@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3c1a35fc318b46ebac7c14e28bb80473" Name="Diagram1">
+        <EntityTypeShape EntityType="testModel.ChiTietHoaDon" Width="1.5" PointX="11.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.ChiTietPhieuNhap" Width="1.5" PointX="8.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.DanhMuc" Width="1.5" PointX="3.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.HoaDon" Width="1.5" PointX="9" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.NguoiDung" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.NhaCungCap" Width="1.5" PointX="0.75" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.PhieuNhap" Width="1.5" PointX="3" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.SanPham" Width="1.5" PointX="6" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.ThanhToan" Width="1.5" PointX="11.25" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="testModel.VaiTro" Width="1.5" PointX="1.5" PointY="8.75" IsExpanded="true" />
+        <AssociationConnector Association="testModel.FK__ChiTietHo__MaHoa__70DDC3D8" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__ChiTietHo__MaSan__71D1E811" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__ChiTietPh__MaPhi__6477ECF3" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__ChiTietPh__MaSan__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__SanPham__MaDanhM__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__HoaDon__MaNguoiD__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__ThanhToan__MaHoa__75A278F5" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__NguoiDung__MaVai__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__PhieuNhap__MaNgu__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__PhieuNhap__MaNha__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="testModel.FK__SanPham__MaNhaCu__5AEE82B9" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
