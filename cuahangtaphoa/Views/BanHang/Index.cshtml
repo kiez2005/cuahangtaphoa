@@ -26,12 +26,13 @@
         }
 
         body {
-            font-family: 'Be Vietnam Pro',sans-serif;
+            font-family: 'Be Vietnam Pro', sans-serif;
             background: var(--bg);
             font-size: 14px;
             overflow: hidden;
         }
 
+        /* ===== TOPBAR ===== */
         .pos-topbar {
             height: 50px;
             background: var(--blue);
@@ -49,7 +50,7 @@
             background: white;
             border-radius: 6px;
             height: 34px;
-            width: 280px;
+            width: 320px;
             padding: 0 10px;
             gap: 6px;
         }
@@ -93,46 +94,101 @@
             cursor: pointer;
         }
 
-        /* Dropdown tìm kiếm */
+        /* ===== DROPDOWN TÌM KIẾM (STYLE MỚI) ===== */
         .search-dropdown {
             position: absolute;
             top: 38px;
             left: 0;
-            width: 320px;
+            width: 460px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,.15);
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.15);
             z-index: 999;
-            max-height: 300px;
+            max-height: 420px;
             overflow-y: auto;
         }
 
         .search-item {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
             padding: 10px 14px;
             cursor: pointer;
             border-bottom: 1px solid #f3f4f6;
+            gap: 12px;
         }
 
             .search-item:hover {
                 background: #f0f7ff;
             }
 
-            .search-item .ten {
-                font-weight: 600;
+            .search-item:last-child {
+                border-bottom: none;
             }
 
-            .search-item .gia {
-                color: var(--blue);
-                font-weight: 700;
-            }
+        .sp-img {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background: #f8f9fb;
+            flex-shrink: 0;
+        }
 
-            .search-item .ton {
-                font-size: 12px;
-                color: #8a94a6;
-            }
+        .sp-img-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background: #f8f9fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
 
+        .sp-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sp-ten {
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #1a1a2e;
+            line-height: 1.3;
+        }
+
+        .sp-mavach {
+            font-size: 12px;
+            color: #8a94a6;
+            margin-top: 2px;
+        }
+
+        .sp-ton {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .sp-gia {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1565c0;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .search-empty {
+            padding: 20px;
+            text-align: center;
+            color: #8a94a6;
+            font-size: 13px;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
         .pos-main {
             display: flex;
             height: calc(100vh - 50px);
@@ -153,7 +209,7 @@
             flex-direction: column;
         }
 
-        /* Bảng giỏ hàng */
+        /* ===== GIỎ HÀNG ===== */
         .cart-table-wrap {
             flex: 1;
             overflow-y: auto;
@@ -225,6 +281,7 @@
                 font-size: 50px;
             }
 
+        /* ===== ORDER SUMMARY ===== */
         .order-summary {
             padding: 14px;
             border-top: 1px solid var(--border);
@@ -257,6 +314,7 @@
             color: #8a94a6;
         }
 
+        /* ===== PAYMENT ===== */
         .payment-section {
             padding: 14px;
         }
@@ -402,16 +460,31 @@
 
             searchTimer = setTimeout(function () {
                 $.get('/BanHang/TimSanPham', { keyword: kw }, function (data) {
-                    if (!data.length) { $('#searchDropdown').hide(); return; }
+                    if (!data.length) {
+                        $('#searchDropdown').html('<div class="search-empty"><i class="bi bi-search me-1"></i>Không tìm thấy sản phẩm</div>').show();
+                        return;
+                    }
                     let html = '';
                     data.forEach(sp => {
-                        html += `<div class="search-item" onclick="addToCart(${sp.MaSanPham},'${sp.TenSanPham}',${sp.GiaBan},${sp.SoLuong})">
-                        <div>
-                            <div class="ten">${sp.TenSanPham}</div>
-                            <div class="ton">Tồn: ${sp.SoLuong}</div>
-                        </div>
-                        <div class="gia">${formatMoney(sp.GiaBan)}</div>
-                    </div>`;
+                        // Render ảnh hoặc placeholder
+                        let imgHtml = sp.HinhAnh
+                            ? `<img class="sp-img" src="${sp.HinhAnh}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                                   <div class="sp-img-placeholder" style="display:none"><i class="bi bi-image"></i></div>`
+                            : `<div class="sp-img-placeholder"><i class="bi bi-image"></i></div>`;
+
+                        // Escape tên sản phẩm tránh lỗi khi có dấu nháy
+                        let tenEscaped = sp.TenSanPham.replace(/'/g, "\\'");
+
+                        html += `<div class="search-item"
+                                        onclick="addToCart(${sp.MaSanPham},'${tenEscaped}',${sp.GiaBan},${sp.SoLuong})">
+                                ${imgHtml}
+                                <div class="sp-info">
+                                    <div class="sp-ten">${sp.TenSanPham}</div>
+                                    <div class="sp-mavach">${sp.MaVach || ''}</div>
+                                    <div class="sp-ton">Tồn: ${sp.SoLuong}&nbsp;&nbsp;|&nbsp;&nbsp;KH đặt: 0</div>
+                                </div>
+                                <div class="sp-gia">${Number(sp.GiaBan).toLocaleString('vi-VN')}</div>
+                            </div>`;
                     });
                     $('#searchDropdown').html(html).show();
                 });
@@ -456,20 +529,20 @@
             cart.forEach((item, i) => {
                 let thanhTien = item.SoLuong * item.GiaBan;
                 html += `<tr>
-                <td>${i + 1}</td>
-                <td>${item.TenSanPham}</td>
-                <td>${formatMoney(item.GiaBan)}</td>
-                <td>
-                    <div class="qty-control">
-                        <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-                        <input class="qty-input" type="number" value="${item.SoLuong}"
-                            onchange="setQty(${i}, this.value)" min="1" max="${item.TonKho}"/>
-                        <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
-                    </div>
-                </td>
-                <td><strong>${formatMoney(thanhTien)}</strong></td>
-                <td><button class="del-btn" onclick="removeItem(${i})"><i class="bi bi-trash"></i></button></td>
-            </tr>`;
+                        <td>${i + 1}</td>
+                        <td>${item.TenSanPham}</td>
+                        <td>${formatMoney(item.GiaBan)}</td>
+                        <td>
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+                                <input class="qty-input" type="number" value="${item.SoLuong}"
+                                    onchange="setQty(${i}, this.value)" min="1" max="${item.TonKho}"/>
+                                <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td><strong>${formatMoney(thanhTien)}</strong></td>
+                        <td><button class="del-btn" onclick="removeItem(${i})"><i class="bi bi-trash"></i></button></td>
+                    </tr>`;
             });
             $('#cartBody').html(html);
             tinhToan();
