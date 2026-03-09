@@ -1,233 +1,897 @@
 ﻿@{
-    Layout = null;
+    ViewBag.Title = "Tổng quan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-
-    <meta name="viewport" content="width=device-width" />
-    <title>Trang chủ</title>
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Cửa hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        :root {
+            --blue: #1565c0;
+            --blue-light: #e8f0fe;
+            --blue-mid: #4285f4;
+            --orange: #f57c00;
+            --orange-light: #fff3e0;
+            --green: #2e7d32;
+            --green-light: #e8f5e9;
+            --red: #c62828;
+            --red-light: #ffebee;
+            --border: #e8eaed;
+            --bg: #f1f3f4;
+            --text: #202124;
+            --text-muted: #5f6368;
+            --white: #ffffff;
+            --sidebar-w: 220px;
+            --topbar-h: 52px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            margin: 0;
-            font-family: Arial;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13.5px;
         }
 
-        /* TOP BAR */
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
 
-        .topbar {
-            height: 60px;
-            background: white;
+        .sidebar-logo {
+            height: var(--topbar-h);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
         }
 
-        .logo {
-            font-size: 25px;
-            font-weight: bold;
-            color: #2a73cc;
-        }
-
-        .top-icons {
-            display: flex;
-            gap: 20px;
-            margin-left: auto;
-            cursor: pointer;
-        }
-
-        .top-icons i {
-            margin-right: 5px;
-            color: #2a73cc;
-        }
-
-        .user-menu {
-            position: relative;
-        }
-
-        .user-icon {
-            background: #e5edf8;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            margin-left: 15px;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: 50px;
-            width: 220px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-        }
-
-        .menu-item {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-         }
-
-        .menu-item:hover {
-            background: #f5f5f5;
-        }
-
-        .menu-item a {
-            text-decoration: none;
-            color: black;
-        }    
-
-        /* NAVBAR */
-
-        .navbar {
-            background: #1e73d8;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-        }
-
-        .menu {
-            display: flex;
-            gap: 25px;
-        }
-
-        .menu a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 12px;
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--blue);
             border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--blue);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-title {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: 10px 16px 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 0;
+            font-size: 13px;
             cursor: pointer;
+            transition: background .15s, color .15s;
+            border-left: 3px solid transparent;
         }
 
-        .menu a:hover {
-            background: #0f5ec4;
+            .nav-item:hover {
+                background: var(--blue-light);
+                color: var(--blue);
+            }
+
+            .nav-item.active {
+                background: var(--blue-light);
+                color: var(--blue);
+                font-weight: 600;
+                border-left-color: var(--blue);
+            }
+
+            .nav-item i {
+                font-size: 16px;
+                width: 18px;
+                text-align: center;
+            }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            position: fixed;
+            left: var(--sidebar-w);
+            right: 0;
+            top: 0;
+            height: var(--topbar-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            z-index: 99;
         }
 
-        .menu .active {
-            background: #0f5ec4;
-        }
-
-        .sell-btn {
-            background: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+        .topbar-title {
             font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
         }
 
-        .sell-btn i {
-            color: #1e73d8;
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .content {
-            padding: 30px;
+        .topbar-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .topbar-btn {
+            height: 32px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+            .topbar-btn:hover {
+                background: var(--bg);
+            }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: var(--sidebar-w);
+            margin-top: var(--topbar-h);
+            padding: 20px;
+            min-height: calc(100vh - var(--topbar-h));
+            display: flex;
+            gap: 16px;
+        }
+
+        .main-left {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .main-right {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 16px;
+        }
+
+        /* ===== KẾT QUẢ HÔM NAY ===== */
+        .today-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        .today-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+            .stat-icon.blue {
+                background: var(--blue-light);
+                color: var(--blue-mid);
+            }
+
+            .stat-icon.orange {
+                background: var(--orange-light);
+                color: var(--orange);
+            }
+
+            .stat-icon.green {
+                background: var(--green-light);
+                color: var(--green);
+            }
+
+            .stat-icon.red {
+                background: var(--red-light);
+                color: var(--red);
+            }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .stat-divider {
+            width: 1px;
+            background: var(--border);
+            margin: 0 4px;
+            align-self: stretch;
+        }
+
+        /* ===== DOANH THU ===== */
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-value {
+            color: var(--blue-mid);
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .tab-item {
+            padding: 6px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: color .15s;
+        }
+
+            .tab-item.active {
+                color: var(--blue-mid);
+                border-bottom-color: var(--blue-mid);
+                font-weight: 600;
+            }
+
+            .tab-item:hover:not(.active) {
+                color: var(--text);
+            }
+
+        .select-sm {
+            height: 30px;
+            padding: 0 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12.5px;
+            color: var(--text);
+            background: white;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        /* ===== TOP 10 SECTION ===== */
+        .two-col {
+            display: flex;
+            gap: 14px;
+        }
+
+            .two-col > * {
+                flex: 1;
+            }
+
+        .section-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .empty-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 12.5px;
+            gap: 10px;
+        }
+
+        .empty-box-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--blue-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-mid);
+            font-size: 24px;
+        }
+
+        /* ===== RIGHT PANEL ===== */
+        .promo-card {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .promo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+            .promo-item:hover {
+                background: var(--bg);
+            }
+
+            .promo-item:last-child {
+                border-bottom: none;
+            }
+
+        .promo-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .promo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+        }
+
+            .promo-icon.blue {
+                background: var(--blue-light);
+                color: var(--blue-mid);
+            }
+
+            .promo-icon.green {
+                background: var(--green-light);
+                color: var(--green);
+            }
+
+        .promo-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .promo-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* ===== HOẠT ĐỘNG ===== */
+        .activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .activity-badge {
+            background: var(--orange-light);
+            color: var(--orange);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        .activity-list {
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+            .activity-item:last-child {
+                border-bottom: none;
+            }
+
+        .act-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .act-text {
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+            .act-text a {
+                color: var(--blue-mid);
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+                .act-text a:hover {
+                    text-decoration: underline;
+                }
+
+        .act-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ===== NOTICE BAR ===== */
+        .notice-bar {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-w);
+            right: 0;
+            height: 36px;
+            background: #fff8e1;
+            border-top: 1px solid #ffe082;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 8px;
+            font-size: 12.5px;
+            color: #5d4037;
+            z-index: 99;
+        }
+
+            .notice-bar a {
+                color: var(--blue-mid);
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+                .notice-bar a:hover {
+                    text-decoration: underline;
+                }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 4px;
         }
     </style>
-
 </head>
-
-
-<script>
-
-    function toggleMenu() {
-
-        var menu = document.getElementById("dropdown");
-
-        if (menu.style.display === "block") {
-            menu.style.display = "none";
-        } else {
-            menu.style.display = "block";
-        }
-
-    }
-
-</script>
-
 <body>
 
-    <!-- TOP BAR -->
-
-    <div class="topbar">
-
-        <div class="logo">
-            <i class="fa-solid fa-store"></i> KiotViet
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">C</div>
+            <span class="logo-text">CuaHang</span>
         </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Tổng quan</div>
+            <a class="nav-item active" href="#">
+                <i class="bi bi-grid-1x2"></i> Tổng quan
+            </a>
 
-        <div class="top-icons">
+            <div class="nav-section-title">Bán hàng</div>
+            <a class="nav-item" href="/BanHang">
+                <i class="bi bi-bag"></i> Bán hàng
+            </a>
+            <a class="nav-item" href="#">
+                <i class="bi bi-receipt"></i> Hóa đơn
+            </a>
 
-            <span><i class="fa-solid fa-truck"></i> Giao hàng</span>
+            <div class="nav-section-title">Kho hàng</div>
+            <a class="nav-item" href="#">
+                <i class="bi bi-box-seam"></i> Hàng hóa
+            </a>
+            <a class="nav-item" href="#">
+                <i class="bi bi-truck"></i> Nhập hàng
+            </a>
 
-            <span><i class="fa-solid fa-palette"></i> Chủ đề</span>
+            <div class="nav-section-title">Danh mục</div>
+            <a class="nav-item" href="#">
+                <i class="bi bi-people"></i> Nhà cung cấp
+            </a>
+            <a class="nav-item" href="#">
+                <i class="bi bi-person-badge"></i> Nhân viên
+            </a>
 
-            <span><i class="fa-solid fa-circle-question"></i> Hỗ trợ</span>
+            <div class="nav-section-title">Báo cáo</div>
+            <a class="nav-item" href="#">
+                <i class="bi bi-bar-chart-line"></i> Doanh thu
+            </a>
+        </nav>
+    </aside>
 
-            <span><i class="fa-solid fa-comment"></i> Góp ý</span>
-
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <span class="topbar-title">Tổng quan</span>
+        <div class="topbar-right">
+            <button class="topbar-btn"><i class="bi bi-bell"></i></button>
+            <button class="topbar-btn"><i class="bi bi-gear"></i></button>
+            <div class="topbar-avatar" title="Tài khoản">A</div>
         </div>
+    </header>
 
-        <div class="user-menu">
+    <!-- MAIN -->
+    <main class="main" style="padding-bottom: 52px;">
 
-            <div class="user-icon" onclick="toggleMenu()">
-                <i class="fa-solid fa-user"></i>
+        <!-- LEFT -->
+        <div class="main-left">
+
+            <!-- Kết quả hôm nay -->
+            <div class="card">
+                <div class="today-header">Kết quả bán hàng hôm nay</div>
+                <div class="today-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div>
+                            <div class="stat-label">Doanh thu</div>
+                            <div class="stat-value" id="doanhThu">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-icon orange"><i class="bi bi-arrow-return-left"></i></div>
+                        <div>
+                            <div class="stat-label">Trả hàng</div>
+                            <div class="stat-value" id="traHang">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-icon green"><i class="bi bi-receipt"></i></div>
+                        <div>
+                            <div class="stat-label">Hóa đơn</div>
+                            <div class="stat-value" id="soHoaDon">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div>
+                        <div>
+                            <div class="stat-label">Sắp hết hàng</div>
+                            <div class="stat-value" id="sapHet">0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div id="dropdown" class="dropdown-menu">
-
-                <div class="menu-item">
-                    <b>0815958918</b><br>
-                    <span style="color:red">Chưa bật xác thực 2 lớp</span>
+            <!-- Biểu đồ doanh thu -->
+            <div class="card">
+                <div class="chart-header">
+                    <div>
+                        <span class="chart-title">Doanh thu thuần</span>
+                        <span class="chart-value" id="tongDoanhThu">0</span>
+                    </div>
+                    <select class="select-sm" id="filterChart" onchange="loadChart()">
+                        <option value="month">Tháng này</option>
+                        <option value="week">Tuần này</option>
+                        <option value="year">Năm nay</option>
+                    </select>
                 </div>
-
-                <div class="menu-item">
-                    <a href="/Login/Logout">Đăng xuất</a>
+                <div class="tab-bar">
+                    <div class="tab-item active" onclick="switchTab(this,'day')">Theo ngày</div>
+                    <div class="tab-item" onclick="switchTab(this,'hour')">Theo giờ</div>
+                    <div class="tab-item" onclick="switchTab(this,'week')">Theo thứ</div>
                 </div>
+                <canvas id="revenueChart" height="90"></canvas>
+            </div>
 
+            <!-- Top 10 -->
+            <div class="two-col">
+                <div class="card">
+                    <div class="chart-header">
+                        <div class="section-title">Top 10 hàng bán chạy</div>
+                        <select class="select-sm">
+                            <option>Theo doanh thu thuần</option>
+                            <option>Theo số lượng</option>
+                        </select>
+                    </div>
+                    <div class="empty-box">
+                        <div class="empty-box-icon"><i class="bi bi-inbox"></i></div>
+                        <span>Chưa có dữ liệu</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="chart-header">
+                        <div class="section-title">Top 10 khách mua nhiều nhất</div>
+                        <select class="select-sm">
+                            <option>Tháng này</option>
+                            <option>Tuần này</option>
+                        </select>
+                    </div>
+                    <div class="empty-box">
+                        <div class="empty-box-icon"><i class="bi bi-inbox"></i></div>
+                        <span>Chưa có dữ liệu</span>
+                    </div>
+                </div>
             </div>
 
         </div>
 
-    </div>
+        <!-- RIGHT -->
+        <div class="main-right">
 
-    <!-- NAVBAR -->
+            <!-- Tiện ích -->
+            <div class="promo-card">
+                <div class="promo-item">
+                    <div class="promo-left">
+                        <div class="promo-icon blue"><i class="bi bi-qr-code"></i></div>
+                        <div>
+                            <div class="promo-name">Thanh toán</div>
+                            <div class="promo-desc">Cài đặt QR tiện lợi</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right" style="color:#bbb"></i>
+                </div>
+                <div class="promo-item">
+                    <div class="promo-left">
+                        <div class="promo-icon green"><i class="bi bi-cash-coin"></i></div>
+                        <div>
+                            <div class="promo-name">Vay vốn</div>
+                            <div class="promo-desc">Đủ vốn hôm nay, vững vàng mai</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right" style="color:#bbb"></i>
+                </div>
+            </div>
 
-    <div class="navbar">
-
-        <div class="menu">
-
-            <a class="active">Tổng quan</a>
-            <a>Hàng hóa</a>
-            <a>Đơn hàng</a>
-            <a>Khách hàng</a>
-            <a>Nhân viên</a>
-            <a>Sổ quỹ</a>
-            <a>Báo cáo</a>
-            <a>Bán online</a>
-            <a>Thuế & Kế toán</a>
+            <!-- Hoạt động gần đây -->
+            <div class="promo-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+                <div class="activity-header">
+                    <span class="activity-title">Hoạt động gần đây</span>
+                    <span class="activity-badge" id="actBadge">0</span>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <div style="padding:20px; text-align:center; color:#bbb; font-size:12px;">
+                        Đang tải...
+                    </div>
+                </div>
+            </div>
 
         </div>
 
-        <button class="sell-btn">
-            <i class="fa-solid fa-cart-shopping"></i> Bán hàng
-        </button>
+    </main>
 
+    <!-- NOTICE BAR -->
+    <div class="notice-bar">
+        <i class="bi bi-info-circle" style="color:#f57c00"></i>
+        Hệ thống quản lý bán hàng &nbsp;|&nbsp; <a href="#">Xem chi tiết</a>
     </div>
- 
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script>
+        // ===== CHART =====
+        let revenueChart;
+
+        function initChart(labels, data) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            if (revenueChart) revenueChart.destroy();
+
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        borderColor: '#4285f4',
+                        backgroundColor: 'rgba(66,133,244,.08)',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#4285f4',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: '#f0f0f0' },
+                            ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e' }
+                        },
+                        y: {
+                            grid: { color: '#f0f0f0' },
+                            ticks: {
+                                font: { size: 11, family: 'Be Vietnam Pro' },
+                                color: '#9e9e9e',
+                                callback: v => v === 0 ? '0' : (v / 1000000).toFixed(0) + 'tr'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadChart() {
+            // Gọi API thực tế: $.get('/Dashboard/GetDoanhThu', { filter: ... }, ...)
+            // Demo: labels theo ngày trong tháng
+            let labels = [];
+            let data = [];
+            for (let i = 1; i <= 30; i++) {
+                labels.push(i < 10 ? '0' + i : '' + i);
+                data.push(0);
+            }
+            initChart(labels, data);
+            $('#tongDoanhThu').text('0');
+        }
+
+        function switchTab(el, type) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            loadChart();
+        }
+
+        // ===== LOAD STATS =====
+        function loadStats() {
+            // Gọi API thực: $.get('/Dashboard/GetStats', function(data){ ... })
+            // Demo tĩnh:
+            $('#doanhThu').text('0');
+            $('#traHang').text('0');
+            $('#soHoaDon').text('0');
+            $('#sapHet').text('0');
+        }
+
+        // ===== HOẠT ĐỘNG =====
+        function loadActivity() {
+            // Gọi API thực: $.get('/Dashboard/GetHoatDong', function(data){ ... })
+            // Demo tĩnh:
+            const activities = [
+                { user: 'Admin', action: 'bán đơn hàng', value: '0', time: 'vừa xong' },
+                { user: 'Admin', action: 'nhập hàng', value: '77,777', time: 'một ngày trước' },
+            ];
+
+            if (!activities.length) {
+                $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Chưa có hoạt động</div>');
+                return;
+            }
+
+            let html = '';
+            activities.forEach(a => {
+                let icon = a.action.includes('bán') ? 'bi-bag-check' : 'bi-box-arrow-in-down';
+                html += `<div class="activity-item">
+                <div class="act-icon"><i class="bi ${icon}"></i></div>
+                <div>
+                    <div class="act-text">
+                        <a href="#">${a.user}</a> vừa <a href="#">${a.action}</a>
+                        với giá trị <strong>${a.value}</strong>
+                    </div>
+                    <div class="act-time">${a.time}</div>
+                </div>
+            </div>`;
+            });
+            $('#activityList').html(html);
+            $('#actBadge').text(activities.length);
+        }
+
+        // ===== INIT =====
+        $(function () {
+            loadStats();
+            loadChart();
+            loadActivity();
+        });
+    </script>
 </body>
 </html>
