@@ -1,8 +1,7 @@
 ﻿@{
     ViewBag.Title = "Tổng quan";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -40,13 +39,13 @@
         }
 
         body {
-            font-family: 'Be Vietnam Pro', sans-serif;
+            font-family: 'Be Vietnam Pro',sans-serif;
             background: var(--bg);
             color: var(--text);
             font-size: 13.5px;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* SIDEBAR */
         .sidebar {
             position: fixed;
             left: 0;
@@ -110,10 +109,9 @@
             padding: 8px 16px;
             color: var(--text-muted);
             text-decoration: none;
-            border-radius: 0;
             font-size: 13px;
             cursor: pointer;
-            transition: background .15s, color .15s;
+            transition: background .15s,color .15s;
             border-left: 3px solid transparent;
         }
 
@@ -135,7 +133,7 @@
                 text-align: center;
             }
 
-        /* ===== TOPBAR ===== */
+        /* TOPBAR */
         .topbar {
             position: fixed;
             left: var(--sidebar-w);
@@ -154,7 +152,6 @@
         .topbar-title {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text);
         }
 
         .topbar-right {
@@ -190,21 +187,21 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-family: 'Be Vietnam Pro', sans-serif;
+            font-family: 'Be Vietnam Pro',sans-serif;
         }
 
             .topbar-btn:hover {
                 background: var(--bg);
             }
 
-        /* ===== MAIN ===== */
+        /* MAIN */
         .main {
             margin-left: var(--sidebar-w);
             margin-top: var(--topbar-h);
-            padding: 20px;
-            min-height: calc(100vh - var(--topbar-h));
+            padding: 20px 20px 52px;
             display: flex;
             gap: 16px;
+            min-height: calc(100vh - var(--topbar-h));
         }
 
         .main-left {
@@ -222,7 +219,7 @@
             gap: 14px;
         }
 
-        /* ===== CARD ===== */
+        /* CARD */
         .card {
             background: var(--white);
             border-radius: 10px;
@@ -230,17 +227,17 @@
             padding: 16px;
         }
 
-        /* ===== KẾT QUẢ HÔM NAY ===== */
+        /* STATS */
         .today-header {
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 14px;
-            color: var(--text);
         }
 
         .today-stats {
             display: flex;
             gap: 24px;
+            flex-wrap: wrap;
         }
 
         .stat-item {
@@ -288,7 +285,6 @@
         .stat-value {
             font-size: 20px;
             font-weight: 700;
-            color: var(--text);
             line-height: 1.2;
         }
 
@@ -299,7 +295,7 @@
             align-self: stretch;
         }
 
-        /* ===== DOANH THU ===== */
+        /* CHART */
         .chart-header {
             display: flex;
             align-items: center;
@@ -320,7 +316,6 @@
 
         .tab-bar {
             display: flex;
-            gap: 0;
             border-bottom: 1px solid var(--border);
             margin-bottom: 12px;
         }
@@ -354,10 +349,10 @@
             color: var(--text);
             background: white;
             cursor: pointer;
-            font-family: 'Be Vietnam Pro', sans-serif;
+            font-family: 'Be Vietnam Pro',sans-serif;
         }
 
-        /* ===== TOP 10 SECTION ===== */
+        /* TOP 10 */
         .two-col {
             display: flex;
             gap: 14px;
@@ -396,7 +391,67 @@
             font-size: 24px;
         }
 
-        /* ===== RIGHT PANEL ===== */
+        .top-list {
+            list-style: none;
+        }
+
+            .top-list li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 7px 0;
+                border-bottom: 1px solid #f5f5f5;
+                font-size: 13px;
+            }
+
+                .top-list li:last-child {
+                    border-bottom: none;
+                }
+
+        .top-rank {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--blue-light);
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+            .top-rank.gold {
+                background: #fff8e1;
+                color: #f9a825;
+            }
+
+            .top-rank.silver {
+                background: #f5f5f5;
+                color: #757575;
+            }
+
+            .top-rank.bronze {
+                background: #fbe9e7;
+                color: #bf360c;
+            }
+
+        .top-name {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-val {
+            font-weight: 600;
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        /* RIGHT */
         .promo-card {
             background: var(--white);
             border-radius: 10px;
@@ -459,7 +514,7 @@
             margin-top: 1px;
         }
 
-        /* ===== HOẠT ĐỘNG ===== */
+        /* ACTIVITY */
         .activity-header {
             display: flex;
             align-items: center;
@@ -507,7 +562,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-muted);
             font-size: 14px;
             flex-shrink: 0;
             margin-top: 1px;
@@ -534,7 +588,7 @@
             margin-top: 2px;
         }
 
-        /* ===== NOTICE BAR ===== */
+        /* NOTICE */
         .notice-bar {
             position: fixed;
             bottom: 0;
@@ -558,17 +612,8 @@
                 text-decoration: none;
             }
 
-                .notice-bar a:hover {
-                    text-decoration: underline;
-                }
-
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 5px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -587,38 +632,22 @@
         </div>
         <nav class="sidebar-nav">
             <div class="nav-section-title">Tổng quan</div>
-            <a class="nav-item active" href="#">
-                <i class="bi bi-grid-1x2"></i> Tổng quan
-            </a>
+            <a class="nav-item active" href="/Dashboard"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
 
             <div class="nav-section-title">Bán hàng</div>
-            <a class="nav-item" href="/BanHang">
-                <i class="bi bi-bag"></i> Bán hàng
-            </a>
-            <a class="nav-item" href="#">
-                <i class="bi bi-receipt"></i> Hóa đơn
-            </a>
+            <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
+            <a class="nav-item" href="#"><i class="bi bi-receipt"></i> Hóa đơn</a>
 
             <div class="nav-section-title">Kho hàng</div>
-            <a class="nav-item" href="#">
-                <i class="bi bi-box-seam"></i> Hàng hóa
-            </a>
-            <a class="nav-item" href="#">
-                <i class="bi bi-truck"></i> Nhập hàng
-            </a>
+            <a class="nav-item" href="#"><i class="bi bi-box-seam"></i> Hàng hóa</a>
+            <a class="nav-item" href="#"><i class="bi bi-truck"></i> Nhập hàng</a>
 
             <div class="nav-section-title">Danh mục</div>
-            <a class="nav-item" href="#">
-                <i class="bi bi-people"></i> Nhà cung cấp
-            </a>
-            <a class="nav-item" href="#">
-                <i class="bi bi-person-badge"></i> Nhân viên
-            </a>
+            <a class="nav-item" href="#"><i class="bi bi-people"></i> Nhà cung cấp</a>
+            <a class="nav-item" href="#"><i class="bi bi-person-badge"></i> Nhân viên</a>
 
             <div class="nav-section-title">Báo cáo</div>
-            <a class="nav-item" href="#">
-                <i class="bi bi-bar-chart-line"></i> Doanh thu
-            </a>
+            <a class="nav-item" href="#"><i class="bi bi-bar-chart-line"></i> Doanh thu</a>
         </nav>
     </aside>
 
@@ -626,19 +655,18 @@
     <header class="topbar">
         <span class="topbar-title">Tổng quan</span>
         <div class="topbar-right">
+            <button class="topbar-btn" onclick="loadAll()" title="Làm mới"><i class="bi bi-arrow-clockwise"></i></button>
             <button class="topbar-btn"><i class="bi bi-bell"></i></button>
-            <button class="topbar-btn"><i class="bi bi-gear"></i></button>
-            <div class="topbar-avatar" title="Tài khoản">A</div>
+            <div class="topbar-avatar">A</div>
         </div>
     </header>
 
     <!-- MAIN -->
-    <main class="main" style="padding-bottom: 52px;">
+    <main class="main">
 
-        <!-- LEFT -->
         <div class="main-left">
 
-            <!-- Kết quả hôm nay -->
+            <!-- Stats hôm nay -->
             <div class="card">
                 <div class="today-header">Kết quả bán hàng hôm nay</div>
                 <div class="today-stats">
@@ -646,7 +674,7 @@
                         <div class="stat-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
                         <div>
                             <div class="stat-label">Doanh thu</div>
-                            <div class="stat-value" id="doanhThu">0</div>
+                            <div class="stat-value" id="statDoanhThu">—</div>
                         </div>
                     </div>
                     <div class="stat-divider"></div>
@@ -654,7 +682,7 @@
                         <div class="stat-icon orange"><i class="bi bi-arrow-return-left"></i></div>
                         <div>
                             <div class="stat-label">Trả hàng</div>
-                            <div class="stat-value" id="traHang">0</div>
+                            <div class="stat-value" id="statTraHang">0</div>
                         </div>
                     </div>
                     <div class="stat-divider"></div>
@@ -662,7 +690,7 @@
                         <div class="stat-icon green"><i class="bi bi-receipt"></i></div>
                         <div>
                             <div class="stat-label">Hóa đơn</div>
-                            <div class="stat-value" id="soHoaDon">0</div>
+                            <div class="stat-value" id="statHoaDon">—</div>
                         </div>
                     </div>
                     <div class="stat-divider"></div>
@@ -670,13 +698,13 @@
                         <div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div>
                         <div>
                             <div class="stat-label">Sắp hết hàng</div>
-                            <div class="stat-value" id="sapHet">0</div>
+                            <div class="stat-value" id="statSapHet">—</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Biểu đồ doanh thu -->
+            <!-- Biểu đồ -->
             <div class="card">
                 <div class="chart-header">
                     <div>
@@ -690,9 +718,9 @@
                     </select>
                 </div>
                 <div class="tab-bar">
-                    <div class="tab-item active" onclick="switchTab(this,'day')">Theo ngày</div>
-                    <div class="tab-item" onclick="switchTab(this,'hour')">Theo giờ</div>
-                    <div class="tab-item" onclick="switchTab(this,'week')">Theo thứ</div>
+                    <div class="tab-item active" onclick="switchTab(this)">Theo ngày</div>
+                    <div class="tab-item" onclick="switchTab(this)">Theo giờ</div>
+                    <div class="tab-item" onclick="switchTab(this)">Theo thứ</div>
                 </div>
                 <canvas id="revenueChart" height="90"></canvas>
             </div>
@@ -702,15 +730,17 @@
                 <div class="card">
                     <div class="chart-header">
                         <div class="section-title">Top 10 hàng bán chạy</div>
-                        <select class="select-sm">
-                            <option>Theo doanh thu thuần</option>
-                            <option>Theo số lượng</option>
+                        <select class="select-sm" id="sortTopSP" onchange="loadTopSanPham()">
+                            <option value="revenue">Theo doanh thu thuần</option>
+                            <option value="quantity">Theo số lượng</option>
                         </select>
                     </div>
-                    <div class="empty-box">
-                        <div class="empty-box-icon"><i class="bi bi-inbox"></i></div>
-                        <span>Chưa có dữ liệu</span>
-                    </div>
+                    <ul class="top-list" id="topSanPhamList">
+                        <div class="empty-box">
+                            <div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div>
+                            <span>Đang tải...</span>
+                        </div>
+                    </ul>
                 </div>
                 <div class="card">
                     <div class="chart-header">
@@ -732,14 +762,13 @@
         <!-- RIGHT -->
         <div class="main-right">
 
-            <!-- Tiện ích -->
             <div class="promo-card">
                 <div class="promo-item">
                     <div class="promo-left">
                         <div class="promo-icon blue"><i class="bi bi-qr-code"></i></div>
                         <div>
                             <div class="promo-name">Thanh toán</div>
-                            <div class="promo-desc">Cài đặt QR tiện lợi</div>
+                            <div class="promo-desc">Cài đặt QR tiện lợi miễn phí</div>
                         </div>
                     </div>
                     <i class="bi bi-chevron-right" style="color:#bbb"></i>
@@ -756,16 +785,13 @@
                 </div>
             </div>
 
-            <!-- Hoạt động gần đây -->
-            <div class="promo-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <div class="promo-card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
                 <div class="activity-header">
                     <span class="activity-title">Hoạt động gần đây</span>
                     <span class="activity-badge" id="actBadge">0</span>
                 </div>
                 <div class="activity-list" id="activityList">
-                    <div style="padding:20px; text-align:center; color:#bbb; font-size:12px;">
-                        Đang tải...
-                    </div>
+                    <div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>
                 </div>
             </div>
 
@@ -773,21 +799,21 @@
 
     </main>
 
-    <!-- NOTICE BAR -->
+    <!-- NOTICE -->
     <div class="notice-bar">
         <i class="bi bi-info-circle" style="color:#f57c00"></i>
-        Hệ thống quản lý bán hàng &nbsp;|&nbsp; <a href="#">Xem chi tiết</a>
+        Hệ thống quản lý bán hàng &nbsp;|&nbsp;
+        <a href="/BanHang">Bắt đầu bán hàng</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script>
-        // ===== CHART =====
         let revenueChart;
 
+        // ── CHART ──────────────────────────────────────────
         function initChart(labels, data) {
             const ctx = document.getElementById('revenueChart').getContext('2d');
             if (revenueChart) revenueChart.destroy();
-
             revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -799,99 +825,125 @@
                         borderWidth: 2,
                         pointRadius: 3,
                         pointBackgroundColor: '#4285f4',
-                        fill: true,
-                        tension: 0.4
+                        fill: true, tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: {
-                            grid: { color: '#f0f0f0' },
-                            ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e' }
-                        },
+                        x: { grid: { color: '#f0f0f0' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e' } },
                         y: {
-                            grid: { color: '#f0f0f0' },
+                            grid: { color: '#f0f0f0' }, beginAtZero: true,
                             ticks: {
-                                font: { size: 11, family: 'Be Vietnam Pro' },
-                                color: '#9e9e9e',
-                                callback: v => v === 0 ? '0' : (v / 1000000).toFixed(0) + 'tr'
-                            },
-                            beginAtZero: true
+                                font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e',
+                                callback: v => v === 0 ? '0' : v >= 1000000 ? (v / 1000000).toFixed(0) + 'tr' : v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
+                            }
                         }
                     }
                 }
             });
         }
 
-        function loadChart() {
-            // Gọi API thực tế: $.get('/Dashboard/GetDoanhThu', { filter: ... }, ...)
-            // Demo: labels theo ngày trong tháng
-            let labels = [];
-            let data = [];
-            for (let i = 1; i <= 30; i++) {
-                labels.push(i < 10 ? '0' + i : '' + i);
-                data.push(0);
-            }
-            initChart(labels, data);
-            $('#tongDoanhThu').text('0');
+        // ── LOAD STATS ────────────────────────────────────
+        function loadStats() {
+            $.get('/Dashboard/GetStats', function (res) {
+                if (!res.success) { $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'); return; }
+                $('#statDoanhThu').text(res.doanhThuText);
+                $('#statTraHang').text(res.traHang);
+                $('#statHoaDon').text(res.soHoaDon);
+                $('#statSapHet').text(res.sapHet);
+            }).fail(() => $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'));
         }
 
-        function switchTab(el, type) {
+        // ── LOAD CHART ────────────────────────────────────
+        function loadChart() {
+            let filter = $('#filterChart').val();
+            $.get('/Dashboard/GetDoanhThu', { filter: filter }, function (res) {
+                if (!res.success) return;
+                $('#tongDoanhThu').text(res.tongDoanhThuText);
+                initChart(res.labels, res.data);
+            });
+        }
+
+        function switchTab(el) {
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             loadChart();
         }
 
-        // ===== LOAD STATS =====
-        function loadStats() {
-            // Gọi API thực: $.get('/Dashboard/GetStats', function(data){ ... })
-            // Demo tĩnh:
-            $('#doanhThu').text('0');
-            $('#traHang').text('0');
-            $('#soHoaDon').text('0');
-            $('#sapHet').text('0');
+        // ── LOAD TOP SẢN PHẨM ────────────────────────────
+        function loadTopSanPham() {
+            let sortBy = $('#sortTopSP').val();
+            let filter = $('#filterChart').val();
+
+            $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
+
+            $.get('/Dashboard/GetTopSanPham', { sortBy: sortBy, filter: filter }, function (res) {
+                if (!res.success || !res.data.length) {
+                    $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
+                    return;
+                }
+                let html = '';
+                res.data.forEach((sp, i) => {
+                    let rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                    let val = sortBy === 'quantity'
+                        ? sp.TongSoLuong + ' cái'
+                        : Number(sp.TongDoanhThu).toLocaleString('vi-VN') + ' ₫';
+                    html += `<li>
+                        <div class="top-rank ${rankClass}">${i + 1}</div>
+                        <div class="top-name" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
+                        <div class="top-val">${val}</div>
+                    </li>`;
+                });
+                $('#topSanPhamList').html(html);
+            }).fail(() => $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-exclamation-circle"></i></div><span>Lỗi tải dữ liệu</span></div>'));
         }
 
-        // ===== HOẠT ĐỘNG =====
+        // ── LOAD HOẠT ĐỘNG ────────────────────────────────
         function loadActivity() {
-            // Gọi API thực: $.get('/Dashboard/GetHoatDong', function(data){ ... })
-            // Demo tĩnh:
-            const activities = [
-                { user: 'Admin', action: 'bán đơn hàng', value: '0', time: 'vừa xong' },
-                { user: 'Admin', action: 'nhập hàng', value: '77,777', time: 'một ngày trước' },
-            ];
+            $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>');
 
-            if (!activities.length) {
-                $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Chưa có hoạt động</div>');
-                return;
-            }
-
-            let html = '';
-            activities.forEach(a => {
-                let icon = a.action.includes('bán') ? 'bi-bag-check' : 'bi-box-arrow-in-down';
-                html += `<div class="activity-item">
-                <div class="act-icon"><i class="bi ${icon}"></i></div>
-                <div>
-                    <div class="act-text">
-                        <a href="#">${a.user}</a> vừa <a href="#">${a.action}</a>
-                        với giá trị <strong>${a.value}</strong>
-                    </div>
-                    <div class="act-time">${a.time}</div>
-                </div>
-            </div>`;
-            });
-            $('#activityList').html(html);
-            $('#actBadge').text(activities.length);
+            $.get('/Dashboard/GetHoatDong', function (res) {
+                if (!res.success || !res.data.length) {
+                    $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Chưa có hoạt động</div>');
+                    $('#actBadge').text('0');
+                    return;
+                }
+                let html = '';
+                res.data.forEach(a => {
+                    let isBan = a.hanhDong.includes('bán');
+                    let icon = isBan ? 'bi-bag-check' : 'bi-box-arrow-in-down';
+                    let color = isBan ? '#1565c0' : '#2e7d32';
+                    html += `<div class="activity-item">
+                        <div class="act-icon" style="color:${color}"><i class="bi ${icon}"></i></div>
+                        <div>
+                            <div class="act-text">
+                                <a href="#">${a.nguoiDung}</a> vừa
+                                <a href="#">${a.hanhDong}</a>
+                                với giá trị <strong>${a.giaTri}</strong>
+                            </div>
+                            <div class="act-time">${a.thoiGian}</div>
+                        </div>
+                    </div>`;
+                });
+                $('#activityList').html(html);
+                $('#actBadge').text(res.total);
+            }).fail(() => $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Lỗi tải dữ liệu</div>'));
         }
 
-        // ===== INIT =====
-        $(function () {
+        // ── LOAD TẤT CẢ ──────────────────────────────────
+        function loadAll() {
             loadStats();
             loadChart();
+            loadTopSanPham();
             loadActivity();
-        });
+        }
+
+        // Tự refresh mỗi 60 giây
+        setInterval(loadAll, 60000);
+
+        $(function () { loadAll(); });
     </script>
 </body>
 </html>
