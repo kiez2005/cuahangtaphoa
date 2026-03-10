@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Nhân viên";
+    Layout = "~/Views/Layout/Index.cshtml";
+}
+
+<div class="container-fluid">
+
+    <!-- Thanh trên -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <!-- Ô tìm kiếm -->
+        <div style="width:350px;">
+            <input type="text" class="form-control" placeholder="Tìm theo mã, tên nhân viên">
+        </div>
+
+        <!-- Các nút -->
+        <div class="d-flex gap-2">
+
+            <a href="#" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Nhân viên
+            </a>
+
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-check2-square"></i> Duyệt yêu cầu
+            </button>
+
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-three-dots"></i>
+            </button>
+
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-list"></i>
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- Bảng -->
+    <div class="card">
+
+        <table class="table table-hover mb-0">
+
+            <thead class="table-light">
+                <tr>
+                    <th style="width:40px">
+                        <input type="checkbox">
+                    </th>
+
+                    <th>Ảnh</th>
+                    <th>Mã nhân viên</th>
+                    <th>Mã chấm công</th>
+                    <th>Tên nhân viên</th>
+                    <th>Số điện thoại</th>
+                    <th>Số CMND/CCCD</th>
+                    <th>Nợ và tạm ứng</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <!-- Khi chưa có dữ liệu -->
+                <tr>
+                    <td colspan="9" class="text-center p-5 text-muted">
+
+                        <div style="font-size:40px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <div class="mt-2">
+                            Gian hàng chưa có nhân viên.
+                        </div>
+
+                        <div>
+                            Nhấn <a href="#">vào đây</a> để thêm mới nhân viên.
+                        </div>
+
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
