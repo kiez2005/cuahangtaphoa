@@ -194,6 +194,53 @@
                 background: var(--bg);
             }
 
+        .avatar-container {
+            position: relative;
+        }
+
+        .topbar-avatar {
+            width: 35px;
+            height: 35px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .avatar-menu {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            width: 220px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        .menu-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+            .menu-item:hover {
+                background: #f5f5f5;
+            }
+
+        .text-red {
+            color: red;
+            font-size: 13px;
+        }
+
+        .logout {
+            color: #333;
+        }
+
         /* MAIN */
         .main {
             margin-left: var(--sidebar-w);
@@ -654,10 +701,28 @@
     <!-- TOPBAR -->
     <header class="topbar">
         <span class="topbar-title">Tổng quan</span>
+
         <div class="topbar-right">
-            <button class="topbar-btn" onclick="loadAll()" title="Làm mới"><i class="bi bi-arrow-clockwise"></i></button>
-            <button class="topbar-btn"><i class="bi bi-bell"></i></button>
-            <div class="topbar-avatar">A</div>
+            <button class="topbar-btn" onclick="loadAll()" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+
+            <button class="topbar-btn">
+                <i class="bi bi-bell"></i>
+            </button>
+
+            <div class="avatar-container">
+                <div class="topbar-avatar" onclick="toggleMenu()">A</div>
+
+                <div class="avatar-menu" id="avatarMenu">
+                    <div class="menu-item">
+                        <b>Thông tin cá nhân</b><br>
+                    </div>
+                    <div class="menu-item logout" onclick="location.href='@Url.Action("Logout","Login")'">
+                        Đăng xuất
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -944,6 +1009,22 @@
         setInterval(loadAll, 60000);
 
         $(function () { loadAll(); });
+
+
+
+        function toggleMenu() {
+            const menu = document.getElementById("avatarMenu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        document.addEventListener("click", function (e) {
+            const avatar = document.querySelector(".topbar-avatar");
+            const menu = document.getElementById("avatarMenu");
+
+            if (!avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.style.display = "none";
+            }
+        });
     </script>
 </body>
 </html>
