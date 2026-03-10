@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<cuahangtaphoa.Models.NguoiDung>
+
+@{
     ViewBag.Title = "Nhân viên";
     Layout = "~/Views/Layout/Index.cshtml";
 }
@@ -8,15 +10,15 @@
     <!-- Thanh trên -->
     <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <!-- Ô tìm kiếm -->
+        <!-- Tìm kiếm -->
         <div style="width:350px;">
             <input type="text" class="form-control" placeholder="Tìm theo mã, tên nhân viên">
         </div>
 
-        <!-- Các nút -->
+        <!-- Nút -->
         <div class="d-flex gap-2">
 
-            <a href="#" class="btn btn-primary">
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNhanVien">
                 <i class="bi bi-plus"></i> Nhân viên
             </a>
 
@@ -36,48 +38,73 @@
     </div>
 
 
-    <!-- Bảng -->
+    <!-- TABLE -->
     <div class="card">
 
         <table class="table table-hover mb-0">
 
             <thead class="table-light">
                 <tr>
-                    <th style="width:40px">
-                        <input type="checkbox">
-                    </th>
-
-                    <th>Ảnh</th>
+                    <th><input type="checkbox"></th>
                     <th>Mã nhân viên</th>
-                    <th>Mã chấm công</th>
                     <th>Tên nhân viên</th>
                     <th>Số điện thoại</th>
-                    <th>Số CMND/CCCD</th>
-                    <th>Nợ và tạm ứng</th>
-                    <th>Ghi chú</th>
+                    <th>Địa chỉ</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
                 </tr>
             </thead>
 
             <tbody>
 
-                <!-- Khi chưa có dữ liệu -->
-                <tr>
-                    <td colspan="9" class="text-center p-5 text-muted">
+                @if (Model == null || Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted p-4">
+                            Chưa có nhân viên
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var nv in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox">
+                            </td>
+                            <td>
+                                @("NV"+ nv.MaNguoiDung)
+                            </td>
 
-                        <div style="font-size:40px;">
-                            <i class="bi bi-person"></i>
-                        </div>
+                            <td>
+                                @nv.HoTen
+                            </td>
 
-                        <div class="mt-2">
-                            Gian hàng chưa có nhân viên.
-                        </div>
+                            <td>
+                                @nv.SoDienThoai
+                            </td>
 
-                        <div>
-                            Nhấn <a href="#">vào đây</a> để thêm mới nhân viên.
-                        </div>
+                            <td>
+                                @nv.DiaChi
+                            </td>
 
-                    </td>
-                </tr>
+                            <td>
+                                @(nv.MaVaiTro == 1 ? "Admin" : "Nhân viên")
+                            </td>
+
+                            <td>
+                                @(nv.TrangThai == true ? "Hoạt động" : "Khóa")
+                            </td>
+
+                            <td>
+                                @(nv.NgayTao?.ToString("dd/MM/yyyy"))
+                            </td>
+
+                        </tr>
+                    }
+                }
 
             </tbody>
 
@@ -85,4 +112,78 @@
 
     </div>
 
+</div>
+
+
+<!-- MODAL THÊM NHÂN VIÊN -->
+<div class="modal fade" id="modalNhanVien">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm mới nhân viên</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/NhanVien/Create" method="post">
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên nhân viên</label>
+                            <input name="HoTen" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Số điện thoại</label>
+                            <input name="SoDienThoai" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên đăng nhập</label>
+                            <input name="TenDangNhap" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Mật khẩu</label>
+                            <input type="password" name="MatKhau" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Địa chỉ</label>
+                            <input name="DiaChi" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Vai trò</label>
+                            <select name="MaVaiTro" class="form-control">
+                                <option value="1">Admin</option>
+                                <option value="2">Nhân viên</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Trạng thái</label>
+                            <select name="TrangThai" class="form-control">
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Đã nghỉ</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
 </div>
