@@ -10,15 +10,11 @@ namespace cuahangtaphoa.Controllers
     {
         testEntities db = new testEntities();
 
-        // GET: /Dashboard/
         public ActionResult Index()
         {
             return View();
         }
 
-        // =============================================
-        // API: Thống kê nhanh hôm nay
-        // =============================================
         [HttpGet]
         public JsonResult GetStats()
         {
@@ -27,18 +23,15 @@ namespace cuahangtaphoa.Controllers
                 DateTime homNay = DateTime.Today;
                 DateTime ngayMai = homNay.AddDays(1);
 
-                // Tổng doanh thu hôm nay
                 decimal doanhThu = db.HoaDons
                     .Where(h => h.NgayLap >= homNay && h.NgayLap < ngayMai
                              && h.TrangThai == "Hoàn thành")
                     .Sum(h => (decimal?)h.TienSauGiam) ?? 0;
 
-                // Số hóa đơn hôm nay
                 int soHoaDon = db.HoaDons
                     .Where(h => h.NgayLap >= homNay && h.NgayLap < ngayMai)
                     .Count();
 
-                // Sản phẩm sắp hết hàng
                 int sapHet = db.SanPhams
                     .Where(s => s.SoLuong <= s.SoLuongToiThieu)
                     .Count();
@@ -59,10 +52,6 @@ namespace cuahangtaphoa.Controllers
             }
         }
 
-        // =============================================
-        // API: Doanh thu theo biểu đồ
-        // filter: "month" | "week" | "year"
-        // =============================================
         [HttpGet]
         public JsonResult GetDoanhThu(string filter = "month")
         {
@@ -75,7 +64,6 @@ namespace cuahangtaphoa.Controllers
 
                 if (filter == "week")
                 {
-                    // 7 ngày gần nhất
                     for (int i = 6; i >= 0; i--)
                     {
                         DateTime ngay = now.Date.AddDays(-i);
@@ -93,7 +81,6 @@ namespace cuahangtaphoa.Controllers
                 }
                 else if (filter == "year")
                 {
-                    // 12 tháng trong năm
                     string[] tenThang = { "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12" };
                     for (int i = 1; i <= 12; i++)
                     {
@@ -112,7 +99,6 @@ namespace cuahangtaphoa.Controllers
                 }
                 else
                 {
-                    // Mặc định: từng ngày trong tháng hiện tại
                     int soNgay = DateTime.DaysInMonth(now.Year, now.Month);
                     for (int i = 1; i <= soNgay; i++)
                     {
@@ -145,11 +131,6 @@ namespace cuahangtaphoa.Controllers
             }
         }
 
-        // =============================================
-        // API: Top 10 hàng bán chạy
-        // sortBy: "revenue" | "quantity"
-        // filter: "month" | "week"
-        // =============================================
         [HttpGet]
         public JsonResult GetTopSanPham(string sortBy = "revenue", string filter = "month")
         {
@@ -194,15 +175,11 @@ namespace cuahangtaphoa.Controllers
             }
         }
 
-        // =============================================
-        // API: Hoạt động gần đây
-        // =============================================
         [HttpGet]
         public JsonResult GetHoatDong()
         {
             try
             {
-                // 10 hóa đơn gần nhất
                 var hoaDons = db.HoaDons
                     .OrderByDescending(h => h.NgayLap)
                     .Take(10)
@@ -211,11 +188,10 @@ namespace cuahangtaphoa.Controllers
                     {
                         NguoiDung = h.NguoiDung != null ? h.NguoiDung.HoTen : "Nhân viên",
                         HanhDong = "bán đơn hàng",
-                        GiaTri = h.TienSauGiam ?? 0,
+                        GiaTri = (decimal)(h.TienSauGiam ?? 0),
                         ThoiGian = h.NgayLap
                     });
 
-                // 10 phiếu nhập gần nhất
                 var phieuNhaps = db.PhieuNhaps
                     .OrderByDescending(p => p.NgayNhap)
                     .Take(10)
@@ -224,11 +200,10 @@ namespace cuahangtaphoa.Controllers
                     {
                         NguoiDung = p.NguoiDung != null ? p.NguoiDung.HoTen : "Nhân viên",
                         HanhDong = "nhập hàng",
-                        GiaTri = p.TongTien,
+                        GiaTri = (decimal)(p.TongTien ?? 0),
                         ThoiGian = p.NgayNhap
                     });
 
-                // Gộp, sắp xếp, lấy 20 mục mới nhất
                 var tatCa = hoaDons
                     .Concat(phieuNhaps)
                     .OrderByDescending(x => x.ThoiGian)
@@ -255,21 +230,15 @@ namespace cuahangtaphoa.Controllers
             }
         }
 
-        // =============================================
-        // HELPER: Format tiền VND
-        // =============================================
         private string FormatMoney(decimal amount)
         {
-            if (amount >= 1_000_000_000)
-                return string.Format("{0:0.##}", amount / 1_000_000_000) + " tỷ";
-            if (amount >= 1_000_000)
-                return string.Format("{0:0.##}", amount / 1_000_000) + " tr";
+            if (amount >= 1000000000)
+                return string.Format("{0:0.##}", amount / 1000000000) + " tỷ";
+            if (amount >= 1000000)
+                return string.Format("{0:0.##}", amount / 1000000) + " tr";
             return string.Format("{0:N0}", amount);
         }
 
-        // =============================================
-        // HELPER: Format thời gian tương đối
-        // =============================================
         private string FormatTime(DateTime? dt)
         {
             if (dt == null) return "";
