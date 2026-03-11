@@ -132,6 +132,7 @@
     <Compile Include="Controllers\BanHangController.cs" />
     <Compile Include="Controllers\BaoCaoController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\HoaDonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LayoutController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -261,6 +262,7 @@
     <Content Include="Views\TrangChu\Index.cshtml" />
     <Content Include="Views\NhanVien\Index.cshtml" />
     <Content Include="Views\Layout\Index.cshtml" />
+    <Content Include="Views\HoaDon\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
