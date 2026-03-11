@@ -1,0 +1,1122 @@
+﻿@{
+    ViewBag.Title = "Hóa đơn";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hóa đơn - Cửa hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --blue: #1565c0;
+            --blue-light: #e8f0fe;
+            --blue-mid: #4285f4;
+            --orange: #f57c00;
+            --orange-light: #fff3e0;
+            --green: #2e7d32;
+            --green-light: #e8f5e9;
+            --red: #c62828;
+            --red-light: #ffebee;
+            --border: #e8eaed;
+            --bg: #f1f3f4;
+            --text: #202124;
+            --text-muted: #5f6368;
+            --white: #ffffff;
+            --sidebar-w: 220px;
+            --topbar-h: 52px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro',sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13.5px;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            height: var(--topbar-h);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--blue);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 8px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-title {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: 10px 16px 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background .15s,color .15s;
+            border-left: 3px solid transparent;
+        }
+
+            .nav-item:hover {
+                background: var(--blue-light);
+                color: var(--blue);
+            }
+
+            .nav-item.active {
+                background: var(--blue-light);
+                color: var(--blue);
+                font-weight: 600;
+                border-left-color: var(--blue);
+            }
+
+            .nav-item i {
+                font-size: 16px;
+                width: 18px;
+                text-align: center;
+            }
+
+        /* TOPBAR */
+        .topbar {
+            position: fixed;
+            left: var(--sidebar-w);
+            right: 0;
+            top: 0;
+            height: var(--topbar-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            z-index: 99;
+        }
+
+        .topbar-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-btn {
+            height: 32px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Be Vietnam Pro',sans-serif;
+        }
+
+            .topbar-btn:hover {
+                background: var(--bg);
+            }
+
+            .topbar-btn.primary {
+                background: var(--blue);
+                color: white;
+                border-color: var(--blue);
+            }
+
+                .topbar-btn.primary:hover {
+                    background: #0d47a1;
+                }
+
+        /* MAIN */
+        .main {
+            margin-left: var(--sidebar-w);
+            margin-top: var(--topbar-h);
+            padding: 20px 20px 52px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: calc(100vh - var(--topbar-h));
+        }
+
+        /* STAT CARDS */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+            .stat-icon.blue {
+                background: var(--blue-light);
+                color: var(--blue-mid);
+            }
+
+            .stat-icon.green {
+                background: var(--green-light);
+                color: var(--green);
+            }
+
+            .stat-icon.red {
+                background: var(--red-light);
+                color: var(--red);
+            }
+
+            .stat-icon.orange {
+                background: var(--orange-light);
+                color: var(--orange);
+            }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* FILTER BAR */
+        .filter-bar {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+            .filter-bar input, .filter-bar select {
+                height: 34px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 0 10px;
+                font-size: 13px;
+                font-family: 'Be Vietnam Pro',sans-serif;
+                color: var(--text);
+                background: white;
+                outline: none;
+            }
+
+                .filter-bar input:focus, .filter-bar select:focus {
+                    border-color: var(--blue-mid);
+                }
+
+        .filter-search {
+            flex: 1;
+            min-width: 180px;
+            padding-left: 32px !important;
+        }
+
+        .filter-search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 180px;
+        }
+
+            .filter-search-wrap i {
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #aaa;
+                font-size: 14px;
+            }
+
+        .quick-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .quick-btn {
+            height: 28px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: white;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-family: 'Be Vietnam Pro',sans-serif;
+        }
+
+            .quick-btn:hover, .quick-btn.active {
+                background: var(--blue-light);
+                color: var(--blue);
+                border-color: #c5d8fb;
+            }
+
+        /* TABLE */
+        .table-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        table.hd-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table.hd-table th {
+                background: #f8f9fb;
+                padding: 10px 12px;
+                text-align: left;
+                font-size: 12.5px;
+                color: var(--text-muted);
+                font-weight: 600;
+                border-bottom: 1px solid var(--border);
+                white-space: nowrap;
+            }
+
+            table.hd-table td {
+                padding: 10px 12px;
+                border-bottom: 1px solid #f5f5f5;
+                font-size: 13px;
+                vertical-align: middle;
+            }
+
+            table.hd-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            table.hd-table tr:hover td {
+                background: #fafbff;
+            }
+
+        .badge-tt {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+            .badge-tt.hoan-thanh {
+                background: var(--green-light);
+                color: var(--green);
+            }
+
+            .badge-tt.da-huy {
+                background: var(--red-light);
+                color: var(--red);
+            }
+
+            .badge-tt.cho-xu-ly {
+                background: var(--orange-light);
+                color: var(--orange);
+            }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+            .action-btn.view {
+                background: var(--blue-light);
+                color: var(--blue-mid);
+            }
+
+            .action-btn.print {
+                background: var(--green-light);
+                color: var(--green);
+            }
+
+            .action-btn.cancel {
+                background: var(--red-light);
+                color: var(--red);
+            }
+
+            .action-btn:hover {
+                opacity: .8;
+            }
+
+        /* PAGINATION */
+        .pagination-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .page-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .page-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .page-btn.active {
+                background: var(--blue);
+                color: white;
+                border-color: var(--blue);
+                font-weight: 600;
+            }
+
+            .page-btn:hover:not(.active) {
+                background: var(--blue-light);
+            }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            width: 620px;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 40px rgba(0,0,0,.2);
+        }
+
+            .modal-box.sm {
+                width: 420px;
+            }
+
+        .modal-hdr {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-hdr-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            border: none;
+            background: none;
+            font-size: 22px;
+            color: #9e9e9e;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-ftr {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* DETAIL */
+        .detail-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+            margin-bottom: 16px;
+        }
+
+        .detail-meta-item {
+            font-size: 13px;
+        }
+
+            .detail-meta-item .lbl {
+                color: var(--text-muted);
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+
+            .detail-meta-item .val {
+                font-weight: 600;
+            }
+
+        .detail-items {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+            .detail-items th {
+                background: #f8f9fb;
+                padding: 8px 10px;
+                text-align: left;
+                font-size: 12px;
+                color: var(--text-muted);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .detail-items td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #f5f5f5;
+            }
+
+            .detail-items tr:last-child td {
+                border-bottom: none;
+            }
+
+        .summary-box {
+            background: var(--blue-light);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 14px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: 13px;
+        }
+
+            .summary-row.big {
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--blue);
+                border-top: 1px solid #c5d8fb;
+                margin-top: 4px;
+                padding-top: 6px;
+            }
+
+        /* RECEIPT PRINT */
+        #receiptPrintArea {
+            display: none;
+        }
+
+        @@media print {
+            body > *:not(#receiptPrintArea) {
+                display: none !important;
+            }
+
+            #receiptPrintArea {
+                display: block !important;
+                font-family: 'Courier New',monospace;
+                font-size: 12px;
+            }
+
+            @@page {
+                size: 80mm auto;
+                margin: 4mm;
+            }
+        }
+
+        /* EMPTY */
+        .empty-row td {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* NOTICE */
+        .notice-bar {
+            position: fixed;
+            bottom: 0;
+            left: var(--sidebar-w);
+            right: 0;
+            height: 36px;
+            background: #fff8e1;
+            border-top: 1px solid #ffe082;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 8px;
+            font-size: 12.5px;
+            color: #5d4037;
+            z-index: 99;
+        }
+
+            .notice-bar a {
+                color: var(--blue-mid);
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">C</div>
+            <span class="logo-text">CuaHang</span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Tổng quan</div>
+            <a class="nav-item" href="/Dashboard"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
+            <div class="nav-section-title">Bán hàng</div>
+            <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
+            <a class="nav-item active" href="/HoaDon"><i class="bi bi-receipt"></i> Hóa đơn</a>
+            <div class="nav-section-title">Kho hàng</div>
+            <a class="nav-item" href="#"><i class="bi bi-box-seam"></i> Hàng hóa</a>
+            <a class="nav-item" href="#"><i class="bi bi-truck"></i> Nhập hàng</a>
+            <div class="nav-section-title">Danh mục</div>
+            <a class="nav-item" href="#"><i class="bi bi-people"></i> Nhà cung cấp</a>
+            <a class="nav-item" href="/NhanVien"><i class="bi bi-person-badge"></i> Nhân viên</a>
+            <div class="nav-section-title">Báo cáo</div>
+            <a class="nav-item" href="/BaoCao"><i class="bi bi-bar-chart-line"></i> Báo cáo doanh thu</a>
+        </nav>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <span class="topbar-title">Hóa đơn</span>
+        <div class="topbar-right">
+            <button class="topbar-btn" onclick="xuatExcel()"><i class="bi bi-file-earmark-excel"></i> Xuất Excel</button>
+            <button class="topbar-btn" onclick="loadAll()"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- STAT CARDS -->
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="bi bi-receipt"></i></div>
+                <div><div class="stat-label">Tổng hóa đơn hôm nay</div><div class="stat-value" id="sTong">—</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
+                <div><div class="stat-label">Hoàn thành</div><div class="stat-value" id="sHoanThanh">—</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="bi bi-x-circle"></i></div>
+                <div><div class="stat-label">Đã hủy</div><div class="stat-value" id="sDaHuy">—</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="bi bi-cash-stack"></i></div>
+                <div><div class="stat-label">Doanh thu hôm nay</div><div class="stat-value" id="sDoanhThu">—</div></div>
+            </div>
+        </div>
+
+        <!-- FILTER -->
+        <div class="filter-bar">
+            <div class="filter-search-wrap">
+                <i class="bi bi-search"></i>
+                <input class="filter-search" id="kwSearch" type="text" placeholder="Tìm mã hóa đơn..." oninput="debounceLoad()" />
+            </div>
+            <input type="date" id="tuNgay" onchange="loadTable(1)" />
+            <span style="color:#bbb;font-size:12px">→</span>
+            <input type="date" id="denNgay" onchange="loadTable(1)" />
+            <select id="trangThaiFilter" onchange="loadTable(1)">
+                <option>Tất cả</option>
+                <option>Hoàn thành</option>
+                <option>Đã hủy</option>
+            </select>
+            <div class="quick-btns">
+                <button class="quick-btn active" onclick="setQuick('today',this)">Hôm nay</button>
+                <button class="quick-btn" onclick="setQuick('yesterday',this)">Hôm qua</button>
+                <button class="quick-btn" onclick="setQuick('week',this)">7 ngày</button>
+                <button class="quick-btn" onclick="setQuick('month',this)">Tháng này</button>
+                <button class="quick-btn" onclick="setQuick('all',this)">Tất cả</button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <div class="table-header">
+                <span class="table-title">Danh sách hóa đơn <span id="totalLabel" style="font-weight:400;color:var(--text-muted);font-size:13px"></span></span>
+            </div>
+            <div style="overflow-x:auto">
+                <table class="hd-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mã hóa đơn</th>
+                            <th>Ngày lập</th>
+                            <th>Thu ngân</th>
+                            <th>Số mặt hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Giảm giá</th>
+                            <th>Thực thu</th>
+                            <th>Trạng thái</th>
+                            <th style="width:100px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="empty-row"><td colspan="10"><i class="bi bi-hourglass-split me-2"></i>Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-row">
+                <span id="pageInfo">—</span>
+                <div class="page-btns" id="pageBtns"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- NOTICE -->
+    <div class="notice-bar">
+        <i class="bi bi-info-circle" style="color:#f57c00"></i>
+        Hệ thống quản lý bán hàng &nbsp;|&nbsp;
+        <a href="/BanHang">Bắt đầu bán hàng</a>
+        &nbsp;|&nbsp;
+        <a href="/BaoCao">Xem báo cáo</a>
+    </div>
+
+    <!-- MODAL CHI TIẾT -->
+    <div class="modal-overlay" id="modalChiTiet" style="display:none">
+        <div class="modal-box">
+            <div class="modal-hdr">
+                <span class="modal-hdr-title"><i class="bi bi-receipt me-2"></i>Chi tiết hóa đơn</span>
+                <button class="modal-close" onclick="dongModal('modalChiTiet')">×</button>
+            </div>
+            <div class="modal-body" id="chiTietBody">Đang tải...</div>
+            <div class="modal-ftr">
+                <button class="topbar-btn" onclick="dongModal('modalChiTiet')">Đóng</button>
+                <button class="topbar-btn" id="btnInLai" onclick="inLai()"><i class="bi bi-printer"></i> In lại</button>
+                <button class="topbar-btn" id="btnHuyTuModal" style="display:none;color:var(--red);border-color:var(--red)" onclick="huyTuModal()">
+                    <i class="bi bi-x-circle"></i> Hủy hóa đơn
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HỦY -->
+    <div class="modal-overlay" id="modalHuy" style="display:none">
+        <div class="modal-box sm">
+            <div class="modal-hdr">
+                <span class="modal-hdr-title" style="color:var(--red)"><i class="bi bi-exclamation-triangle me-2"></i>Hủy hóa đơn</span>
+                <button class="modal-close" onclick="dongModal('modalHuy')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:12px;color:var(--text-muted)">Hủy hóa đơn sẽ hoàn lại tồn kho. Bạn có chắc chắn?</p>
+                <div style="margin-bottom:8px;font-size:13px;font-weight:600">Lý do hủy:</div>
+                <textarea id="lyDoHuy" rows="3" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;outline:none;resize:none" placeholder="Nhập lý do hủy..."></textarea>
+            </div>
+            <div class="modal-ftr">
+                <button class="topbar-btn" onclick="dongModal('modalHuy')">Không</button>
+                <button class="topbar-btn primary" onclick="xacNhanHuy()" style="background:var(--red);border-color:var(--red)">
+                    <i class="bi bi-x-circle"></i> Xác nhận hủy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VÙNG IN ẨN -->
+    <div id="receiptPrintArea"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script>
+    let currentPage  = 1;
+    let totalPages   = 1;
+    let currentHoaDon = null; // dữ liệu chi tiết đang xem
+    let huyId        = null;
+    let allData      = []; // cache để export Excel
+
+    // ─── HELPERS ──────────────────────────────────────────
+    function fmt(n) { return Number(n).toLocaleString('vi-VN') + ' ₫'; }
+    function today() { return new Date().toISOString().slice(0,10); }
+
+    function setQuick(type, btn) {
+        document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        let now = new Date(), from, to = today();
+        if (type === 'today')     { from = today(); }
+        else if (type === 'yesterday') {
+            let d = new Date(); d.setDate(d.getDate()-1);
+            from = to = d.toISOString().slice(0,10);
+        }
+        else if (type === 'week') {
+            let d = new Date(); d.setDate(d.getDate()-6);
+            from = d.toISOString().slice(0,10);
+        }
+        else if (type === 'month') {
+            from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+        }
+        else { from = ''; to = ''; }
+
+        $('#tuNgay').val(from); $('#denNgay').val(to);
+        loadTable(1);
+    }
+
+    // ─── LOAD STATS ────────────────────────────────────────
+    function loadStats() {
+        $.get('/HoaDon/GetStats', { tuNgay: today(), denNgay: today() }, function(res) {
+            if (!res.success) return;
+            $('#sTong').text(res.tongHoaDon);
+            $('#sHoanThanh').text(res.hoanThanh);
+            $('#sDaHuy').text(res.daHuy);
+            $('#sDoanhThu').text(res.doanhThuText);
+        });
+    }
+
+    // ─── LOAD TABLE ────────────────────────────────────────
+    let debTimer;
+    function debounceLoad() { clearTimeout(debTimer); debTimer = setTimeout(() => loadTable(1), 350); }
+
+    function loadTable(page) {
+        currentPage = page || 1;
+        $('#tableBody').html('<tr class="empty-row"><td colspan="10"><i class="bi bi-hourglass-split me-2"></i>Đang tải...</td></tr>');
+
+        $.get('/HoaDon/GetDanhSach', {
+            tuNgay:     $('#tuNgay').val(),
+            denNgay:    $('#denNgay').val(),
+            trangThai:  $('#trangThaiFilter').val(),
+            keyword:    $('#kwSearch').val(),
+            page:       currentPage,
+            pageSize:   20
+        }, function(res) {
+            if (!res.success) { $('#tableBody').html('<tr class="empty-row"><td colspan="10">Lỗi tải dữ liệu</td></tr>'); return; }
+
+            totalPages = res.totalPages;
+            allData    = res.data;
+            $('#totalLabel').text('(' + res.total + ' hóa đơn)');
+            renderTable(res.data, res.total, res.page, res.totalPages);
+        }).fail(() => $('#tableBody').html('<tr class="empty-row"><td colspan="10">Lỗi kết nối</td></tr>'));
+    }
+
+    function renderTable(data, total, page, totalPgs) {
+        if (!data.length) {
+            $('#tableBody').html('<tr class="empty-row"><td colspan="10"><i class="bi bi-inbox me-2"></i>Không có dữ liệu</td></tr>');
+            $('#pageInfo').text(''); $('#pageBtns').html(''); return;
+        }
+
+        let html = '', offset = (page-1)*20;
+        data.forEach((hd, i) => {
+            let badge = hd.trangThai === 'Hoàn thành'
+                ? `<span class="badge-tt hoan-thanh"><i class="bi bi-check-circle-fill"></i> Hoàn thành</span>`
+                : hd.trangThai === 'Đã hủy'
+                ? `<span class="badge-tt da-huy"><i class="bi bi-x-circle-fill"></i> Đã hủy</span>`
+                : `<span class="badge-tt cho-xu-ly">${hd.trangThai}</span>`;
+
+            let cancelBtn = hd.trangThai === 'Hoàn thành'
+                ? `<button class="action-btn cancel" onclick="moModalHuy(${hd.maHoaDon})" title="Hủy"><i class="bi bi-x-circle"></i></button>`
+                : '';
+
+            html += `<tr>
+                <td style="color:var(--text-muted)">${offset+i+1}</td>
+                <td><strong style="color:var(--blue)">${hd.maDon}</strong></td>
+                <td>${hd.ngayLap}</td>
+                <td>${hd.nhanVien}</td>
+                <td style="text-align:center">${hd.soMatHang}</td>
+                <td>${fmt(hd.tongTien)}</td>
+                <td>${hd.phanTramGiam > 0 ? hd.phanTramGiam+'%' : '—'}</td>
+                <td><strong style="color:var(--green)">${fmt(hd.thucThu)}</strong></td>
+                <td>${badge}</td>
+                <td>
+                    <button class="action-btn view"  onclick="xemChiTiet(${hd.maHoaDon})" title="Xem chi tiết"><i class="bi bi-eye"></i></button>
+                    <button class="action-btn print" onclick="inNhanhTuList(${hd.maHoaDon})" title="In lại"><i class="bi bi-printer"></i></button>
+                    ${cancelBtn}
+                </td>
+            </tr>`;
+        });
+        $('#tableBody').html(html);
+
+        // Pagination
+        $('#pageInfo').text(`Trang ${page}/${totalPgs} — Tổng ${total} hóa đơn`);
+        let pHtml = '';
+        if (page > 1) pHtml += `<button class="page-btn" onclick="loadTable(${page-1})"><i class="bi bi-chevron-left"></i></button>`;
+        let start = Math.max(1, page-2), end = Math.min(totalPgs, page+2);
+        for (let p=start; p<=end; p++)
+            pHtml += `<button class="page-btn ${p===page?'active':''}" onclick="loadTable(${p})">${p}</button>`;
+        if (page < totalPgs) pHtml += `<button class="page-btn" onclick="loadTable(${page+1})"><i class="bi bi-chevron-right"></i></button>`;
+        $('#pageBtns').html(pHtml);
+    }
+
+    // ─── XEM CHI TIẾT ──────────────────────────────────────
+    function xemChiTiet(id) {
+        currentHoaDon = null;
+        $('#chiTietBody').html('<div style="text-align:center;padding:30px;color:#bbb"><i class="bi bi-hourglass-split"></i> Đang tải...</div>');
+        $('#modalChiTiet').show();
+        $('#btnHuyTuModal').hide();
+
+        $.get('/HoaDon/GetChiTiet', { id: id }, function(res) {
+            if (!res.success) { $('#chiTietBody').html('<div style="color:red">Lỗi: ' + res.message + '</div>'); return; }
+            currentHoaDon = res;
+
+            if (res.trangThai === 'Hoàn thành') $('#btnHuyTuModal').show();
+
+            let ctHtml = '';
+            res.chiTiet.forEach((ct, i) => {
+                ctHtml += `<tr>
+                    <td>${i+1}</td>
+                    <td>${ct.tenSanPham}<br><small style="color:#aaa">${ct.maVach||''}</small></td>
+                    <td style="text-align:center">${ct.soLuong}</td>
+                    <td style="text-align:right">${fmt(ct.giaBan)}</td>
+                    <td style="text-align:right;font-weight:600">${fmt(ct.thanhTien)}</td>
+                </tr>`;
+            });
+
+            let giam = res.tongTien - res.thucThu;
+            let thua = Math.max(0, res.tienKhachDua - res.thucThu);
+
+            $('#chiTietBody').html(`
+                <div class="detail-meta">
+                    <div class="detail-meta-item"><div class="lbl">Mã hóa đơn</div><div class="val" style="color:var(--blue)">${res.maDon}</div></div>
+                    <div class="detail-meta-item"><div class="lbl">Trạng thái</div><div class="val">${res.trangThai}</div></div>
+                    <div class="detail-meta-item"><div class="lbl">Ngày lập</div><div class="val">${res.ngayLap}</div></div>
+                    <div class="detail-meta-item"><div class="lbl">Thu ngân</div><div class="val">${res.nhanVien}</div></div>
+                    <div class="detail-meta-item"><div class="lbl">Phương thức</div><div class="val">${res.phuongThuc}</div></div>
+                    <div class="detail-meta-item"><div class="lbl">Tiền khách đưa</div><div class="val">${fmt(res.tienKhachDua)}</div></div>
+                </div>
+                <table class="detail-items">
+                    <thead><tr><th>#</th><th>Sản phẩm</th><th style="text-align:center">SL</th><th style="text-align:right">Đơn giá</th><th style="text-align:right">Thành tiền</th></tr></thead>
+                    <tbody>${ctHtml}</tbody>
+                </table>
+                <div class="summary-box">
+                    <div class="summary-row"><span>Tổng tiền hàng</span><span>${fmt(res.tongTien)}</span></div>
+                    ${res.phanTramGiam > 0 ? `<div class="summary-row"><span>Giảm giá (${res.phanTramGiam}%)</span><span>-${fmt(giam)}</span></div>` : ''}
+                    <div class="summary-row big"><span>Khách phải trả</span><span>${fmt(res.thucThu)}</span></div>
+                    ${res.tienKhachDua > 0 ? `
+                    <div class="summary-row"><span>Tiền khách đưa</span><span>${fmt(res.tienKhachDua)}</span></div>
+                    <div class="summary-row"><span>Tiền thừa</span><span>${fmt(thua)}</span></div>` : ''}
+                </div>
+            `);
+        });
+    }
+
+    // ─── IN LẠI ────────────────────────────────────────────
+    function buildReceipt(hd) {
+        let items = hd.chiTiet.map((ct,i) => `
+            <div style="display:flex;justify-content:space-between;margin:2px 0">
+                <span>${ct.tenSanPham}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin:2px 0;padding-left:8px;color:#555">
+                <span>${ct.soLuong} x ${ct.giaBan.toLocaleString('vi-VN')}</span>
+                <strong>${(ct.soLuong*ct.giaBan).toLocaleString('vi-VN')} đ</strong>
+            </div>`).join('');
+
+        let giam = hd.phanTramGiam > 0
+            ? `<div style="display:flex;justify-content:space-between"><span>Giảm (${hd.phanTramGiam}%):</span><span>-${(hd.tongTien-hd.thucThu).toLocaleString('vi-VN')} đ</span></div>` : '';
+        let thua = hd.tienKhachDua > 0
+            ? `<div style="display:flex;justify-content:space-between"><span>Tiền khách:</span><span>${hd.tienKhachDua.toLocaleString('vi-VN')} đ</span></div>
+               <div style="display:flex;justify-content:space-between"><span>Tiền thừa:</span><span>${Math.max(0,hd.tienKhachDua-hd.thucThu).toLocaleString('vi-VN')} đ</span></div>` : '';
+
+        return `<style>@@page{size:80mm auto;margin:4mm}</style>
+            <div style="text-align:center;font-weight:bold;font-size:15px">🏪 CỬA HÀNG TẠP HÓA</div>
+            <div style="text-align:center;font-size:11px;color:#555;margin-bottom:8px">SĐT: 0xxx xxx xxx</div>
+            <div style="text-align:center;font-size:14px;font-weight:bold;letter-spacing:1px;margin:6px 0">HÓA ĐƠN BÁN HÀNG</div>
+            <div style="font-size:11px;margin-bottom:6px">Mã: <strong>${hd.maDon}</strong><br>Ngày: ${hd.ngayLap}<br>Thu ngân: ${hd.nhanVien}</div>
+            <hr style="border:1px dashed #aaa;margin:4px 0"/>
+            ${items}
+            <hr style="border:1px dashed #aaa;margin:4px 0"/>
+            <div style="font-size:12px">
+                <div style="display:flex;justify-content:space-between"><span>Tổng tiền:</span><span>${hd.tongTien.toLocaleString('vi-VN')} đ</span></div>
+                ${giam}
+                <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:bold;border-top:1px solid #aaa;padding-top:4px;margin-top:4px">
+                    <span>Phải trả:</span><span>${hd.thucThu.toLocaleString('vi-VN')} đ</span>
+                </div>
+                ${thua}
+            </div>
+            <hr style="border:1px dashed #aaa;margin:6px 0"/>
+            <div style="text-align:center;font-size:11px;color:#666">Cảm ơn quý khách!<br>Hẹn gặp lại 😊</div>`;
+    }
+
+    function inLai() {
+        if (!currentHoaDon) return;
+        document.getElementById('receiptPrintArea').innerHTML = buildReceipt(currentHoaDon);
+        window.print();
+    }
+
+    function inNhanhTuList(id) {
+        $.get('/HoaDon/GetChiTiet', { id: id }, function(res) {
+            if (!res.success) { alert('Lỗi: ' + res.message); return; }
+            document.getElementById('receiptPrintArea').innerHTML = buildReceipt(res);
+            window.print();
+        });
+    }
+
+    // ─── HỦY HÓA ĐƠN ──────────────────────────────────────
+    function moModalHuy(id) {
+        huyId = id;
+        $('#lyDoHuy').val('');
+        $('#modalHuy').show();
+    }
+
+    function huyTuModal() {
+        if (!currentHoaDon) return;
+        dongModal('modalChiTiet');
+        moModalHuy(currentHoaDon.maHoaDon);
+    }
+
+    function xacNhanHuy() {
+        if (!huyId) return;
+        $.post('/HoaDon/HuyHoaDon', { id: huyId, lyDo: $('#lyDoHuy').val() }, function(res) {
+            if (res.success) {
+                dongModal('modalHuy');
+                loadAll();
+            } else {
+                alert('Lỗi: ' + res.message);
+            }
+        });
+    }
+
+    // ─── XUẤT EXCEL ────────────────────────────────────────
+    function xuatExcel() {
+        if (!allData.length) { alert('Không có dữ liệu để xuất!'); return; }
+        let rows = [['Mã hóa đơn','Ngày lập','Thu ngân','Số mặt hàng','Tổng tiền','Giảm giá','Thực thu','Trạng thái']];
+        allData.forEach(hd => rows.push([hd.maDon, hd.ngayLap, hd.nhanVien, hd.soMatHang,
+            hd.tongTien, hd.phanTramGiam+'%', hd.thucThu, hd.trangThai]));
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'HoaDon');
+        XLSX.writeFile(wb, 'HoaDon_' + new Date().toISOString().slice(0,10) + '.xlsx');
+    }
+
+    // ─── MISC ──────────────────────────────────────────────
+    function dongModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    $(document).on('click', '.modal-overlay', function(e) {
+        if (e.target === this) dongModal(this.id);
+    });
+
+    function loadAll() { loadStats(); loadTable(currentPage); }
+
+    // Mặc định lọc hôm nay
+    $(function() {
+        $('#tuNgay').val(today());
+        $('#denNgay').val(today());
+        loadAll();
+    });
+    </script>
+</body>
+</html>
