@@ -12,23 +12,23 @@
 
         <!-- Tìm kiếm -->
         <div style="width:350px;">
-            <input type="text" class="form-control" placeholder="Tìm theo mã, tên nhân viên">
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo mã, tên nhân viên">
+        </div>
+
+        <div class="mb-2 text-muted" id="selectedCount">
+            Đã chọn 0 nhân viên
         </div>
 
         <!-- Nút -->
         <div class="d-flex gap-2">
 
+            <button class="btn btn-danger" onclick="deleteSelected()">
+                <i class="bi bi-trash"></i> Xóa
+            </button>
+
             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNhanVien">
                 <i class="bi bi-plus"></i> Nhân viên
             </a>
-
-            <button class="btn btn-outline-secondary">
-                <i class="bi bi-check2-square"></i> Duyệt yêu cầu
-            </button>
-
-            <button class="btn btn-outline-secondary">
-                <i class="bi bi-three-dots"></i>
-            </button>
 
             <button class="btn btn-outline-secondary">
                 <i class="bi bi-list"></i>
@@ -43,9 +43,9 @@
 
         <table class="table table-hover mb-0">
 
-            <thead class="table-light">
-                <tr>
-                    <th><input type="checkbox"></th>
+            <thead>
+                <tr class="table-primary">
+                    <th><input type="checkbox" id="checkAll"></th>
                     <th>Mã nhân viên</th>
                     <th>Tên nhân viên</th>
                     <th>Số điện thoại</th>
@@ -70,10 +70,24 @@
                 {
                     foreach (var nv in Model)
                     {
-                        <tr>
+                        <tr style="cursor:pointer"
+                            data-id="@nv.MaNguoiDung"
+                            data-ten="@nv.HoTen"
+                            data-sdt="@nv.SoDienThoai"
+                            data-tendangnhap="@nv.TenDangNhap"
+                            data-matkhau="@nv.MatKhau"
+                            data-diachi="@nv.DiaChi"
+                            data-vaitro="@nv.MaVaiTro"
+                            data-trangthai="@nv.TrangThai"
+                            onclick="openEditModal(this)">
+
                             <td>
-                                <input type="checkbox">
+                                <input type="checkbox"
+                                       class="checkItem"
+                                       value="@nv.MaNguoiDung"
+                                       onclick="event.stopPropagation()">
                             </td>
+
                             <td>
                                 @("NV"+ nv.MaNguoiDung)
                             </td>
@@ -95,13 +109,12 @@
                             </td>
 
                             <td>
-                                @(nv.TrangThai == true ? "Hoạt động" : "Khóa")
+                                @(nv.TrangThai == true ? "Hoạt động" : "Đã nghỉ")
                             </td>
 
                             <td>
                                 @(nv.NgayTao?.ToString("dd/MM/yyyy"))
                             </td>
-
                         </tr>
                     }
                 }
@@ -125,7 +138,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/NhanVien/Create" method="post">
+            @using (Html.BeginForm("Create", "NhanVien", FormMethod.Post))
+            {
 
                 <div class="modal-body">
 
@@ -182,8 +196,216 @@
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
 
-            </form>
+            }
 
         </div>
     </div>
 </div>
+
+<!-- MODAL SỬA THÔNG TIN NHÂN VIÊN -->
+
+<div class="modal fade" id="modalEditNhanVien">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Sửa thông tin nhân viên</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            @using (Html.BeginForm("Edit", "NhanVien", FormMethod.Post))
+            {
+
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="editMaNguoiDung" name="MaNguoiDung">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên nhân viên</label>
+                            <input id="editHoTen" name="HoTen" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Số điện thoại</label>
+                            <input id="editSDT" name="SoDienThoai" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên đăng nhập</label>
+                            <input id="editTenDangNhap" name="TenDangNhap" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Mật khẩu</label>
+                            <input id="editMatKhau" type="password" name="MatKhau" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Địa chỉ</label>
+                            <input id="editDiaChi" name="DiaChi" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Vai trò</label>
+                            <select id="editVaiTro" name="MaVaiTro" class="form-control">
+                                <option value="1">Admin</option>
+                                <option value="2">Nhân viên</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Trạng thái</label>
+                            <select id="editTrangThai" name="TrangThai" class="form-control">
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Đã nghỉ</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                     <button type="submit" class="btn btn-primary">
+                         <i class="bi bi-save"></i> Cập nhật
+                     </button>
+                 </div>
+             }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const checkAll = document.getElementById("checkAll");
+    const items = document.querySelectorAll(".checkItem");
+    const selectedText = document.getElementById("selectedCount");
+
+    function updateCount() {
+
+        let checked = document.querySelectorAll(".checkItem:checked").length;
+        selectedText.innerText = "Đã chọn " + checked + " nhân viên";
+
+    }
+
+    // check all
+    checkAll.addEventListener("change", function () {
+
+        items.forEach(function (item) {
+            item.checked = checkAll.checked;
+        });
+
+        updateCount();
+
+    });
+
+    // check từng item
+    items.forEach(function (item) {
+
+        item.addEventListener("change", function () {
+
+            let all = document.querySelectorAll(".checkItem");
+            let checked = document.querySelectorAll(".checkItem:checked");
+
+            checkAll.checked = all.length === checked.length;
+
+            updateCount();
+
+        });
+
+    });
+    //Xóa nhân viên
+    function deleteSelected() {
+
+        let checked = document.querySelectorAll(".checkItem:checked");
+
+        if (checked.length === 0) {
+            alert("Vui lòng chọn nhân viên cần xóa");
+            return;
+        }
+
+        if (!confirm("Bạn có chắc muốn xóa?")) return;
+
+        let formData = new FormData();
+
+        checked.forEach(function (item) {
+            formData.append("ids", item.value);
+        });
+
+        fetch('/NhanVien/DeleteMultiple', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Xóa thất bại");
+                }
+
+            });
+    }
+
+    //Tìm kiếm
+    const searchInput = document.getElementById("searchInput");
+
+    searchInput.addEventListener("keyup", function () {
+
+        let keyword = removeVietnameseTones(searchInput.value.toLowerCase());
+
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(function (row) {
+
+            let ma = removeVietnameseTones(row.children[1].innerText.toLowerCase());
+            let ten = removeVietnameseTones(row.children[2].innerText.toLowerCase());
+
+            if (ma.includes(keyword) || ten.includes(keyword)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    });
+
+    function removeVietnameseTones(str) {
+        return str.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D");
+    }
+
+    //ĐỔ DỮ LIỆU VÀO MODAL
+    function openEditModal(row) {
+
+        let id = row.dataset.id;
+        let ten = row.dataset.ten;
+        let sdt = row.dataset.sdt;
+        let diachi = row.dataset.diachi;
+        let vaitro = row.dataset.vaitro;
+        let trangthai = row.dataset.trangthai;
+        let tendangnhap = row.dataset.tendangnhap;
+        let matkhau = row.dataset.matkhau;
+
+        document.getElementById("editMaNguoiDung").value = id;
+        document.getElementById("editHoTen").value = ten;
+        document.getElementById("editSDT").value = sdt;
+        document.getElementById("editDiaChi").value = diachi;
+        document.getElementById("editVaiTro").value = vaitro;
+        document.getElementById("editTrangThai").value = trangthai;
+
+        document.getElementById("editTenDangNhap").value = tendangnhap;
+        document.getElementById("editMatKhau").value = matkhau;
+
+        let modal = new bootstrap.Modal(document.getElementById("modalEditNhanVien"));
+        modal.show();
+    }
+</script>
