@@ -1,4 +1,6 @@
-﻿@{
+﻿@model cuahangtaphoa.Models.NguoiDung
+
+@{
     Layout = null;
 }
 
@@ -78,9 +80,9 @@
 
         @using (Html.BeginForm("Index", "Login", FormMethod.Post))
         {
-            <input type="text" name="TenDangNhap" placeholder="Tên đăng nhập">
+            @Html.TextBoxFor(m => m.TenDangNhap, new { placeholder = "Tên đăng nhập" })
 
-            <input type="password" name="MatKhau" placeholder="Mật khẩu">
+            @Html.PasswordFor(m => m.MatKhau, new { placeholder = "Mật khẩu" })
 
             <div class="btn-group">
                 <button type="submit" class="btn login">Đăng nhập</button>
