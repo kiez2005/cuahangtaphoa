@@ -1,0 +1,341 @@
+﻿@model List<cuahangtaphoa.Models.NhaCungCap>
+
+@{
+    ViewBag.Title = "Nhà cung cấp";
+    Layout = "~/Views/Layout/Index.cshtml";
+}
+
+<div class="container-fluid">
+
+    <!-- Thanh trên -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <!-- Tìm kiếm -->
+        <div style="width:350px;">
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo mã, tên nhà cung cấp">
+        </div>
+
+        <div class="mb-2 text-muted" id="selectedCount">
+            Đã chọn 0 nhà cung cấp
+        </div>
+
+        <!-- Nút -->
+        <div class="d-flex gap-2">
+            <button class="btn btn-danger" onclick="deleteSelected()">
+                <i class="bi bi-trash"></i> Xóa
+            </button>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNhaCungCap">
+                <i class="bi bi-plus"></i> Nhà cung cấp
+            </a>
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr class="table-primary">
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>Mã nhà cung cấp</th>
+                    <th>Tên nhà cung cấp</th>
+                    <th>Số điện thoại</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th>Ngày tạo</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model == null || Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted p-4">
+                            Chưa có nhà cung cấp
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var ncc in Model)
+                    {
+                        <tr style="cursor:pointer"
+                            data-id="@ncc.MaNhaCungCap"
+                            data-ten="@ncc.TenNhaCungCap"
+                            data-sdt="@ncc.SoDienThoai"
+                            data-email="@ncc.Email"
+                            data-diachi="@ncc.DiaChi"
+                            data-ngaytao="@ncc.NgayTao?.ToString("yyyy-MM-dd")"
+                            onclick="openEditModal(this)">
+
+                            <td>
+                                <input type="checkbox"
+                                       class="checkItem"
+                                       value="@ncc.MaNhaCungCap"
+                                       onclick="event.stopPropagation()">
+                            </td>
+
+                            <td>
+                                @("NCC"+ ncc.MaNhaCungCap)
+                            </td>
+
+                            <td>
+                                @ncc.TenNhaCungCap
+                            </td>
+
+                            <td>
+                                @ncc.SoDienThoai
+                            </td>
+
+                            <td>
+                                @ncc.Email
+                            </td>
+
+                            <td>
+                                @ncc.DiaChi
+                            </td>
+
+                            <td>
+                                @(ncc.NgayTao?.ToString("dd/MM/yyyy"))
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- MODAL THÊM NHÀ CUNG CẤP -->
+<div class="modal fade" id="modalNhaCungCap">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm mới nhà cung cấp</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            @using (Html.BeginForm("Create", "NhaCungCap", FormMethod.Post))
+            {
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên nhà cung cấp</label>
+                            <input name="TenNhaCungCap" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Số điện thoại</label>
+                            <input name="SoDienThoai" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Email</label>
+                            <input name="Email" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Địa chỉ</label>
+                            <input name="DiaChi" class="form-control">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalEditNhaCungCap">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Sửa thông tin nhà cung cấp</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            @using (Html.BeginForm("Edit", "NhaCungCap", FormMethod.Post))
+            {
+
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="editMaNhaCungCap" name="MaNhaCungCap">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label>Tên nhà cung cấp</label>
+                            <input id="editTenNhaCungCap" name="TenNhaCungCap" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Số điện thoại</label>
+                            <input id="editSDT" name="SoDienThoai" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Email</label>
+                            <input id="editEmail" name="Email" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Địa chỉ</label>
+                            <input id="editDiaChi" name="DiaChi" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Cập nhật
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    const checkAll = document.getElementById("checkAll");
+    const items = document.querySelectorAll(".checkItem");
+    const selectedText = document.getElementById("selectedCount");
+
+    function updateCount() {
+
+        let checked = document.querySelectorAll(".checkItem:checked").length;
+        selectedText.innerText = "Đã chọn " + checked + " nhà cung cấp";
+
+    }
+
+    // check all
+    checkAll.addEventListener("change", function () {
+
+        items.forEach(function (item) {
+            item.checked = checkAll.checked;
+        });
+
+        updateCount();
+
+    });
+
+    // check từng item
+    items.forEach(function (item) {
+
+        item.addEventListener("change", function () {
+
+            let all = document.querySelectorAll(".checkItem");
+            let checked = document.querySelectorAll(".checkItem:checked");
+
+            checkAll.checked = all.length === checked.length;
+
+            updateCount();
+
+        });
+
+    });
+    //Xóa nhà cung cấp
+    function deleteSelected() {
+
+        let checked = document.querySelectorAll(".checkItem:checked");
+
+        if (checked.length === 0) {
+            alert("Vui lòng chọn nhà cung cấp cần xóa");
+            return;
+        }
+
+        if (!confirm("Bạn có chắc muốn xóa?")) return;
+
+        let formData = new FormData();
+
+        checked.forEach(function (item) {
+            formData.append("ids", item.value);
+        });
+
+        fetch('/NhaCungCap/DeleteMultiple', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Xóa thất bại");
+                }
+
+            });
+    }
+
+    //Tìm kiếm
+    const searchInput = document.getElementById("searchInput");
+
+    searchInput.addEventListener("keyup", function () {
+
+        let keyword = removeVietnameseTones(searchInput.value.toLowerCase());
+
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(function (row) {
+
+            let ma = removeVietnameseTones(row.children[1].innerText.toLowerCase());
+            let ten = removeVietnameseTones(row.children[2].innerText.toLowerCase());
+
+            if (ma.includes(keyword) || ten.includes(keyword)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    });
+
+    function removeVietnameseTones(str) {
+        return str.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D");
+    }
+
+    //ĐỔ DỮ LIỆU VÀO MODAL
+    function openEditModal(row) {
+
+        let id = row.dataset.id;
+        let ten = row.dataset.ten;
+        let sdt = row.dataset.sdt;
+        let email = row.dataset.email;
+        let diachi = row.dataset.diachi;
+
+
+        document.getElementById("editMaNhaCungCap").value = id;
+        document.getElementById("editTenNhaCungCap").value = ten;
+        document.getElementById("editSDT").value = sdt;
+        document.getElementById("editEmail").value = email;
+        document.getElementById("editDiaChi").value = diachi;
+
+        let modal = new bootstrap.Modal(document.getElementById("modalEditNhaCungCap"));
+        modal.show();
+    }
+</script>
