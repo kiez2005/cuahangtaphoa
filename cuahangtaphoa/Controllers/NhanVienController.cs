@@ -28,21 +28,23 @@ namespace cuahangtaphoa.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteMultiple(List<int> ids)
+        public JsonResult DeleteMultiple(int[] ids)
         {
-            if (ids == null || ids.Count == 0)
+            try
             {
-                return Json(new { success = false });
+                var list = db.NguoiDungs
+                             .Where(x => ids.Contains(x.MaNguoiDung))
+                             .ToList();
+
+                db.NguoiDungs.RemoveRange(list);
+                db.SaveChanges();
+
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }
-
-            var nhanViens = db.NguoiDungs
-                              .Where(x => ids.Contains(x.MaNguoiDung))
-                              .ToList();
-
-            db.NguoiDungs.RemoveRange(nhanViens);
-            db.SaveChanges();
-
-            return Json(new { success = true });
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]
