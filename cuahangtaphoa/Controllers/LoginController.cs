@@ -33,14 +33,14 @@ public class LoginController : Controller
 
         if (user == null)
         {
-            ViewBag.error = "Vui lòng nhập lại tài khoản hoặc mật khẩu";
+            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
             return View(model);
         }
 
         // 3. Kiểm tra mật khẩu
         if (user.MatKhau != model.MatKhau)
         {
-            ViewBag.error = "Vui lòng nhập lại tài khoản hoặc mật khẩu";
+            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
             return View(model);
         }
 
