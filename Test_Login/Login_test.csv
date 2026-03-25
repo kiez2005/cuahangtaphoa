@@ -1,0 +1,7 @@
+﻿email,password,expected_message
+admin,123456,Home page
+admin,sai_mat_khau,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
+sai_tai_khoan,123456,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
+,123456,Vui lòng nhập tên đăng nhập
+admin,,Vui lòng nhập mật khẩu
+,,Vui lòng nhập tên đăng nhập
