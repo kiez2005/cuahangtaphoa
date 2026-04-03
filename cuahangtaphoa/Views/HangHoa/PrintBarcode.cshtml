@@ -1,0 +1,14 @@
+﻿@model cuahangtaphoa.Models.SanPham
+
+<h3>@Model.TenSanPham</h3>
+
+<p>Giá: @Model.GiaBan</p>
+
+<img src="https://barcode.tec-it.com/barcode.ashx?data=@Model.MaVach&code=Code128" />
+
+<br>
+<br>
+
+<button onclick="window.print()" class="btn btn-primary">
+    In tem
+</button>

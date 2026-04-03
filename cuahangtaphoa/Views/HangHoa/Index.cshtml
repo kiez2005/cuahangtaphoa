@@ -1,0 +1,409 @@
+﻿@model List<cuahangtaphoa.Models.SanPham>
+@{
+    Layout = "~/Views/Layout/Index.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+<div class="container mt-4">
+
+    <h3>Danh sách sản phẩm</h3>
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <form method="get">
+            <input type="text" name="search" class="form-control" placeholder="Tìm theo tên hoặc mã vạch">
+        </form>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSanPham">
+            + Thêm mới
+        </button>
+
+    </div>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-light">
+            <tr>
+                <th>Mã SP</th>
+                <th>Tên sản phẩm</th>
+                <th>Mã vạch</th>
+                <th>Giá nhập</th>
+                <th style="width:140px">Giá bán</th>
+                <th>Số lượng</th>
+                <th>Cảnh báo</th>
+                <th>Hạn sử dụng</th>
+                <th>Ngày tạo</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td>@item.MaSanPham</td>
+                        <td>@item.TenSanPham</td>
+                        <td>@item.MaVach</td>
+
+                        <td>@String.Format("{0:N0}", item.GiaNhap) ₫</td>
+
+                        <td style="font-weight:bold;color:red">
+                            @String.Format("{0:N0}", item.GiaBan) ₫
+                        </td>
+
+                        <td>@item.SoLuong</td>
+
+                        <td>
+                            @if (item.SoLuong <= item.SoLuongToiThieu)
+                            {
+                                <span style="color:red">⚠ Tồn kho thấp</span>
+                            }
+                            else
+                            {
+                                <span style="color:green">OK</span>
+                            }
+                        </td>
+
+                        <td>
+                            @(item.HanSuDung?.ToString("dd/MM/yyyy"))
+                        </td>
+
+                        <td>
+                            @(item.NgayTao?.ToString("dd/MM/yyyy"))
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-warning btn-sm"
+                                    data-id="@item.MaSanPham"
+                                    data-ten="@item.TenSanPham"
+                                    data-mavach="@item.MaVach"
+                                    data-gianhap="@item.GiaNhap"
+                                    data-giaban="@item.GiaBan"
+                                    data-soluong="@item.SoLuong"
+                                    data-hansudung="@item.HanSuDung"
+                                    onclick="openEditModal(this)">
+                                Sửa
+                            </button>
+
+                            <a href="@Url.Action("Delete","SanPham", new { id = item.MaSanPham })"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                Xóa
+                            </a>
+
+                            <button class="btn btn-info btn-sm"
+                                    data-id="@item.MaSanPham"
+                                    data-ten="@item.TenSanPham"
+                                    data-gianhap="@item.GiaNhap"
+                                    data-giaban="@item.GiaBan"
+                                    onclick="openPriceModal(this)">
+                                Thiết lập giá
+                            </button>
+
+                            <button class="btn btn-secondary btn-sm"
+                                    data-ten="@item.TenSanPham"
+                                    data-mavach="@item.MaVach"
+                                    data-giaban="@item.GiaBan.ToString()"
+                                    onclick="openBarcodeModal(this)">
+                                In tem mã
+                            </button>
+
+                        </td>
+
+                    </tr>
+                }
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- MODAL THÊM -->
+<div class="modal fade" id="modalSanPham">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Tạo hàng hóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/SanPham/Create" method="post">
+
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Tên sản phẩm</label>
+                            <input type="text" name="TenSanPham" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Mã vạch</label>
+                            <input type="text" name="MaVach" class="form-control">
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <label>Giá nhập</label>
+                            <input type="number" name="GiaNhap" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Giá bán</label>
+                            <input type="number" name="GiaBan" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <label>Số lượng</label>
+                            <input type="number" name="SoLuong" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Số lượng tối thiểu</label>
+                            <input type="number" name="SoLuongToiThieu" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label>Hạn sử dụng</label>
+                            <input type="date" name="HanSuDung" class="form-control">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL SỬA -->
+<div class="modal fade" id="modalEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Sửa sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/SanPham/Edit" method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="editMaSanPham" name="MaSanPham">
+
+                    <div class="mb-3">
+                        <label>Tên sản phẩm</label>
+                        <input type="text" id="editTenSanPham" name="TenSanPham" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Mã vạch</label>
+                        <input type="text" id="editMaVach" name="MaVach" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Giá nhập</label>
+                        <input type="number" id="editGiaNhap" name="GiaNhap" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Giá bán</label>
+                        <input type="number" id="editGiaBan" name="GiaBan" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Số lượng</label>
+                        <input type="number" id="editSoLuong" name="SoLuong" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Hạn sử dụng</label>
+                        <input type="date" id="editHanSuDung" name="HanSuDung" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Cập nhật</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL THIẾT LẬP GIÁ -->
+<div class="modal fade" id="modalPrice">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Thiết lập giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/SanPham/SetPrice" method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="priceMaSanPham" name="id">
+
+                    <div class="mb-3">
+                        <label>Tên sản phẩm</label>
+                        <input type="text" id="priceTenSanPham" readonly class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Giá nhập</label>
+                        <input type="number" id="priceGiaNhap" name="GiaNhap" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Giá bán</label>
+                        <input type="number" id="priceGiaBan" name="GiaBan" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn btn-success">Lưu</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL BARCODE -->
+<div class="modal fade" id="modalBarcode">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">In tem mã</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+
+                <h5 id="barcodeTen"></h5>
+
+                <img id="barcodeImg" style="width:200px">
+
+                <h4 style="color:red;margin-top:10px" id="barcodeGia"></h4>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button class="btn btn-success" onclick="window.print()">In</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+    function openEditModal(btn) {
+
+        var id = btn.dataset.id;
+        var ten = btn.dataset.ten;
+        var mavach = btn.dataset.mavach;
+        var gianhap = btn.dataset.gianhap;
+        var giaban = btn.dataset.giaban;
+        var soluong = btn.dataset.soluong;
+        var hansudung = btn.dataset.hansudung;
+
+        document.getElementById("editMaSanPham").value = id;
+        document.getElementById("editTenSanPham").value = ten;
+        document.getElementById("editMaVach").value = mavach;
+        document.getElementById("editGiaNhap").value = gianhap;
+        document.getElementById("editGiaBan").value = giaban;
+        document.getElementById("editSoLuong").value = soluong;
+
+        if (hansudung) {
+            document.getElementById("editHanSuDung").value = hansudung.split('T')[0];
+        }
+
+        var modal = new bootstrap.Modal(document.getElementById('modalEdit'));
+        modal.show();
+
+    }
+
+
+    function openPriceModal(btn) {
+
+        document.getElementById("priceMaSanPham").value = btn.dataset.id;
+        document.getElementById("priceTenSanPham").value = btn.dataset.ten;
+        document.getElementById("priceGiaNhap").value = btn.dataset.gianhap;
+        document.getElementById("priceGiaBan").value = btn.dataset.giaban;
+
+        var modal = new bootstrap.Modal(document.getElementById('modalPrice'));
+        modal.show();
+
+    }
+
+
+    function openBarcodeModal(btn) {
+
+        var ten = btn.getAttribute("data-ten");
+        var mavach = btn.getAttribute("data-mavach");
+        var giaban = parseFloat(btn.getAttribute("data-giaban"));
+
+        if (isNaN(giaban)) {
+            giaban = 0;
+        }
+
+        document.getElementById("barcodeTen").innerText = ten;
+
+        document.getElementById("barcodeImg").src =
+            "https://barcode.tec-it.com/barcode.ashx?data=" + mavach + "&code=Code128";
+
+        document.getElementById("barcodeGia").innerText =
+            giaban.toLocaleString('vi-VN') + " ₫";
+
+        var modal = new bootstrap.Modal(document.getElementById('modalBarcode'));
+        modal.show();
+    }
+
+</script>
