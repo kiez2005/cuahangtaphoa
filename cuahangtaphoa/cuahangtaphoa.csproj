@@ -120,6 +120,7 @@
     <Compile Include="Controllers\BanHangController.cs" />
     <Compile Include="Controllers\BaoCaoController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\HangHoaController.cs" />
     <Compile Include="Controllers\HoaDonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LayoutController.cs" />
@@ -253,6 +254,9 @@
     <Content Include="Views\Layout\Index.cshtml" />
     <Content Include="Views\HoaDon\Index.cshtml" />
     <Content Include="Views\NhaCungCap\Index.cshtml" />
+    <Content Include="Views\HangHoa\Index.cshtml" />
+    <Content Include="Views\HangHoa\SetPrice.cshtml" />
+    <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
