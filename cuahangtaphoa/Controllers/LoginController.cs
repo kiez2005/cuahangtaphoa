@@ -12,41 +12,27 @@ public class LoginController : Controller
     }
 
     [HttpPost]
-    public ActionResult Index(NguoiDung model)
+    public JsonResult Login(string TenDangNhap, string MatKhau)
     {
-        // 1. Kiểm tra nhập thiếu
-        if (string.IsNullOrWhiteSpace(model.TenDangNhap))
+        if (string.IsNullOrWhiteSpace(TenDangNhap))
         {
-            ViewBag.error = "Vui lòng nhập tên đăng nhập";
-            return View(model);
+            return Json(new { success = false, message = "Vui lòng nhập tên đăng nhập" });
         }
 
-        if (string.IsNullOrWhiteSpace(model.MatKhau))
+        if (string.IsNullOrWhiteSpace(MatKhau))
         {
-            ViewBag.error = "Vui lòng nhập mật khẩu";
-            return View(model);
+            return Json(new { success = false, message = "Vui lòng nhập mật khẩu" });
         }
 
-        // 2. Sai tài khoản
         var user = db.NguoiDungs
-                     .FirstOrDefault(x => x.TenDangNhap == model.TenDangNhap);
+                     .FirstOrDefault(x => x.TenDangNhap == TenDangNhap);
 
-        if (user == null)
+        if (user == null || user.MatKhau != MatKhau)
         {
-            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
-            return View(model);
+            return Json(new { success = false, message = "Sai tài khoản hoặc mật khẩu" });
         }
 
-        // 3. Kiểm tra mật khẩu
-        if (user.MatKhau != model.MatKhau)
-        {
-            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
-            return View(model);
-        }
-
-        // 4. Đăng nhập thành công
-        Session["user"] = user;
-        return RedirectToAction("Index", "TrangChu");
+        return Json(new { success = true, message = "Đăng nhập thành công" });
     }
 
     public ActionResult Logout()

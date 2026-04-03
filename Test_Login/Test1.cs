@@ -80,7 +80,10 @@ namespace Zentask.AutomationTests
             }
 
             // Xuất report JSON
-            string jsonFileName = @"C:\Users\manhd\OneDrive\Desktop\Test-report.json";
+            string jsonFileName = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Test-report.json"
+            );
             string jsonContent = JsonConvert.SerializeObject(testResults, Formatting.Indented);
             File.WriteAllText(jsonFileName, jsonContent);
 
