@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
-{
+{ 
     public class NhanVienController : Controller
     {
         testEntities db = new testEntities();
