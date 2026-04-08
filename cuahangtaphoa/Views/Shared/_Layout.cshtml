@@ -1,6 +1,5 @@
 ﻿
 @{
-    ViewBag.Title = "";
     Layout = null;
 }
 
@@ -265,8 +264,7 @@
 
         <nav class="sidebar-nav">
 
-            <div class="nav-section-title">Tổng quan</div>
-            <a class="nav-item" href="/TrangChu"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
+            <a class="nav-item" href="/Dashboard"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
 
             <div class="nav-section-title">Bán hàng</div>
             <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
@@ -288,7 +286,7 @@
 
     <!-- TOPBAR -->
     <header class="topbar">
-        <span class="topbar-title">Tổng quan</span>
+        <span class="topbar-title">@ViewBag.Title</span> 
 
         <div class="topbar-right">
             <button class="topbar-btn" onclick="loadAll()" title="Làm mới">
@@ -323,6 +321,9 @@
 
 </body>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     function toggleMenu() {
         const menu = document.getElementById("avatarMenu");
@@ -338,4 +339,5 @@
         }
     });
 </script>
+
 </html>
