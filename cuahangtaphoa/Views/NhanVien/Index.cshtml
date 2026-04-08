@@ -282,31 +282,28 @@
 <script>
 
     const checkAll = document.getElementById("checkAll");
-    const items = document.querySelectorAll(".checkItem");
     const selectedText = document.getElementById("selectedCount");
 
     function updateCount() {
-
         let checked = document.querySelectorAll(".checkItem:checked").length;
         selectedText.innerText = "Đã chọn " + checked + " nhân viên";
-
     }
 
     // check all
     checkAll.addEventListener("change", function () {
+
+        let items = document.querySelectorAll(".checkItem"); // lấy lại ở đây
 
         items.forEach(function (item) {
             item.checked = checkAll.checked;
         });
 
         updateCount();
-
     });
 
-    // check từng item
-    items.forEach(function (item) {
-
-        item.addEventListener("change", function () {
+    // check từng item (dùng delegation)
+    document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("checkItem")) {
 
             let all = document.querySelectorAll(".checkItem");
             let checked = document.querySelectorAll(".checkItem:checked");
@@ -314,9 +311,7 @@
             checkAll.checked = all.length === checked.length;
 
             updateCount();
-
-        });
-
+        }
     });
     //Xóa nhân viên
     function deleteSelected() {

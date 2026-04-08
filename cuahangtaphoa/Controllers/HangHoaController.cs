@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class HangHoaController : Controller
+    public class HangHoaController : TrangChuController
     {
         // GET: SanPham
         testEntities db = new testEntities();

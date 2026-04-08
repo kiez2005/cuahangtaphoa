@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 { 
-    public class NhanVienController : Controller
+    public class NhanVienController : TrangChuController
     {
         testEntities db = new testEntities();
 
@@ -64,7 +64,7 @@ namespace cuahangtaphoa.Controllers
 
                 if (!string.IsNullOrEmpty(nv.MatKhau))
                 {
-                    data.MatKhau = nv.MatKhau;
+                    data.MatKhau = LoginController.MaHoa(nv.MatKhau);
                 }
 
                 db.SaveChanges();

@@ -6,13 +6,16 @@ using cuahangtaphoa.Models;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class DashboardController : Controller
+    public class DashboardController : TrangChuController
     {
         testEntities db = new testEntities();
 
         public ActionResult Index()
         {
-            return View();
+            if (Session["user"] == null)
+                return RedirectToAction("Index", "Login");
+
+            return View("~/Views/TrangChu/Index.cshtml");
         }
 
         [HttpGet]

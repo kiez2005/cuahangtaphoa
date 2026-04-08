@@ -8,15 +8,14 @@ namespace cuahangtaphoa.Controllers
 {
     public class TrangChuController : Controller
     {
-        // GET: TrangChu
-        public ActionResult Index()
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (Session["user"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                filterContext.Result = RedirectToAction("Index", "Login");
             }
-
-            return View();
+            base.OnActionExecuting(filterContext);
         }
+        // KHÔNG CÓ GÌ KHÁC Ở ĐÂY
     }
 }
