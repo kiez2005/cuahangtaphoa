@@ -254,10 +254,10 @@
     <Content Include="Views\NhanVien\Index.cshtml" />
     <Content Include="Views\HoaDon\Index.cshtml" />
     <Content Include="Views\NhaCungCap\Index.cshtml" />
-    <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\HangHoa\Index.cshtml" />
     <Content Include="Views\HangHoa\SetPrice.cshtml" />
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
+    <Content Include="Views\Login\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

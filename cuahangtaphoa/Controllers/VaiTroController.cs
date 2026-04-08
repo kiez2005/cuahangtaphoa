@@ -9,7 +9,7 @@ namespace cuahangtaphoa.Controllers
 {
     [MyAuthorize(1)]
 
-    public class VaiTroController : Controller
+    public class VaiTroController : TrangChuController
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {

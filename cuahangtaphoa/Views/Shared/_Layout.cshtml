@@ -1,97 +1,341 @@
-﻿@model cuahangtaphoa.Models.NguoiDung
-
+﻿
 @{
+    ViewBag.Title = "";
     Layout = null;
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
 
-    <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: url('https://png.pngtree.com/thumb_back/fh260/background/20250228/pngtree-fresh-grocery-store-background-image_17023389.jpg') no-repeat center;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+    <link rel="stylesheet" href="~/Content/site.css" />
+</head>
+
+<style>
+    :root {
+        --blue: #1565c0;
+        --blue-light: #e8f0fe;
+        --blue-mid: #4285f4;
+        --orange: #f57c00;
+        --orange-light: #fff3e0;
+        --green-light: #e8f5e9;
+        --red: #c62828;
+        --red-light: #ffebee;
+        --border: #e8eaed;
+        --bg: #f1f3f4;
+        --text: #202124;
+        --text-muted: #5f6368;
+        --white: #ffffff;
+        --sidebar-w: 220px;
+        --topbar-h: 52px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Be Vietnam Pro',sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13.5px;
+    }
+
+    .content {
+        margin-left: var(--sidebar-w);
+        margin-top: var(--topbar-h);
+        padding: 20px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--sidebar-w);
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+    }
+
+    .sidebar-logo {
+        height: var(--topbar-h);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--border);
+        gap: 8px;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--blue);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .logo-text {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--blue);
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        padding: 8px 0;
+        overflow-y: auto;
+    }
+
+    .nav-section-title {
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        padding: 10px 16px 4px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background .15s,color .15s;
+        border-left: 3px solid transparent;
+    }
+
+        .nav-item:hover {
+            background: var(--blue-light);
+            color: var(--blue);
         }
 
-        .login-box {
-            width: 400px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .nav-item.active {
+            background: var(--blue-light);
+            color: var(--blue);
+            font-weight: 600;
+            border-left-color: var(--blue);
+        }
+
+        .nav-item i {
+            font-size: 16px;
+            width: 18px;
             text-align: center;
         }
 
-        .store-icon {
-            color: red;
+    /* TOPBAR */
+    .topbar {
+        position: fixed;
+        left: var(--sidebar-w);
+        right: 0;
+        top: 0;
+        height: var(--topbar-h);
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 12px;
+        z-index: 99;
+    }
+
+    .topbar-title {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .topbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .topbar-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--blue);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .topbar-btn {
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        font-size: 13px;
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Be Vietnam Pro',sans-serif;
+    }
+
+        .topbar-btn:hover {
+            background: var(--bg);
         }
 
-        input {
-            width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            box-sizing: border-box;
+    .avatar-container {
+        position: relative;
+    }
+
+    .topbar-avatar {
+        width: 35px;
+        height: 35px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .avatar-menu {
+        position: absolute;
+        right: 0;
+        top: 45px;
+        width: 220px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        display: none;
+    }
+
+    .menu-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+    }
+
+        .menu-item:hover {
+            background: #f5f5f5;
         }
 
-        .btn-group {
-            display: flex;
-            justify-content: center;
-        }
+    .text-red {
+        color: red;
+        font-size: 13px;
+    }
 
-        .btn {
-            padding: 14px 20px;
-            width: 120px;
-            border: none;
-            color: white;
-            margin-top: 15px;
-            cursor: pointer;
-        }
+    .logout {
+        color: #333;
+    }
+</style>
 
-        .login {
-            background: #2a73cc;
-        }
-    </style>
-
-</head>
 
 <body>
 
-    <div class="login-box">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">C</div>
+            <span class="logo-text">CuaHang</span>
+        </div>
 
-        <h2 style="color:#2a73cc">
-            <i class="fa-solid fa-store store-icon"></i> Cửa hàng tạp hóa
-        </h2>
+        <nav class="sidebar-nav">
 
-        @using (Html.BeginForm("Login", "Login", FormMethod.Post))
-        {
-            @Html.TextBoxFor(m => m.TenDangNhap, new { placeholder = "Tên đăng nhập" })
+            <div class="nav-section-title">Tổng quan</div>
+            <a class="nav-item" href="/TrangChu"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
 
-            @Html.PasswordFor(m => m.MatKhau, new { placeholder = "Mật khẩu" })
+            <div class="nav-section-title">Bán hàng</div>
+            <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
+            <a class="nav-item" href="/HoaDon"><i class="bi bi-receipt"></i> Hóa đơn</a>
 
-            <div class="btn-group">
-                <button type="submit" class="btn login">Đăng nhập</button>
+            <div class="nav-section-title">Kho hàng</div>
+            <a class="nav-item" href="/HangHoa"><i class="bi bi-box-seam"></i> Hàng hóa</a>
+            <a class="nav-item" href="#"><i class="bi bi-truck"></i> Nhập hàng</a>
+
+            <div class="nav-section-title">Danh mục</div>
+            <a class="nav-item" href="/NhaCungCap"><i class="bi bi-people"></i> Nhà cung cấp</a>
+            <a class="nav-item" href="/NhanVien"><i class="bi bi-person-badge"></i> Nhân viên</a>
+
+            <div class="nav-section-title">Báo cáo</div>
+            <a class="nav-item" href="#"><i class="bi bi-bar-chart-line"></i> Doanh thu</a>
+
+        </nav>
+    </aside>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <span class="topbar-title">Tổng quan</span>
+
+        <div class="topbar-right">
+            <button class="topbar-btn" onclick="loadAll()" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+
+            <button class="topbar-btn">
+                <i class="bi bi-bell"></i>
+            </button>
+
+            <div class="avatar-container">
+                <div class="topbar-avatar" onclick="toggleMenu()">A</div>
+
+                <div class="avatar-menu" id="avatarMenu">
+                    <div class="menu-item">
+                        <b>Thông tin cá nhân</b><br>
+                    </div>
+                    <div class="menu-item logout" onclick="location.href='@Url.Action("Logout","Login")'">
+                        Đăng xuất
+                    </div>
+                </div>
             </div>
+        </div>
+    </header>
 
-            <p style="color:red">@ViewBag.error</p>
-        }
-
+    <!-- Nội dung trang -->
+    <div class="content">
+        @RenderBody()
     </div>
 
+
+
 </body>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById("avatarMenu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    document.addEventListener("click", function (e) {
+        const avatar = document.querySelector(".topbar-avatar");
+        const menu = document.getElementById("avatarMenu");
+
+        if (!avatar.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = "none";
+        }
+    });
+</script>
 </html>

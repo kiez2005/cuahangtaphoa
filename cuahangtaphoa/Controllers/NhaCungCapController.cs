@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class NhaCungCapController : Controller
+    public class NhaCungCapController : TrangChuController
     {
         testEntities db = new testEntities();
 

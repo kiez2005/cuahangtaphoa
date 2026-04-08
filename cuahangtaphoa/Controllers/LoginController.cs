@@ -11,6 +11,16 @@ public class LoginController : Controller
         return View();
     }
 
+    public static string MaHoa(string input)
+    {
+        using (var md5 = System.Security.Cryptography.MD5.Create())
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var hash = md5.ComputeHash(bytes);
+            return string.Concat(hash.Select(b => b.ToString("x2")));
+        }
+    }
+
     [HttpPost]
     public JsonResult Login(string TenDangNhap, string MatKhau)
     {
@@ -25,12 +35,17 @@ public class LoginController : Controller
         }
 
         var user = db.NguoiDungs
-                     .FirstOrDefault(x => x.TenDangNhap == TenDangNhap);
+            .FirstOrDefault(x => x.TenDangNhap == TenDangNhap);
 
-        if (user == null || user.MatKhau != MatKhau)
+        string mk = MaHoa(MatKhau.Trim());
+
+        if (user == null || user.MatKhau.Trim().ToLower() != mk.ToLower())
         {
             return Json(new { success = false, message = "Sai tài khoản hoặc mật khẩu" });
         }
+
+        // lưu session
+        Session["user"] = user;
 
         return Json(new { success = true, message = "Đăng nhập thành công" });
     }
