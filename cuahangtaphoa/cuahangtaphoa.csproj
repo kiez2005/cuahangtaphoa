@@ -310,9 +310,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62354</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:44355</IISUrl>
+          <IISUrl>http://localhost:5001</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:44355</IISAppRootUrl>
+          <IISAppRootUrl>http://localhost:5001</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

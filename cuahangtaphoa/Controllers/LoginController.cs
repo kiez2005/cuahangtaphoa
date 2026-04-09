@@ -41,7 +41,7 @@ public class LoginController : Controller
 
         if (user == null || user.MatKhau.Trim().ToLower() != mk.ToLower())
         {
-            return Json(new { success = false, message = "Sai tài khoản hoặc mật khẩu" });
+            return Json(new { success = false, message = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu" });
         }
 
         // lưu session
