@@ -209,5 +209,22 @@ namespace UnitTestProject
                 Assert.IsFalse(db.NguoiDungs.Any(x => x.MaNguoiDung == id));
             }
         }
+
+
+        // ================== CLEANUP ==================
+        [TestCleanup]
+        public void Cleanup()
+        {
+            using (var db = new testEntities())
+            {
+                var rác = db.NguoiDungs
+                            .Where(x => x.HoTen.StartsWith("NV")
+                                     || x.HoTen.StartsWith("Noname"))
+                            .ToList();
+
+                db.NguoiDungs.RemoveRange(rác);
+                db.SaveChanges();
+            }
+        }
     }
 }
