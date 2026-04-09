@@ -9,16 +9,14 @@ namespace cuahangtaphoa.Controllers
     {
         testEntities db = new testEntities();
 
-        // ================== INDEX ==================
         public ActionResult Index()
         {
             var ds = db.NguoiDungs.ToList();
             return View(ds);
         }
 
-        // ================== CREATE ==================
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Create(NguoiDung nv)
         {
             try
@@ -55,7 +53,7 @@ namespace cuahangtaphoa.Controllers
 
         // ================== EDIT ==================
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Edit(NguoiDung nv)
         {
             var data = db.NguoiDungs.Find(nv.MaNguoiDung);
@@ -94,7 +92,7 @@ namespace cuahangtaphoa.Controllers
 
         // ================== DELETE ==================
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public JsonResult DeleteMultiple(int[] ids)
         {
             try
