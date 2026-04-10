@@ -258,7 +258,7 @@
     <Content Include="Views\HangHoa\Index.cshtml" />
     <Content Include="Views\HangHoa\SetPrice.cshtml" />
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
-    <Content Include="Views\Login\Index.cshtml" />
+<Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\PhieuNhap\Index.cshtml" />
     <Content Include="Views\PhieuNhap\Create.cshtml" />
     <Content Include="Views\PhieuNhap\Edit.cshtml" />
