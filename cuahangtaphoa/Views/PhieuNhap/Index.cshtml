@@ -1,0 +1,161 @@
+﻿@model IEnumerable<cuahangtaphoa.Models.PhieuNhap>
+
+@{
+    ViewBag.Title = "Nhập hàng";
+}
+@{
+    Layout = "~/Views/Layout/Index.cshtml";
+}
+
+<style>
+    body {
+        background: #f5f7fb;
+        font-family: 'Segoe UI', Tahoma;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .search-box input {
+        width: 320px;
+        padding: 8px 14px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+    }
+
+    .btn-main {
+        background: #0d6efd;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-export {
+        margin-left: 10px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        text-decoration: none;
+    }
+
+    table {
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #eef3fb;
+        padding: 14px;
+        font-weight: 600;
+        color: #333;
+        text-align: left;
+    }
+
+    td {
+        padding: 14px;
+        border-top: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    tr:hover {
+        background: #f9fbff;
+    }
+
+    .col-id {
+        font-weight: 600;
+        color: #0d6efd;
+    }
+
+    .col-time {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .col-money {
+        text-align: right;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .action a {
+        margin-right: 8px;
+        text-decoration: none;
+        color: #0d6efd;
+    }
+
+        .action a:last-child {
+            color: red;
+        }
+</style>
+
+<h2>Nhập hàng</h2>
+
+<div class="top-bar">
+    <div class="search-box">
+        @using (Html.BeginForm("Index", "PhieuNhap", FormMethod.Get))
+        {
+            <input type="text" name="search" placeholder="Tìm mã phiếu..." value="@Request["search"]" />
+        }
+    </div>
+
+    <div>
+        @Html.ActionLink("+ Nhập hàng", "Create", null, new { @class = "btn-main" })
+        @Html.ActionLink("Xuất file", "Export", null, new { @class = "btn-export" })
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 150px;">Mã phiếu</th>
+            <th style="width: 180px;">Thời gian</th>
+            <th style="width: 120px;">Mã NCC</th>
+            <th>Nhà cung cấp</th>
+            <th style="width: 150px; text-align:right;">Tổng tiền</th>
+            <th style="width: 120px;"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="col-id">@item.MaPhieu</td>
+
+                <td class="col-time">
+                    @(item.NgayNhap.HasValue
+                        ? item.NgayNhap.Value.ToString("dd/MM/yyyy HH:mm")
+                        : "")
+                </td>
+
+                <td>@item.MaNhaCungCap</td>
+
+                <td>
+                    @(item.NhaCungCap != null
+                        ? item.NhaCungCap.TenNhaCungCap
+                        : "")
+                </td>
+
+                <td class="col-money">
+                    @String.Format("{0:N0}", item.TongTien)
+                </td>
+
+                <td class="action">
+                    @Html.ActionLink("Sửa", "Edit", new { id = item.MaPhieuNhap })
+                    @Html.ActionLink("Xoá", "Delete", new { id = item.MaPhieuNhap },
+                        new { onclick = "return confirm('Xoá thật không?');" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

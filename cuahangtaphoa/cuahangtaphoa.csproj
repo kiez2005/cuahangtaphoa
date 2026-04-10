@@ -17,7 +17,8 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort>44355</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -260,8 +261,8 @@
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\PhieuNhap\Index.cshtml" />
-    <Content Include="Views\PhieuNhap\Create.cshtml" />
     <Content Include="Views\PhieuNhap\Edit.cshtml" />
+    <Content Include="Views\PhieuNhap\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

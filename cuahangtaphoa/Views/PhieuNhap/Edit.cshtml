@@ -1,0 +1,30 @@
+﻿// edit
+@model cuahangtaphoa.Models.PhieuNhap
+
+@{
+    ViewBag.Title = "Sửa phiếu nhập";
+}
+
+<h2>Sửa phiếu nhập</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.MaPhieuNhap)
+
+    <div>
+        <label>Nhà cung cấp</label>
+        @Html.DropDownListFor(m => m.MaNhaCungCap,
+            (SelectList)ViewBag.MaNhaCungCap)
+    </div>
+
+    <div>
+        <label>Người nhập</label>
+        @Html.DropDownListFor(m => m.MaNguoiDung,
+            (SelectList)ViewBag.MaNguoiDung)
+    </div>
+
+    <br />
+
+    <button type="submit">Lưu</button>
+    <a href="/PhieuNhap/Index">Quay lại</a>
+}
