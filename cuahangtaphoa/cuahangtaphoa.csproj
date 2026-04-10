@@ -258,13 +258,10 @@
     <Content Include="Views\HangHoa\Index.cshtml" />
     <Content Include="Views\HangHoa\SetPrice.cshtml" />
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
-<<<<<<< Updated upstream
     <Content Include="Views\Login\Index.cshtml" />
-=======
     <Content Include="Views\PhieuNhap\Index.cshtml" />
     <Content Include="Views\PhieuNhap\Create.cshtml" />
     <Content Include="Views\PhieuNhap\Edit.cshtml" />
->>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
