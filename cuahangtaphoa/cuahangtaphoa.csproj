@@ -17,7 +17,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort>44355</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -117,17 +117,20 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BanHangController.cs" />
     <Compile Include="Controllers\BaoCaoController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HangHoaController.cs" />
     <Compile Include="Controllers\HoaDonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LayoutController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\NhaCungCapController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
+    <Compile Include="Controllers\PhieuNhapController.cs" />
     <Compile Include="Controllers\TrangChuController.cs" />
+    <Compile Include="Controllers\VaiTroController.cs" />
+    <Compile Include="Filters\MyAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -248,20 +251,23 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\BanHang\Index.cshtml" />
     <Content Include="Views\BaoCao\Index.cshtml" />
-    <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\TrangChu\Index.cshtml" />
     <Content Include="Views\NhanVien\Index.cshtml" />
-    <Content Include="Views\Layout\Index.cshtml" />
     <Content Include="Views\HoaDon\Index.cshtml" />
     <Content Include="Views\NhaCungCap\Index.cshtml" />
     <Content Include="Views\HangHoa\Index.cshtml" />
     <Content Include="Views\HangHoa\SetPrice.cshtml" />
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
+<<<<<<< Updated upstream
+    <Content Include="Views\Login\Index.cshtml" />
+=======
+    <Content Include="Views\PhieuNhap\Index.cshtml" />
+    <Content Include="Views\PhieuNhap\Create.cshtml" />
+    <Content Include="Views\PhieuNhap\Edit.cshtml" />
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Dashboard\" />
-    <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -311,7 +317,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62354</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44355/</IISUrl>
+          <IISUrl>http://localhost:5001</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:5001</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
