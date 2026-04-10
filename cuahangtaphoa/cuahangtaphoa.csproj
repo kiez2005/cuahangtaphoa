@@ -17,8 +17,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort>44355</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -128,7 +127,6 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\NhaCungCapController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
-    <Compile Include="Controllers\PhieuNhapController.cs" />
     <Compile Include="Controllers\TrangChuController.cs" />
     <Compile Include="Controllers\VaiTroController.cs" />
     <Compile Include="Filters\MyAuthorizeAttribute.cs" />
@@ -260,9 +258,6 @@
     <Content Include="Views\HangHoa\SetPrice.cshtml" />
     <Content Include="Views\HangHoa\PrintBarcode.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
-    <Content Include="Views\PhieuNhap\Index.cshtml" />
-    <Content Include="Views\PhieuNhap\Edit.cshtml" />
-    <Content Include="Views\PhieuNhap\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

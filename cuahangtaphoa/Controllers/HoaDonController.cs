@@ -6,7 +6,7 @@ using cuahangtaphoa.Models;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class HoaDonController : Controller
+    public class HoaDonController : TrangChuController
     {
         testEntities db = new testEntities();
 
