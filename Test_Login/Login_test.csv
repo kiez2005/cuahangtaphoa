@@ -1,7 +1,7 @@
-﻿email,password,expected_message
-admin,123456,Home page
-admin,sai_mat_khau,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
-sai_tai_khoan,123456,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
-,123456,Vui lòng nhập tên đăng nhập
-admin,,Vui lòng nhập mật khẩu
-,,Vui lòng nhập tên đăng nhập
+﻿TestCaseID,Description,taikhoan,password,expected_message
+TC01,Đăng nhập đúng,admin,123456,Home page
+TC02,Sai mật khẩu,admin,sai_mat_khau,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
+TC03,Sai tài khoản,sai_tai_khoan,123456,Vui lòng nhập lại tên đăng nhập hoặc mật khẩu
+TC04,Thiếu tài khoản,,123456,Vui lòng nhập tên đăng nhập
+TC05,Thiếu mật khẩu,admin,,Vui lòng nhập mật khẩu
+TC06,Thiếu cả 2,,,Vui lòng nhập tên đăng nhập

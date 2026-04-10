@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Nhân viên";
-    Layout = "~/Views/Layout/Index.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid">
@@ -140,7 +140,7 @@
 
             @using (Html.BeginForm("Create", "NhanVien", FormMethod.Post))
             {
-
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
 
                     <div class="row">
@@ -216,7 +216,7 @@
             @using (Html.BeginForm("Edit", "NhanVien", FormMethod.Post))
             {
 
-
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
 
                     <input type="hidden" id="editMaNguoiDung" name="MaNguoiDung">
@@ -268,13 +268,13 @@
 
                 </div>
 
-                 <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
-                     <button type="submit" class="btn btn-primary">
-                         <i class="bi bi-save"></i> Cập nhật
-                     </button>
-                 </div>
-             }
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Cập nhật
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -282,31 +282,28 @@
 <script>
 
     const checkAll = document.getElementById("checkAll");
-    const items = document.querySelectorAll(".checkItem");
     const selectedText = document.getElementById("selectedCount");
 
     function updateCount() {
-
         let checked = document.querySelectorAll(".checkItem:checked").length;
         selectedText.innerText = "Đã chọn " + checked + " nhân viên";
-
     }
 
     // check all
     checkAll.addEventListener("change", function () {
+
+        let items = document.querySelectorAll(".checkItem"); // lấy lại ở đây
 
         items.forEach(function (item) {
             item.checked = checkAll.checked;
         });
 
         updateCount();
-
     });
 
-    // check từng item
-    items.forEach(function (item) {
-
-        item.addEventListener("change", function () {
+    // check từng item (dùng delegation)
+    document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("checkItem")) {
 
             let all = document.querySelectorAll(".checkItem");
             let checked = document.querySelectorAll(".checkItem:checked");
@@ -314,9 +311,7 @@
             checkAll.checked = all.length === checked.length;
 
             updateCount();
-
-        });
-
+        }
     });
     //Xóa nhân viên
     function deleteSelected() {
@@ -383,29 +378,34 @@
             .replace(/Đ/g, "D");
     }
 
-    //ĐỔ DỮ LIỆU VÀO MODAL
     function openEditModal(row) {
 
-        let id = row.dataset.id;
-        let ten = row.dataset.ten;
-        let sdt = row.dataset.sdt;
-        let diachi = row.dataset.diachi;
-        let vaitro = row.dataset.vaitro;
-        let trangthai = row.dataset.trangthai;
-        let tendangnhap = row.dataset.tendangnhap;
-        let matkhau = row.dataset.matkhau;
+        try {
+            let id = row.dataset.id;
+            let ten = row.dataset.ten;
+            let sdt = row.dataset.sdt;
+            let diachi = row.dataset.diachi;
+            let vaitro = row.dataset.vaitro;
+            let trangthai = row.dataset.trangthai;
+            let tendangnhap = row.dataset.tendangnhap;
 
-        document.getElementById("editMaNguoiDung").value = id;
-        document.getElementById("editHoTen").value = ten;
-        document.getElementById("editSDT").value = sdt;
-        document.getElementById("editDiaChi").value = diachi;
-        document.getElementById("editVaiTro").value = vaitro;
-        document.getElementById("editTrangThai").value = trangthai;
+            document.getElementById("editMaNguoiDung").value = id;
+            document.getElementById("editHoTen").value = ten;
+            document.getElementById("editSDT").value = sdt;
+            document.getElementById("editDiaChi").value = diachi;
+            document.getElementById("editVaiTro").value = vaitro;
+            document.getElementById("editTrangThai").value = trangthai;
+            document.getElementById("editTenDangNhap").value = tendangnhap;
 
-        document.getElementById("editTenDangNhap").value = tendangnhap;
-        document.getElementById("editMatKhau").value = matkhau;
+            // ❌ không set mật khẩu
+            document.getElementById("editMatKhau").value = "";
 
-        let modal = new bootstrap.Modal(document.getElementById("modalEditNhanVien"));
-        modal.show();
+            let modalEl = document.getElementById("modalEditNhanVien");
+            let modal = new bootstrap.Modal(modalEl);
+            modal.show();
+
+        } catch (e) {
+            console.error("Lỗi mở modal:", e);
+        }
     }
 </script>

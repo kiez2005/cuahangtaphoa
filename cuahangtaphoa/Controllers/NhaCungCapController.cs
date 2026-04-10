@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class NhaCungCapController : Controller
+    public class NhaCungCapController : TrangChuController
     {
         testEntities db = new testEntities();
 
@@ -57,17 +57,20 @@ namespace cuahangtaphoa.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(NhaCungCap ncc)
+        public ActionResult Edit(NhaCungCap model)
         {
-            var data = db.NhaCungCaps.Find(ncc.MaNhaCungCap);
+            var ncc = db.NhaCungCaps.Find(model.MaNhaCungCap);
 
-            if (data != null)
+            if (ncc != null)
             {
-                data.TenNhaCungCap = ncc.TenNhaCungCap;
-                data.SoDienThoai = ncc.SoDienThoai;
-                data.Email = ncc.Email;
-                data.DiaChi = ncc.DiaChi;
-                data.NgayTao = ncc.NgayTao;
+                ncc.TenNhaCungCap = model.TenNhaCungCap;
+                ncc.SoDienThoai = model.SoDienThoai;
+                ncc.Email = model.Email;
+                ncc.DiaChi = model.DiaChi;
+
+                // ❌ KHÔNG đụng vào NgayTao
+                // ncc.NgayTao = model.NgayTao;
+
                 db.SaveChanges();
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cuahangtaphoa.Filters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,16 +7,21 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
-    public class TrangChuController : Controller
+    [MyAuthorize(1)]
+    public class AdminController : Controller
     {
+        public ActionResult Index()
+        {
+            return View();
+        }
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (Session["user"] == null)
+            if (Session["User"] == null || Convert.ToInt32(Session["MaVaiTro"]) != 1)
             {
                 filterContext.Result = RedirectToAction("Index", "Login");
             }
+
             base.OnActionExecuting(filterContext);
         }
-        // KHÔNG CÓ GÌ KHÁC Ở ĐÂY
     }
 }

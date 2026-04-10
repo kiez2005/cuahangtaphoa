@@ -11,42 +11,43 @@ public class LoginController : Controller
         return View();
     }
 
-    [HttpPost]
-    public ActionResult Index(NguoiDung model)
+    public static string MaHoa(string input)
     {
-        // 1. Kiểm tra nhập thiếu
-        if (string.IsNullOrWhiteSpace(model.TenDangNhap))
+        using (var md5 = System.Security.Cryptography.MD5.Create())
         {
-            ViewBag.error = "Vui lòng nhập tên đăng nhập";
-            return View(model);
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var hash = md5.ComputeHash(bytes);
+            return string.Concat(hash.Select(b => b.ToString("x2")));
+        }
+    }
+
+    [HttpPost]
+    public JsonResult Login(string TenDangNhap, string MatKhau)
+    {
+        if (string.IsNullOrWhiteSpace(TenDangNhap))
+        {
+            return Json(new { success = false, message = "Vui lòng nhập tên đăng nhập" });
         }
 
-        if (string.IsNullOrWhiteSpace(model.MatKhau))
+        if (string.IsNullOrWhiteSpace(MatKhau))
         {
-            ViewBag.error = "Vui lòng nhập mật khẩu";
-            return View(model);
+            return Json(new { success = false, message = "Vui lòng nhập mật khẩu" });
         }
 
-        // 2. Sai tài khoản
         var user = db.NguoiDungs
-                     .FirstOrDefault(x => x.TenDangNhap == model.TenDangNhap);
+            .FirstOrDefault(x => x.TenDangNhap == TenDangNhap);
 
-        if (user == null)
+        string mk = MaHoa(MatKhau.Trim());
+
+        if (user == null || user.MatKhau.Trim().ToLower() != mk.ToLower())
         {
-            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
-            return View(model);
+            return Json(new { success = false, message = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu" });
         }
 
-        // 3. Kiểm tra mật khẩu
-        if (user.MatKhau != model.MatKhau)
-        {
-            ViewBag.error = "Vui lòng nhập lại tên đăng nhập hoặc mật khẩu";
-            return View(model);
-        }
-
-        // 4. Đăng nhập thành công
+        // lưu session
         Session["user"] = user;
-        return RedirectToAction("Index", "TrangChu");
+
+        return Json(new { success = true, message = "Đăng nhập thành công" });
     }
 
     public ActionResult Logout()

@@ -10,11 +10,11 @@
 
     <meta name="viewport" content="width=device-width" />
     <title>Login</title>
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-
         body {
             margin: 0;
             font-family: Arial;
@@ -66,6 +66,10 @@
         .login {
             background: #2a73cc;
         }
+
+        #error {
+            margin-top: 10px;
+        }
     </style>
 
 </head>
@@ -78,20 +82,50 @@
             <i class="fa-solid fa-store store-icon"></i> Cửa hàng tạp hóa
         </h2>
 
-        @using (Html.BeginForm("Index", "Login", FormMethod.Post))
-        {
-            @Html.TextBoxFor(m => m.TenDangNhap, new { placeholder = "Tên đăng nhập" })
+        <form id="loginForm">
 
-            @Html.PasswordFor(m => m.MatKhau, new { placeholder = "Mật khẩu" })
+            <input type="text" id="TenDangNhap" placeholder="Tên đăng nhập" />
+
+            <input type="password" id="MatKhau" placeholder="Mật khẩu" />
 
             <div class="btn-group">
                 <button type="submit" class="btn login">Đăng nhập</button>
             </div>
 
-            <p style="color:red">@ViewBag.error</p>
-        }
+            <p id="error" style="color:red"></p>
+
+        </form>
 
     </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault(); 
+
+            fetch('/Login/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    TenDangNhap: document.getElementById("TenDangNhap").value,
+                    MatKhau: document.getElementById("MatKhau").value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/Dashboard/Index";
+                } else {
+                    document.getElementById("error").innerText = data.message;
+                }
+            })
+            .catch(err => {
+                document.getElementById("error").innerText = "Lỗi kết nối server";
+                console.log(err);
+            });
+        });
+    </script>
 
 </body>
 </html>
