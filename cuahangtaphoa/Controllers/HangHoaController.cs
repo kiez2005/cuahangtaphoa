@@ -1,4 +1,5 @@
-﻿using cuahangtaphoa.Models;
+﻿using cuahangtaphoa.Filters;
+using cuahangtaphoa.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,8 @@ using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
+    [CustomAuthorize(Roles = "1,2")]
+
     public class HangHoaController : TrangChuController
     {
         // GET: SanPham

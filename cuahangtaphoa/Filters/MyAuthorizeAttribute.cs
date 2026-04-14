@@ -1,35 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using cuahangtaphoa.Models;
 
 namespace cuahangtaphoa.Filters
 {
-    public class MyAuthorize : ActionFilterAttribute
+    public class CustomAuthorizeAttribute : ActionFilterAttribute
     {
-        private int[] _roles;
-
-        public MyAuthorize(params int[] roles)
-        {
-            _roles = roles;
-        }
+        public string Roles { get; set; }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var session = filterContext.HttpContext.Session["MaVaiTro"];
+            var user = filterContext.HttpContext.Session["user"] as NguoiDung;
 
-            if (session == null)
+            if (user == null)
             {
-                filterContext.Result = new RedirectResult("/Login/Index");
+                filterContext.Result = new RedirectToRouteResult(
+                    new System.Web.Routing.RouteValueDictionary(
+                        new { controller = "Login", action = "Index" }));
                 return;
             }
 
-            int role = (int)session;
-            if (!_roles.Contains(role))
+            if (!string.IsNullOrEmpty(Roles))
             {
-                filterContext.Result = new RedirectResult("/Login/Index");
-                return;
+                var allowedRoles = Roles.Split(',');
+                if (!Array.Exists(allowedRoles, r => r.Trim() == user.MaVaiTro.ToString()))
+                {
+                    filterContext.Result = new RedirectToRouteResult(
+                        new System.Web.Routing.RouteValueDictionary(
+                            new { controller = "TrangChu", action = "KhongCoDuocPhep" }));
+                    return;
+                }
             }
 
             base.OnActionExecuting(filterContext);

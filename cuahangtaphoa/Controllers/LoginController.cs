@@ -47,7 +47,11 @@ public class LoginController : Controller
         // lưu session
         Session["user"] = user;
 
-        return Json(new { success = true, message = "Đăng nhập thành công" });
+        string redirectUrl = user.MaVaiTro == 1
+            ? Url.Action("Index", "Dashboard")
+            : Url.Action("Index", "BanHang");
+
+        return Json(new { success = true, message = "Đăng nhập thành công", redirectUrl = redirectUrl });
     }
 
     public ActionResult Logout()

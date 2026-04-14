@@ -1,0 +1,57 @@
+﻿@model cuahangtaphoa.Models.NguoiDung
+
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+}
+
+<div class="card shadow-sm" style="max-width:600px;">
+    <div class="card-header bg-primary text-white">
+        <b>Thông tin cá nhân</b>
+    </div>
+
+    <div class="card-body">
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-success">
+                @ViewBag.Message
+            </div>
+        }
+
+        @using (Html.BeginForm())
+        {
+            @Html.HiddenFor(m => m.MaNguoiDung)
+
+            <div class="mb-3">
+                <label>Họ tên</label>
+                @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control" })
+            </div>
+
+            <div class="mb-3">
+                <label>Tên đăng nhập</label>
+                @Html.TextBoxFor(m => m.TenDangNhap, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+
+            <div class="mb-3">
+                <label>Số điện thoại</label>
+                @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control" })
+            </div>
+
+            <div class="mb-3">
+                <label>Địa chỉ</label>
+                @Html.TextBoxFor(m => m.DiaChi, new { @class = "form-control" })
+            </div>
+
+            <div class="mb-3">
+                <label>Vai trò</label>
+                <input class="form-control"
+                       value="@(Model.MaVaiTro == 1 ? "Quản trị viên" : "Nhân viên")"
+                       disabled />
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Lưu thay đổi
+            </button>
+        }
+    </div>
+</div>

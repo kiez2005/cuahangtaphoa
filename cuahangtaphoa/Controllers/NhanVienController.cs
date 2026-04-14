@@ -1,10 +1,13 @@
-﻿using cuahangtaphoa.Models;
+﻿using cuahangtaphoa.Filters;
+using cuahangtaphoa.Models;
 using System;
 using System.Linq;
 using System.Web.Mvc;
 
 namespace cuahangtaphoa.Controllers
 {
+    [CustomAuthorize(Roles = "1")]
+
     public class NhanVienController : TrangChuController
     {
         testEntities db = new testEntities();
