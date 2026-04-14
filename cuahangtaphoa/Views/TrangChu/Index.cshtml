@@ -1,1030 +1,952 @@
 ﻿@{
     ViewBag.Title = "Tổng quan";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Cửa hàng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        :root {
-            --blue: #1565c0;
-            --blue-light: #e8f0fe;
-            --blue-mid: #4285f4;
-            --orange: #f57c00;
-            --orange-light: #fff3e0;
-            --green: #2e7d32;
-            --green-light: #e8f5e9;
-            --red: #c62828;
-            --red-light: #ffebee;
-            --border: #e8eaed;
-            --bg: #f1f3f4;
-            --text: #202124;
-            --text-muted: #5f6368;
-            --white: #ffffff;
-            --sidebar-w: 220px;
-            --topbar-h: 52px;
+
+<style>
+    /* ═══════════════════════════════
+       STATS
+    ═══════════════════════════════ */
+    .today-header {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
+    .today-stats {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+
+        .stat-icon.blue {
+            background: var(--blue-light);
+            color: var(--blue-mid);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .stat-icon.orange {
+            background: var(--orange-light);
+            color: var(--orange);
         }
 
-        body {
-            font-family: 'Be Vietnam Pro',sans-serif;
-            background: var(--bg);
+        .stat-icon.green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .stat-icon.red {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .stat-divider {
+        width: 1px;
+        background: var(--border);
+        margin: 0 4px;
+        align-self: stretch;
+    }
+
+    /* ═══════════════════════════════
+       CHART / TABS
+    ═══════════════════════════════ */
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .chart-title {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .chart-value {
+        color: var(--blue-mid);
+        font-weight: 700;
+        margin-left: 6px;
+    }
+
+    .tab-bar {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 12px;
+        overflow-x: auto;
+    }
+
+    .tab-item {
+        padding: 6px 14px;
+        font-size: 13px;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        white-space: nowrap;
+    }
+
+        .tab-item.active {
+            color: var(--blue-mid);
+            border-bottom-color: var(--blue-mid);
+            font-weight: 600;
+        }
+
+        .tab-item:hover:not(.active) {
             color: var(--text);
-            font-size: 13.5px;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: var(--sidebar-w);
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-        }
+    .select-sm {
+        height: 30px;
+        padding: 0 8px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12.5px;
+        color: var(--text);
+        background: white;
+        cursor: pointer;
+        font-family: 'Be Vietnam Pro',sans-serif;
+    }
 
-        .sidebar-logo {
-            height: var(--topbar-h);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            border-bottom: 1px solid var(--border);
-            gap: 8px;
-        }
+    /* ═══════════════════════════════
+       LAYOUT CHÍNH
+    ═══════════════════════════════ */
+    .dash-wrap {
+        display: flex;
+        gap: 16px;
+    }
 
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            background: var(--blue);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-        }
+    .dash-left {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
 
-        .logo-text {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--blue);
-        }
+    .dash-right {
+        width: 280px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
 
-        .sidebar-nav {
-            flex: 1;
-            padding: 8px 0;
-            overflow-y: auto;
-        }
+    .card {
+        background: var(--white);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 16px;
+    }
 
-        .nav-section-title {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            padding: 10px 16px 4px;
-        }
+    .two-col {
+        display: flex;
+        gap: 14px;
+    }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background .15s,color .15s;
-            border-left: 3px solid transparent;
-        }
-
-            .nav-item:hover {
-                background: var(--blue-light);
-                color: var(--blue);
-            }
-
-            .nav-item.active {
-                background: var(--blue-light);
-                color: var(--blue);
-                font-weight: 600;
-                border-left-color: var(--blue);
-            }
-
-            .nav-item i {
-                font-size: 16px;
-                width: 18px;
-                text-align: center;
-            }
-
-        /* TOPBAR */
-        .topbar {
-            position: fixed;
-            left: var(--sidebar-w);
-            right: 0;
-            top: 0;
-            height: var(--topbar-h);
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            gap: 12px;
-            z-index: 99;
-        }
-
-        .topbar-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .topbar-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .topbar-btn {
-            height: 32px;
-            padding: 0 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-            font-size: 13px;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Be Vietnam Pro',sans-serif;
-        }
-
-            .topbar-btn:hover {
-                background: var(--bg);
-            }
-
-        .avatar-container {
-            position: relative;
-        }
-
-        .topbar-avatar {
-            width: 35px;
-            height: 35px;
-            background: #4CAF50;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .avatar-menu {
-            position: absolute;
-            right: 0;
-            top: 45px;
-            width: 220px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            display: none;
-        }
-
-        .menu-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
-
-            .menu-item:hover {
-                background: #f5f5f5;
-            }
-
-        .text-red {
-            color: red;
-            font-size: 13px;
-        }
-
-        .logout {
-            color: #333;
-        }
-
-        /* MAIN */
-        .main {
-            margin-left: var(--sidebar-w);
-            margin-top: var(--topbar-h);
-            padding: 20px 20px 52px;
-            display: flex;
-            gap: 16px;
-            min-height: calc(100vh - var(--topbar-h));
-        }
-
-        .main-left {
+        .two-col > * {
             flex: 1;
             min-width: 0;
+        }
+
+    .section-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    /* ═══════════════════════════════
+       TOP LIST
+    ═══════════════════════════════ */
+    .empty-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 0;
+        color: var(--text-muted);
+        font-size: 12.5px;
+        gap: 10px;
+    }
+
+    .empty-box-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--blue-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blue-mid);
+        font-size: 22px;
+    }
+
+    .top-list {
+        list-style: none;
+    }
+
+        .top-list li {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 13px;
         }
 
-        .main-right {
-            width: 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            .top-list li:last-child {
+                border-bottom: none;
+            }
+
+    .top-rank {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--blue-light);
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+        .top-rank.gold {
+            background: #fff8e1;
+            color: #f9a825;
         }
 
-        /* CARD */
-        .card {
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 16px;
+        .top-rank.silver {
+            background: #f5f5f5;
+            color: #757575;
         }
 
-        /* STATS */
-        .today-header {
-            font-size: 14px;
+        .top-rank.bronze {
+            background: #fbe9e7;
+            color: #bf360c;
+        }
+
+    .top-name {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .top-val {
+        font-weight: 600;
+        color: var(--blue);
+        white-space: nowrap;
+        font-size: 12.5px;
+    }
+
+    .top-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    /* ═══════════════════════════════
+       SẮP HẾT HÀNG
+    ═══════════════════════════════ */
+    .saphet-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .saphet-item:last-child {
+            border-bottom: none;
+        }
+
+    .saphet-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+        .saphet-badge.het {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .saphet-badge.sap {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+    .saphet-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .saphet-ten {
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .saphet-meta {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    .saphet-soluong {
+        font-size: 14px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+        .saphet-soluong.het {
+            color: var(--red);
+        }
+
+        .saphet-soluong.sap {
+            color: var(--orange);
+        }
+
+    /* ═══════════════════════════════
+       RIGHT PANEL
+    ═══════════════════════════════ */
+    .promo-card {
+        background: var(--white);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .promo-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+        .promo-item:hover {
+            background: var(--bg);
+        }
+
+        .promo-item:last-child {
+            border-bottom: none;
+        }
+
+    .promo-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .promo-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+        .promo-icon.blue {
+            background: var(--blue-light);
+            color: var(--blue-mid);
+        }
+
+        .promo-icon.green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+    .promo-name {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .promo-desc {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    /* ═══════════════════════════════
+       ACTIVITY
+    ═══════════════════════════════ */
+    .activity-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .activity-title {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .activity-badge {
+        background: var(--orange-light);
+        color: var(--orange);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 10px;
+    }
+
+    .activity-list {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+    .act-icon {
+        width: 30px;
+        height: 30px;
+        background: var(--bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .act-text {
+        font-size: 12.5px;
+        line-height: 1.5;
+    }
+
+        .act-text a {
+            color: var(--blue-mid);
             font-weight: 600;
-            margin-bottom: 14px;
+            text-decoration: none;
+        }
+
+            .act-text a:hover {
+                text-decoration: underline;
+            }
+
+    .act-time {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════
+       NOTICE BAR
+    ═══════════════════════════════ */
+    .notice-bar {
+        position: fixed;
+        bottom: 0;
+        left: var(--sidebar-w);
+        right: 0;
+        height: 36px;
+        background: #fff8e1;
+        border-top: 1px solid #ffe082;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 8px;
+        font-size: 12.5px;
+        color: #5d4037;
+        z-index: 100;
+    }
+
+        .notice-bar a {
+            color: var(--blue-mid);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+    /* ═══════════════════════════════
+       MODAL
+    ═══════════════════════════════ */
+    .modal-box {
+        background: white;
+        border-radius: 12px;
+        width: 560px;
+        max-width: 95vw;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 40px rgba(0,0,0,.2);
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .modal-close {
+        border: none;
+        background: none;
+        font-size: 22px;
+        color: #9e9e9e;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+    }
+
+    .modal-footer {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    /* ═══════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════ */
+    @@media (max-width:900px) {
+        .two-col {
+            flex-direction: column;
+        }
+    }
+
+    @@media (max-width:768px) {
+        .dash-wrap {
+            flex-direction: column;
+        }
+
+        .dash-right {
+            width: 100%;
         }
 
         .today-stats {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
-        }
-
-            .stat-icon.blue {
-                background: var(--blue-light);
-                color: var(--blue-mid);
-            }
-
-            .stat-icon.orange {
-                background: var(--orange-light);
-                color: var(--orange);
-            }
-
-            .stat-icon.green {
-                background: var(--green-light);
-                color: var(--green);
-            }
-
-            .stat-icon.red {
-                background: var(--red-light);
-                color: var(--red);
-            }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 1.2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .stat-divider {
-            width: 1px;
-            background: var(--border);
-            margin: 0 4px;
-            align-self: stretch;
+            display: none;
         }
 
-        /* CHART */
-        .chart-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .chart-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .chart-value {
-            color: var(--blue-mid);
-            font-weight: 700;
-            margin-left: 6px;
-        }
-
-        .tab-bar {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 12px;
-        }
-
-        .tab-item {
-            padding: 6px 14px;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: color .15s;
-        }
-
-            .tab-item.active {
-                color: var(--blue-mid);
-                border-bottom-color: var(--blue-mid);
-                font-weight: 600;
-            }
-
-            .tab-item:hover:not(.active) {
-                color: var(--text);
-            }
-
-        .select-sm {
-            height: 30px;
-            padding: 0 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 12.5px;
-            color: var(--text);
-            background: white;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro',sans-serif;
-        }
-
-        /* TOP 10 */
-        .two-col {
-            display: flex;
-            gap: 14px;
-        }
-
-            .two-col > * {
-                flex: 1;
-            }
-
-        .section-title {
-            font-size: 13.5px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .empty-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 0;
-            color: var(--text-muted);
-            font-size: 12.5px;
-            gap: 10px;
-        }
-
-        .empty-box-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--blue-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--blue-mid);
-            font-size: 24px;
-        }
-
-        .top-list {
-            list-style: none;
-        }
-
-            .top-list li {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                padding: 7px 0;
-                border-bottom: 1px solid #f5f5f5;
-                font-size: 13px;
-            }
-
-                .top-list li:last-child {
-                    border-bottom: none;
-                }
-
-        .top-rank {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--blue-light);
-            color: var(--blue);
-            font-size: 11px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-            .top-rank.gold {
-                background: #fff8e1;
-                color: #f9a825;
-            }
-
-            .top-rank.silver {
-                background: #f5f5f5;
-                color: #757575;
-            }
-
-            .top-rank.bronze {
-                background: #fbe9e7;
-                color: #bf360c;
-            }
-
-        .top-name {
-            flex: 1;
-            min-width: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .top-val {
-            font-weight: 600;
-            color: var(--blue);
-            white-space: nowrap;
-        }
-
-        /* RIGHT */
-        .promo-card {
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .promo-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background .15s;
-        }
-
-            .promo-item:hover {
-                background: var(--bg);
-            }
-
-            .promo-item:last-child {
-                border-bottom: none;
-            }
-
-        .promo-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .promo-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-        }
-
-            .promo-icon.blue {
-                background: var(--blue-light);
-                color: var(--blue-mid);
-            }
-
-            .promo-icon.green {
-                background: var(--green-light);
-                color: var(--green);
-            }
-
-        .promo-name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .promo-desc {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
-
-        /* ACTIVITY */
-        .activity-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-title {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .activity-badge {
-            background: var(--orange-light);
-            color: var(--orange);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 7px;
-            border-radius: 10px;
-        }
-
-        .activity-list {
-            max-height: 380px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 10px 14px;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-            .activity-item:last-child {
-                border-bottom: none;
-            }
-
-        .act-icon {
-            width: 30px;
-            height: 30px;
-            background: var(--bg);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .act-text {
-            font-size: 12.5px;
-            line-height: 1.5;
-        }
-
-            .act-text a {
-                color: var(--blue-mid);
-                font-weight: 600;
-                text-decoration: none;
-            }
-
-                .act-text a:hover {
-                    text-decoration: underline;
-                }
-
-        .act-time {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* NOTICE */
         .notice-bar {
-            position: fixed;
-            bottom: 0;
-            left: var(--sidebar-w);
-            right: 0;
-            height: 36px;
-            background: #fff8e1;
-            border-top: 1px solid #ffe082;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
+            left: 0;
+        }
+    }
+
+    @@media (max-width:480px) {
+        .stat-value {
+            font-size: 16px;
+        }
+
+        .chart-header {
+            flex-direction: column;
+            align-items: flex-start;
             gap: 8px;
-            font-size: 12.5px;
-            color: #5d4037;
-            z-index: 99;
         }
+    }
+</style>
 
-            .notice-bar a {
-                color: var(--blue-mid);
-                font-weight: 600;
-                text-decoration: none;
-            }
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
+<div class="dash-wrap">
 
-        ::-webkit-scrollbar-thumb {
-            background: #ddd;
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body>
+    <div class="dash-left">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-icon">C</div>
-            <span class="logo-text">CuaHang</span>
-        </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section-title">Tổng quan</div>
-            <a class="nav-item active" href="/TrangChu"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
-
-            <div class="nav-section-title">Bán hàng</div>
-            <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
-            <a class="nav-item" href="/HoaDon"><i class="bi bi-receipt"></i> Hóa đơn</a>
-
-            <div class="nav-section-title">Kho hàng</div>
-            <a class="nav-item" href="/HangHoa"><i class="bi bi-box-seam"></i> Hàng hóa</a>
-            <a class="nav-item" href="#"><i class="bi bi-truck"></i> Nhập hàng</a>
-
-            <div class="nav-section-title">Danh mục</div>
-            <a class="nav-item" href="/NhaCungCap"><i class="bi bi-people"></i> Nhà cung cấp</a>
-            <a class="nav-item" href="/NhanVien"><i class="bi bi-person-badge"></i> Nhân viên</a>
-
-            <div class="nav-section-title">Báo cáo</div>
-            <a class="nav-item" href="/BaoCao"><i class="bi bi-bar-chart-line"></i> Doanh thu</a>
-        </nav>
-    </aside>
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-        <span class="topbar-title">Tổng quan</span>
-
-        <div class="topbar-right">
-            <button class="topbar-btn" onclick="loadAll()" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
-
-            <button class="topbar-btn">
-                <i class="bi bi-bell"></i>
-            </button>
-
-            <div class="avatar-container">
-                <div class="topbar-avatar" onclick="toggleMenu()">A</div>
-
-                <div class="avatar-menu" id="avatarMenu">
-                    <div class="menu-item">
-                        <b>Thông tin cá nhân</b><br>
-                    </div>
-                    <div class="menu-item logout" onclick="location.href='@Url.Action("Logout","Login")'">
-                        Đăng xuất
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- MAIN -->
-    <main class="main">
-
-        <div class="main-left">
-
-            <!-- Stats hôm nay -->
-            <div class="card">
-                <div class="today-header">Kết quả bán hàng hôm nay</div>
-                <div class="today-stats">
-                    <div class="stat-item">
-                        <div class="stat-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
-                        <div>
-                            <div class="stat-label">Doanh thu</div>
-                            <div class="stat-value" id="statDoanhThu">—</div>
-                        </div>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <div class="stat-icon orange"><i class="bi bi-arrow-return-left"></i></div>
-                        <div>
-                            <div class="stat-label">Trả hàng</div>
-                            <div class="stat-value" id="statTraHang">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <div class="stat-icon green"><i class="bi bi-receipt"></i></div>
-                        <div>
-                            <div class="stat-label">Hóa đơn</div>
-                            <div class="stat-value" id="statHoaDon">—</div>
-                        </div>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div>
-                        <div>
-                            <div class="stat-label">Sắp hết hàng</div>
-                            <div class="stat-value" id="statSapHet">—</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Biểu đồ -->
-            <div class="card">
-                <div class="chart-header">
+        <!-- Stats hôm nay -->
+        <div class="card">
+            <div class="today-header">Kết quả bán hàng hôm nay</div>
+            <div class="today-stats">
+                <div class="stat-item">
+                    <div class="stat-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
                     <div>
-                        <span class="chart-title">Doanh thu thuần</span>
-                        <span class="chart-value" id="tongDoanhThu">0</span>
+                        <div class="stat-label">Doanh thu</div>
+                        <div class="stat-value" id="statDoanhThu">—</div>
                     </div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon orange"><i class="bi bi-arrow-return-left"></i></div>
+                    <div>
+                        <div class="stat-label">Trả hàng</div>
+                        <div class="stat-value" id="statTraHang">0</div>
+                    </div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon green"><i class="bi bi-receipt"></i></div>
+                    <div>
+                        <div class="stat-label">Hóa đơn</div>
+                        <div class="stat-value" id="statHoaDon">—</div>
+                    </div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div>
+                    <div>
+                        <div class="stat-label">Sắp hết hàng</div>
+                        <div class="stat-value" id="statSapHet"
+                             style="cursor:pointer;color:var(--red)"
+                             onclick="moModalSapHet()">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu -->
+        <div class="card">
+            <div class="chart-header">
+                <div>
+                    <span class="chart-title">Doanh thu thuần</span>
+                    <span class="chart-value" id="tongDoanhThu">0</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
                     <select class="select-sm" id="filterChart" onchange="loadChart()">
                         <option value="month">Tháng này</option>
                         <option value="week">Tuần này</option>
                         <option value="year">Năm nay</option>
                     </select>
+                    <a href="/BaoCao" style="font-size:12px;color:var(--blue-mid);text-decoration:none;white-space:nowrap">Xem chi tiết →</a>
                 </div>
-                <div class="tab-bar">
-                    <div class="tab-item active" onclick="switchTab(this)">Theo ngày</div>
-                    <div class="tab-item" onclick="switchTab(this)">Theo giờ</div>
-                    <div class="tab-item" onclick="switchTab(this)">Theo thứ</div>
-                </div>
-                <canvas id="revenueChart" height="90"></canvas>
             </div>
+            <div class="tab-bar">
+                <div class="tab-item active" onclick="switchTab(this)">Theo ngày</div>
+                <div class="tab-item" onclick="switchTab(this)">Theo giờ</div>
+                <div class="tab-item" onclick="switchTab(this)">Theo thứ</div>
+            </div>
+            <canvas id="revenueChart" height="90"></canvas>
+        </div>
 
-            <!-- Top 10 -->
-            <div class="two-col">
-                <div class="card">
-                    <div class="chart-header">
-                        <div class="section-title">Top 10 hàng bán chạy</div>
-                        <select class="select-sm" id="sortTopSP" onchange="loadTopSanPham()">
-                            <option value="revenue">Theo doanh thu thuần</option>
-                            <option value="quantity">Theo số lượng</option>
-                        </select>
-                    </div>
-                    <ul class="top-list" id="topSanPhamList">
-                        <div class="empty-box">
-                            <div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div>
-                            <span>Đang tải...</span>
-                        </div>
-                    </ul>
+        <!-- Top 10 -->
+        <div class="two-col">
+            <div class="card">
+                <div class="chart-header">
+                    <div class="section-title">Top 10 hàng bán chạy</div>
+                    <select class="select-sm" id="sortTopSP" onchange="loadTopSanPham()">
+                        <option value="revenue">Doanh thu</option>
+                        <option value="quantity">Số lượng</option>
+                    </select>
                 </div>
-                <div class="card">
-                    <div class="chart-header">
-                        <div class="section-title">Top 10 khách mua nhiều nhất</div>
-                        <select class="select-sm">
-                            <option>Tháng này</option>
-                            <option>Tuần này</option>
-                        </select>
-                    </div>
+                <ul class="top-list" id="topSanPhamList">
                     <div class="empty-box">
-                        <div class="empty-box-icon"><i class="bi bi-inbox"></i></div>
-                        <span>Chưa có dữ liệu</span>
+                        <div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <span>Đang tải...</span>
                     </div>
-                </div>
+                </ul>
             </div>
 
+            <div class="card">
+                <div class="chart-header">
+                    <div class="section-title">Top doanh thu theo nhân viên</div>
+                    <select class="select-sm" id="filterTopKH" onchange="loadTopKhachHang()">
+                        <option value="month">Tháng này</option>
+                        <option value="week">Tuần này</option>
+                    </select>
+                </div>
+                <ul class="top-list" id="topKhachHangList">
+                    <div class="empty-box">
+                        <div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div>
+                        <span>Đang tải...</span>
+                    </div>
+                </ul>
+            </div>
         </div>
 
-        <!-- RIGHT -->
-        <div class="main-right">
+    </div><!-- /.dash-left -->
+    <!-- RIGHT PANEL -->
+    <div class="dash-right">
 
-            <div class="promo-card">
-                <div class="promo-item">
-                    <div class="promo-left">
-                        <div class="promo-icon blue"><i class="bi bi-qr-code"></i></div>
-                        <div>
-                            <div class="promo-name">Thanh toán</div>
-                            <div class="promo-desc">Cài đặt QR tiện lợi miễn phí</div>
-                        </div>
+        <div class="promo-card">
+            <div class="promo-item">
+                <div class="promo-left">
+                    <div class="promo-icon blue"><i class="bi bi-qr-code"></i></div>
+                    <div>
+                        <div class="promo-name">Thanh toán</div>
+                        <div class="promo-desc">Cài đặt QR tiện lợi miễn phí</div>
                     </div>
-                    <i class="bi bi-chevron-right" style="color:#bbb"></i>
                 </div>
-                <div class="promo-item">
-                    <div class="promo-left">
-                        <div class="promo-icon green"><i class="bi bi-cash-coin"></i></div>
-                        <div>
-                            <div class="promo-name">Vay vốn</div>
-                            <div class="promo-desc">Đủ vốn hôm nay, vững vàng mai</div>
-                        </div>
+                <i class="bi bi-chevron-right" style="color:#bbb"></i>
+            </div>
+            <div class="promo-item">
+                <div class="promo-left">
+                    <div class="promo-icon green"><i class="bi bi-cash-coin"></i></div>
+                    <div>
+                        <div class="promo-name">Vay vốn</div>
+                        <div class="promo-desc">Đủ vốn hôm nay, vững vàng mai</div>
                     </div>
-                    <i class="bi bi-chevron-right" style="color:#bbb"></i>
                 </div>
+                <i class="bi bi-chevron-right" style="color:#bbb"></i>
             </div>
-
-            <div class="promo-card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-                <div class="activity-header">
-                    <span class="activity-title">Hoạt động gần đây</span>
-                    <span class="activity-badge" id="actBadge">0</span>
-                </div>
-                <div class="activity-list" id="activityList">
-                    <div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>
-                </div>
-            </div>
-
         </div>
 
-    </main>
+        <div class="promo-card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+            <div class="activity-header">
+                <span class="activity-title">Hoạt động gần đây</span>
+                <span class="activity-badge" id="actBadge">0</span>
+            </div>
+            <div class="activity-list" id="activityList">
+                <div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>
+            </div>
+        </div>
 
-    <!-- NOTICE -->
-    <div class="notice-bar">
-        <i class="bi bi-info-circle" style="color:#f57c00"></i>
-        Hệ thống quản lý bán hàng &nbsp;|&nbsp;
-        <a href="/BanHang">Bắt đầu bán hàng</a>
+    </div><!-- /.dash-right -->
+
+</div><!-- /.dash-wrap -->
+<!-- NOTICE BAR -->
+<div class="notice-bar" id="noticeBar">
+    <i class="bi bi-info-circle" style="color:#f57c00"></i>
+    <span id="noticeText">Hệ thống quản lý bán hàng</span>
+    &nbsp;|&nbsp; <a href="/BanHang">Bắt đầu bán hàng</a>
+    &nbsp;|&nbsp; <a href="/BaoCao">Báo cáo</a>
+</div>
+
+<!-- MODAL SẮP HẾT HÀNG -->
+<div id="modalSapHet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span style="font-size:15px;font-weight:700;color:var(--red)">
+                <i class="bi bi-exclamation-triangle me-2"></i>Sản phẩm sắp hết / hết hàng
+            </span>
+            <button class="modal-close" onclick="dongModalSapHet()">×</button>
+        </div>
+        <div class="modal-body" id="sapHetBody">
+            <div class="empty-box">
+                <div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div>
+                <span>Đang tải...</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="dongModalSapHet()"
+                    style="height:34px;padding:0 16px;border:1px solid var(--border);border-radius:6px;background:white;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;font-size:13px">
+                Đóng
+            </button>
+            <a href="/HangHoa"
+               style="height:34px;padding:0 16px;border:none;border-radius:6px;background:var(--blue);color:white;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none">
+                <i class="bi bi-box-seam"></i> Quản lý hàng hóa
+            </a>
+        </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <script>
-        let revenueChart;
+<script>
+    let revenueChart;
 
-        // ── CHART ──────────────────────────────────────────
-        function initChart(labels, data) {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            if (revenueChart) revenueChart.destroy();
-            revenueChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        borderColor: '#4285f4',
-                        backgroundColor: 'rgba(66,133,244,.08)',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#4285f4',
-                        fill: true, tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: '#f0f0f0' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e' } },
-                        y: {
-                            grid: { color: '#f0f0f0' }, beginAtZero: true,
-                            ticks: {
-                                font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e',
-                                callback: v => v === 0 ? '0' : v >= 1000000 ? (v / 1000000).toFixed(0) + 'tr' : v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
-                            }
+    function initChart(labels, data) {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        if (revenueChart) revenueChart.destroy();
+        revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    data,
+                    borderColor: '#4285f4',
+                    backgroundColor: 'rgba(66,133,244,.08)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#4285f4',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#f0f0f0' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e', maxTicksLimit: 10 } },
+                    y: {
+                        grid: { color: '#f0f0f0' }, beginAtZero: true,
+                        ticks: {
+                            font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e',
+                            callback: v => v === 0 ? '0' : v >= 1000000 ? (v / 1000000).toFixed(0) + 'tr' : v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
                         }
                     }
                 }
-            });
-        }
-
-        // ── LOAD STATS ────────────────────────────────────
-        function loadStats() {
-            $.get('/Dashboard/GetStats', function (res) {
-                if (!res.success) { $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'); return; }
-                $('#statDoanhThu').text(res.doanhThuText);
-                $('#statTraHang').text(res.traHang);
-                $('#statHoaDon').text(res.soHoaDon);
-                $('#statSapHet').text(res.sapHet);
-            }).fail(() => $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'));
-        }
-
-        // ── LOAD CHART ────────────────────────────────────
-        function loadChart() {
-            let filter = $('#filterChart').val();
-            $.get('/Dashboard/GetDoanhThu', { filter: filter }, function (res) {
-                if (!res.success) return;
-                $('#tongDoanhThu').text(res.tongDoanhThuText);
-                initChart(res.labels, res.data);
-            });
-        }
-
-        function switchTab(el) {
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            loadChart();
-        }
-
-        // ── LOAD TOP SẢN PHẨM ────────────────────────────
-        function loadTopSanPham() {
-            let sortBy = $('#sortTopSP').val();
-            let filter = $('#filterChart').val();
-
-            $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
-
-            $.get('/Dashboard/GetTopSanPham', { sortBy: sortBy, filter: filter }, function (res) {
-                if (!res.success || !res.data.length) {
-                    $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
-                    return;
-                }
-                let html = '';
-                res.data.forEach((sp, i) => {
-                    let rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-                    let val = sortBy === 'quantity'
-                        ? sp.TongSoLuong + ' cái'
-                        : Number(sp.TongDoanhThu).toLocaleString('vi-VN') + ' ₫';
-                    html += `<li>
-                        <div class="top-rank ${rankClass}">${i + 1}</div>
-                        <div class="top-name" title="${sp.TenSanPham}">${sp.TenSanPham}</div>
-                        <div class="top-val">${val}</div>
-                    </li>`;
-                });
-                $('#topSanPhamList').html(html);
-            }).fail(() => $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-exclamation-circle"></i></div><span>Lỗi tải dữ liệu</span></div>'));
-        }
-
-        // ── LOAD HOẠT ĐỘNG ────────────────────────────────
-        function loadActivity() {
-            $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>');
-
-            $.get('/Dashboard/GetHoatDong', function (res) {
-                if (!res.success || !res.data.length) {
-                    $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Chưa có hoạt động</div>');
-                    $('#actBadge').text('0');
-                    return;
-                }
-                let html = '';
-                res.data.forEach(a => {
-                    let isBan = a.hanhDong.includes('bán');
-                    let icon = isBan ? 'bi-bag-check' : 'bi-box-arrow-in-down';
-                    let color = isBan ? '#1565c0' : '#2e7d32';
-                    html += `<div class="activity-item">
-                        <div class="act-icon" style="color:${color}"><i class="bi ${icon}"></i></div>
-                        <div>
-                            <div class="act-text">
-                                <a href="#">${a.nguoiDung}</a> vừa
-                                <a href="#">${a.hanhDong}</a>
-                                với giá trị <strong>${a.giaTri}</strong>
-                            </div>
-                            <div class="act-time">${a.thoiGian}</div>
-                        </div>
-                    </div>`;
-                });
-                $('#activityList').html(html);
-                $('#actBadge').text(res.total);
-            }).fail(() => $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Lỗi tải dữ liệu</div>'));
-        }
-
-        // ── LOAD TẤT CẢ ──────────────────────────────────
-        function loadAll() {
-            loadStats();
-            loadChart();
-            loadTopSanPham();
-            loadActivity();
-        }
-
-        // Tự refresh mỗi 60 giây
-        setInterval(loadAll, 60000);
-
-        $(function () { loadAll(); });
-
-
-
-        function toggleMenu() {
-            const menu = document.getElementById("avatarMenu");
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
-        }
-
-        document.addEventListener("click", function (e) {
-            const avatar = document.querySelector(".topbar-avatar");
-            const menu = document.getElementById("avatarMenu");
-
-            if (!avatar.contains(e.target) && !menu.contains(e.target)) {
-                menu.style.display = "none";
             }
         });
-    </script>
-</body>
-</html>
+    }
+
+    function loadStats() {
+        $.get('/Dashboard/GetStats', function (res) {
+            if (!res.success) { $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'); return; }
+            $('#statDoanhThu').text(res.doanhThuText);
+            $('#statTraHang').text(res.traHang);
+            $('#statHoaDon').text(res.soHoaDon);
+            $('#statSapHet').text(res.sapHet > 0 ? res.sapHet : '0');
+            if (res.sapHet > 0) {
+                $('#noticeText').html('<span style="color:var(--red);font-weight:600;cursor:pointer" onclick="moModalSapHet()">⚠ ' + res.sapHet + ' sản phẩm sắp hết hàng — Click để xem</span>');
+            }
+        }).fail(() => $('#statDoanhThu,#statHoaDon,#statSapHet').text('—'));
+    }
+
+    function loadChart() {
+        $.get('/Dashboard/GetDoanhThu', { filter: $('#filterChart').val() }, function (res) {
+            if (!res.success) return;
+            $('#tongDoanhThu').text(res.tongDoanhThuText);
+            initChart(res.labels, res.data);
+        });
+    }
+
+    function switchTab(el) {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        loadChart();
+    }
+
+    function loadTopSanPham() {
+        let sortBy = $('#sortTopSP').val() || 'revenue';
+        let filter = $('#filterChart').val() || 'month';
+        $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
+        $.get('/Dashboard/GetTopSanPham', { sortBy, filter }, function (res) {
+            if (!res.success || !res.data.length) {
+                $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
+                return;
+            }
+            let html = '';
+            res.data.forEach((sp, i) => {
+                let rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                let val = sortBy === 'quantity'
+                    ? '<div class="top-val">' + sp.TongSoLuong + ' cái</div>'
+                    : '<div><div class="top-val">' + Number(sp.TongDoanhThu).toLocaleString('vi-VN') + ' ₫</div><div class="top-sub">' + sp.TongSoLuong + ' cái</div></div>';
+                html += '<li><div class="top-rank ' + rc + '">' + (i + 1) + '</div><div class="top-name" title="' + sp.TenSanPham + '">' + sp.TenSanPham + '</div>' + val + '</li>';
+            });
+            $('#topSanPhamList').html(html);
+        }).fail(() => $('#topSanPhamList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-exclamation-circle"></i></div><span>Lỗi tải</span></div>'));
+    }
+
+    function loadTopKhachHang() {
+        let filter = $('#filterTopKH').val() || 'month';
+        $('#topKhachHangList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
+        $.get('/Dashboard/GetTopKhachHang', { filter }, function (res) {
+            if (!res.success || !res.data.length) {
+                $('#topKhachHangList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
+                return;
+            }
+            let html = '';
+            res.data.forEach((kh, i) => {
+                let rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                html += '<li><div class="top-rank ' + rc + '">' + (i + 1) + '</div><div class="top-name" title="' + kh.HoTen + '">' + kh.HoTen + '</div><div><div class="top-val">' + kh.TongDoanhThuText + '</div><div class="top-sub">' + kh.SoHoaDon + ' đơn</div></div></li>';
+            });
+            $('#topKhachHangList').html(html);
+        }).fail(() => $('#topKhachHangList').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-exclamation-circle"></i></div><span>Lỗi tải</span></div>'));
+    }
+
+    function moModalSapHet() {
+        $('#modalSapHet').css('display', 'flex');
+        $('#sapHetBody').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
+        $.get('/Dashboard/GetSapHetHang', function (res) {
+            if (!res.success || !res.data.length) {
+                $('#sapHetBody').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-check-circle" style="color:var(--green)"></i></div><span style="color:var(--green)">Tất cả sản phẩm còn đủ hàng!</span></div>');
+                return;
+            }
+            let html = '';
+            res.data.forEach(sp => {
+                let isHet = sp.trangThai === 'het';
+                let cls = isHet ? 'het' : 'sap';
+                let label = isHet ? 'Hết hàng' : 'Sắp hết';
+                let icon = isHet ? 'bi-x-circle-fill' : 'bi-exclamation-triangle-fill';
+                html += '<div class="saphet-item"><div class="saphet-info"><div class="saphet-ten">' + sp.tenSanPham + '</div><div class="saphet-meta">'
+                    + (sp.maVach ? '<span style="background:#f1f3f4;padding:1px 6px;border-radius:4px;font-size:11px;margin-right:6px">' + sp.maVach + '</span>' : '')
+                    + (sp.danhMuc !== '—' ? '<span style="color:var(--blue-mid)">' + sp.danhMuc + '</span>' : '')
+                    + ' &nbsp;·&nbsp; Giá bán: <strong>' + Number(sp.giaBan).toLocaleString('vi-VN') + ' ₫</strong>'
+                    + ' &nbsp;·&nbsp; Tối thiểu: <strong>' + sp.soLuongToiThieu + '</strong>'
+                    + '</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">'
+                    + '<div class="saphet-soluong ' + cls + '">' + sp.soLuong + '</div>'
+                    + '<span class="saphet-badge ' + cls + '"><i class="bi ' + icon + '"></i> ' + label + '</span>'
+                    + '</div></div>';
+            });
+            $('#sapHetBody').html(html);
+        });
+    }
+
+    function dongModalSapHet() { $('#modalSapHet').css('display', 'none'); }
+
+    function loadActivity() {
+        $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Đang tải...</div>');
+        $.get('/Dashboard/GetHoatDong', function (res) {
+            if (!res.success || !res.data.length) {
+                $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Chưa có hoạt động</div>');
+                $('#actBadge').text('0'); return;
+            }
+            let html = '';
+            res.data.forEach(a => {
+                let isBan = a.hanhDong.includes('bán');
+                let icon = isBan ? 'bi-bag-check' : 'bi-box-arrow-in-down';
+                let color = isBan ? '#1565c0' : '#2e7d32';
+                html += '<div class="activity-item"><div class="act-icon" style="color:' + color + '"><i class="bi ' + icon + '"></i></div>'
+                    + '<div><div class="act-text"><a href="#">' + a.nguoiDung + '</a> vừa <a href="#">' + a.hanhDong + '</a> — <strong>' + a.giaTri + ' ₫</strong></div>'
+                    + '<div class="act-time">' + a.thoiGian + '</div></div></div>';
+            });
+            $('#activityList').html(html);
+            $('#actBadge').text(res.total);
+        }).fail(() => $('#activityList').html('<div style="padding:20px;text-align:center;color:#bbb;font-size:12px;">Lỗi tải</div>'));
+    }
+
+    function loadAll() {
+        loadStats();
+        loadChart();
+        setTimeout(function () { loadTopSanPham(); loadTopKhachHang(); }, 100);
+        loadActivity();
+    }
+
+    setInterval(loadAll, 60000);
+    $(function () { loadAll(); });
+
+    document.getElementById('modalSapHet').addEventListener('click', function (e) {
+        if (e.target === this) dongModalSapHet();
+    });
+</script>

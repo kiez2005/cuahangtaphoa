@@ -91,7 +91,7 @@
                                 Sửa
                             </button>
 
-                            <a href="@Url.Action("Delete","SanPham", new { id = item.MaSanPham })"
+                            <a href="@Url.Action("Delete","HangHoa", new { id = item.MaSanPham })"
                                class="btn btn-danger btn-sm"
                                onclick="return confirm('Bạn có chắc muốn xóa?')">
                                 Xóa
@@ -137,7 +137,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/Create" method="post">
+            <form action="/HangHoa/Create" method="post">
 
                 <div class="modal-body">
 
@@ -214,7 +214,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/Edit" method="post">
+            <form action="/HangHoa/Edit" method="post">
 
                 <div class="modal-body">
 
@@ -274,7 +274,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/SetPrice" method="post">
+            <form action="/HangHoa/SetPrice" method="post">
 
                 <div class="modal-body">
 
