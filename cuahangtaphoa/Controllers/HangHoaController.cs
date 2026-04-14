@@ -12,7 +12,7 @@ namespace cuahangtaphoa.Controllers
         // GET: SanPham
         testEntities db = new testEntities();
 
-        public ActionResult Index(string search)
+        public ActionResult Index(string search, int? MaDanhMuc, string sort)
         {
             var sanpham = db.SanPhams.AsQueryable();
 
@@ -22,6 +22,23 @@ namespace cuahangtaphoa.Controllers
                     s.TenSanPham.Contains(search) ||
                     s.MaVach.Contains(search));
             }
+            if (MaDanhMuc.HasValue)
+            {
+                sanpham = sanpham.Where(s => s.MaDanhMuc == MaDanhMuc);
+            }
+            switch (sort)
+            {
+                case "ten":
+                    sanpham = sanpham.OrderBy(s => s.TenSanPham);
+                    break;
+                case "gia_asc":
+                    sanpham = sanpham.OrderBy(s => s.GiaBan);
+                    break;
+                case "gia_desc":
+                    sanpham = sanpham.OrderByDescending(s => s.GiaBan);
+                    break;
+            }
+            ViewBag.Sort = sort;
             ViewBag.MaDanhMuc = new SelectList(db.DanhMucs, "MaDanhMuc", "TenDanhMuc");
             ViewBag.MaNhaCungCap = new SelectList(db.NhaCungCaps, "MaNhaCungCap", "TenNhaCungCap");
 
@@ -83,7 +100,30 @@ namespace cuahangtaphoa.Controllers
             old.TenSanPham = sp.TenSanPham ?? old.TenSanPham;
             old.MaVach = sp.MaVach ?? old.MaVach;
             old.SoLuong = sp.SoLuong;
+            if (sp.HanSuDung != null)
+            {
+                old.HanSuDung = sp.HanSuDung;
             old.HanSuDung = sp.HanSuDung;
+            old.MaDanhMuc = sp.MaDanhMuc ?? old.MaDanhMuc;
+            old.MaNhaCungCap = sp.MaNhaCungCap ?? old.MaNhaCungCap;
+
+            var giaNhapRaw = Request?.Form["GiaNhap"];
+            var giaBanRaw = Request?.Form["GiaBan"];
+
+            if (decimal.TryParse(giaNhapRaw, out decimal gn))
+                old.GiaNhap = gn;
+
+            if (decimal.TryParse(giaBanRaw, out decimal gb))
+                old.GiaBan = gb;
+
+            if (fileAnh != null && fileAnh.ContentLength > 0)
+            {
+                var fileName = System.IO.Path.GetFileName(fileAnh.FileName);
+                var path = Server.MapPath("~/Content/images/" + fileName);
+                fileAnh.SaveAs(path);
+
+                old.HinhAnh = "/Content/images/" + fileName;
+            }
             old.MaDanhMuc = sp.MaDanhMuc ?? old.MaDanhMuc;
             old.MaNhaCungCap = sp.MaNhaCungCap ?? old.MaNhaCungCap;
 
