@@ -103,6 +103,26 @@ namespace cuahangtaphoa.Controllers
             if (sp.HanSuDung != null)
             {
                 old.HanSuDung = sp.HanSuDung;
+            old.HanSuDung = sp.HanSuDung;
+            old.MaDanhMuc = sp.MaDanhMuc ?? old.MaDanhMuc;
+            old.MaNhaCungCap = sp.MaNhaCungCap ?? old.MaNhaCungCap;
+
+            var giaNhapRaw = Request?.Form["GiaNhap"];
+            var giaBanRaw = Request?.Form["GiaBan"];
+
+            if (decimal.TryParse(giaNhapRaw, out decimal gn))
+                old.GiaNhap = gn;
+
+            if (decimal.TryParse(giaBanRaw, out decimal gb))
+                old.GiaBan = gb;
+
+            if (fileAnh != null && fileAnh.ContentLength > 0)
+            {
+                var fileName = System.IO.Path.GetFileName(fileAnh.FileName);
+                var path = Server.MapPath("~/Content/images/" + fileName);
+                fileAnh.SaveAs(path);
+
+                old.HinhAnh = "/Content/images/" + fileName;
             }
             old.MaDanhMuc = sp.MaDanhMuc ?? old.MaDanhMuc;
             old.MaNhaCungCap = sp.MaNhaCungCap ?? old.MaNhaCungCap;

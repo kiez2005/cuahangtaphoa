@@ -1,819 +1,658 @@
 ﻿@{
     ViewBag.Title = "Báo cáo";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Báo cáo - Cửa hàng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        :root {
-            --blue: #1565c0;
-            --blue-light: #e8f0fe;
-            --blue-mid: #4285f4;
-            --orange: #f57c00;
-            --orange-light: #fff3e0;
-            --green: #2e7d32;
-            --green-light: #e8f5e9;
-            --red: #c62828;
-            --red-light: #ffebee;
-            --purple: #6a1b9a;
-            --purple-light: #f3e5f5;
-            --border: #e8eaed;
-            --bg: #f1f3f4;
-            --text: #202124;
-            --text-muted: #5f6368;
-            --white: #ffffff;
-            --sidebar-w: 220px;
-            --topbar-h: 52px;
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+    /* FILTER */
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 14px 16px;
+        margin-bottom: 16px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .date-input {
+        height: 34px;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: 'Be Vietnam Pro',sans-serif;
+        outline: none;
+    }
+
+        .date-input:focus {
+            border-color: var(--blue-mid);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    .quick-btn {
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        font-size: 12.5px;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: 'Be Vietnam Pro',sans-serif;
+        white-space: nowrap;
+    }
+
+        .quick-btn:hover, .quick-btn.active {
+            background: var(--blue-light);
+            color: var(--blue);
+            border-color: var(--blue-mid);
+            font-weight: 600;
         }
 
-        body {
-            font-family: 'Be Vietnam Pro',sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            font-size: 13.5px;
+    .apply-btn {
+        height: 34px;
+        padding: 0 16px;
+        border: none;
+        border-radius: 6px;
+        background: var(--blue);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: 'Be Vietnam Pro',sans-serif;
+    }
+
+        .apply-btn:hover {
+            background: #0d47a1;
         }
 
-        /* ── SIDEBAR ── */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: var(--sidebar-w);
-            background: var(--white);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
+    /* STAT GRID */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .stat-card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+        .stat-card-icon.blue {
+            background: var(--blue-light);
+            color: var(--blue-mid);
         }
 
-        .sidebar-logo {
-            height: var(--topbar-h);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
+        .stat-card-icon.green {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .stat-card-icon.orange {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .stat-card-icon.purple {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+    .stat-card-label {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .stat-card-value {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .stat-card-sub {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    /* CARD */
+    .card {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+        .card-title i {
+            color: var(--blue-mid);
+        }
+
+    .select-sm {
+        height: 30px;
+        padding: 0 8px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12.5px;
+        background: white;
+        cursor: pointer;
+        font-family: 'Be Vietnam Pro',sans-serif;
+    }
+
+    /* TWO COL */
+    .two-col {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* TABLE */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .data-table th {
+            background: #f8f9fb;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-weight: 600;
             border-bottom: 1px solid var(--border);
-            gap: 8px;
+            white-space: nowrap;
         }
 
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            background: var(--blue);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
+        .data-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+            vertical-align: middle;
         }
 
-        .logo-text {
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover td {
+            background: #fafbff;
+        }
+
+        .data-table tfoot td {
             font-weight: 700;
-            font-size: 14px;
+            background: #f8f9fb;
+            border-top: 2px solid var(--border);
+        }
+
+    .badge-success {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .badge-warning {
+        display: inline-block;
+        background: #fff3e0;
+        color: #f57c00;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .rank-badge {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .rank-badge.gold {
+            background: #fff8e1;
+            color: #f9a825;
+        }
+
+        .rank-badge.silver {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
+        .rank-badge.bronze {
+            background: #fbe9e7;
+            color: #bf360c;
+        }
+
+        .rank-badge.normal {
+            background: var(--blue-light);
             color: var(--blue);
         }
 
-        .sidebar-nav {
-            flex: 1;
-            padding: 8px 0;
-            overflow-y: auto;
+    .progress-wrap {
+        background: #f0f0f0;
+        border-radius: 4px;
+        height: 6px;
+        margin-top: 4px;
+    }
+
+    .progress-fill {
+        height: 6px;
+        border-radius: 4px;
+        background: var(--blue-mid);
+    }
+
+    .empty-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+        color: var(--text-muted);
+        font-size: 12.5px;
+        gap: 10px;
+    }
+
+    .empty-box-icon {
+        width: 52px;
+        height: 52px;
+        background: var(--blue-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blue-mid);
+        font-size: 22px;
+    }
+
+    @@media print {
+        .sidebar, .topbar, .notice-bar, .filter-bar {
+            display: none !important;
         }
 
-        .nav-section-title {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: .8px;
-            padding: 10px 16px 4px;
+        .content {
+            margin: 0 !important;
+            padding: 0 !important;
         }
+    }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background .15s,color .15s;
-            border-left: 3px solid transparent;
-        }
-
-            .nav-item:hover {
-                background: var(--blue-light);
-                color: var(--blue);
-            }
-
-            .nav-item.active {
-                background: var(--blue-light);
-                color: var(--blue);
-                font-weight: 600;
-                border-left-color: var(--blue);
-            }
-
-            .nav-item i {
-                font-size: 16px;
-                width: 18px;
-                text-align: center;
-            }
-
-        /* ── TOPBAR ── */
-        .topbar {
-            position: fixed;
-            left: var(--sidebar-w);
-            right: 0;
-            top: 0;
-            height: var(--topbar-h);
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            gap: 12px;
-            z-index: 99;
-        }
-
-        .topbar-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .topbar-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .topbar-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .topbar-btn {
-            height: 32px;
-            padding: 0 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-            font-size: 13px;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Be Vietnam Pro',sans-serif;
-            transition: background .15s;
-        }
-
-            .topbar-btn:hover {
-                background: var(--bg);
-            }
-
-            .topbar-btn.primary {
-                background: var(--blue);
-                color: white;
-                border-color: var(--blue);
-            }
-
-                .topbar-btn.primary:hover {
-                    background: #0d47a1;
-                }
-
-        /* ── MAIN ── */
-        .main {
-            margin-left: var(--sidebar-w);
-            margin-top: var(--topbar-h);
-            padding: 20px 20px 52px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* ── CARD ── */
-        .card {
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 16px;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-            .card-title i {
-                color: var(--blue-mid);
-            }
-
-        /* ── BỘ LỌC NGÀY ── */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 14px 16px;
-        }
-
-        .filter-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .date-input {
-            height: 34px;
-            padding: 0 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--text);
-            font-family: 'Be Vietnam Pro',sans-serif;
-            outline: none;
-            transition: border .15s;
-        }
-
-            .date-input:focus {
-                border-color: var(--blue-mid);
-            }
-
-        .quick-btn {
-            height: 32px;
-            padding: 0 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: white;
-            font-size: 12.5px;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro',sans-serif;
-            transition: all .15s;
-            white-space: nowrap;
-        }
-
-            .quick-btn:hover, .quick-btn.active {
-                background: var(--blue-light);
-                color: var(--blue);
-                border-color: var(--blue-mid);
-                font-weight: 600;
-            }
-
-        .apply-btn {
-            height: 34px;
-            padding: 0 16px;
-            border: none;
-            border-radius: 6px;
-            background: var(--blue);
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro',sans-serif;
-            transition: background .15s;
-        }
-
-            .apply-btn:hover {
-                background: #0d47a1;
-            }
-
-        /* ── STAT CARDS ── */
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @@media (max-width: 1024px) {
         .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4,1fr);
-            gap: 14px;
+            grid-template-columns: repeat(2,1fr);
         }
 
-        .stat-card {
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        .two-col {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform .25s;
+            z-index: 200;
         }
 
-        .stat-card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 20px rgba(0,0,0,.2);
+            }
+
+        .content {
+            margin-left: 0 !important;
+            padding: 12px !important;
         }
 
-            .stat-card-icon.blue {
-                background: var(--blue-light);
-                color: var(--blue-mid);
-            }
-
-            .stat-card-icon.green {
-                background: var(--green-light);
-                color: var(--green);
-            }
-
-            .stat-card-icon.orange {
-                background: var(--orange-light);
-                color: var(--orange);
-            }
-
-            .stat-card-icon.purple {
-                background: var(--purple-light);
-                color: var(--purple);
-            }
-
-        .stat-card-info {
-            flex: 1;
-            min-width: 0;
+        .topbar {
+            left: 0 !important;
         }
 
-        .stat-card-label {
-            font-size: 12px;
-            color: var(--text-muted);
+        .hamburger {
+            display: flex !important;
+        }
+        /* Stat grid 2 cột */
+        .stat-grid {
+            grid-template-columns: repeat(2,1fr);
+            gap: 8px;
         }
 
         .stat-card-value {
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 1.3;
+            font-size: 16px;
         }
-
-        .stat-card-sub {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* ── TWO COL ── */
-        .two-col {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 16px;
-        }
-
-        .three-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-        }
-
-        /* ── CHART ── */
-        .select-sm {
-            height: 30px;
-            padding: 0 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 12.5px;
-            color: var(--text);
-            background: white;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro',sans-serif;
-        }
-
-        /* ── TABLE ── */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-            .data-table th {
-                background: #f8f9fb;
-                padding: 8px 12px;
-                text-align: left;
-                font-size: 12.5px;
-                color: var(--text-muted);
-                font-weight: 600;
-                border-bottom: 1px solid var(--border);
-                white-space: nowrap;
-            }
-
-            .data-table td {
-                padding: 9px 12px;
-                border-bottom: 1px solid #f3f4f6;
-                font-size: 13px;
-                vertical-align: middle;
-            }
-
-            .data-table tr:last-child td {
-                border-bottom: none;
-            }
-
-            .data-table tr:hover td {
-                background: #fafbff;
-            }
-
-            .data-table tfoot td {
-                font-weight: 700;
-                background: #f8f9fb;
-                border-top: 2px solid var(--border);
-            }
-
-        .badge-success {
-            display: inline-block;
-            background: var(--green-light);
-            color: var(--green);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        .badge-warning {
-            display: inline-block;
-            background: var(--orange-light);
-            color: var(--orange);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        .rank-badge {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .rank-badge.gold {
-                background: #fff8e1;
-                color: #f9a825;
-            }
-
-            .rank-badge.silver {
-                background: #f5f5f5;
-                color: #757575;
-            }
-
-            .rank-badge.bronze {
-                background: #fbe9e7;
-                color: #bf360c;
-            }
-
-            .rank-badge.normal {
-                background: var(--blue-light);
-                color: var(--blue);
-            }
-
-        /* ── PROGRESS BAR ── */
-        .progress-wrap {
-            background: #f0f0f0;
-            border-radius: 4px;
-            height: 6px;
-            margin-top: 4px;
-        }
-
-        .progress-fill {
-            height: 6px;
-            border-radius: 4px;
-            background: var(--blue-mid);
-            transition: width .4s;
-        }
-
-        /* ── EMPTY ── */
-        .empty-box {
-            display: flex;
+        /* Filter dọc */
+        .filter-bar {
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 0;
-            color: var(--text-muted);
-            font-size: 12.5px;
-            gap: 10px;
-        }
-
-        .empty-box-icon {
-            width: 52px;
-            height: 52px;
-            background: var(--blue-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--blue-mid);
-            font-size: 22px;
-        }
-
-        /* ── NOTICE ── */
-        .notice-bar {
-            position: fixed;
-            bottom: 0;
-            left: var(--sidebar-w);
-            right: 0;
-            height: 36px;
-            background: #fff8e1;
-            border-top: 1px solid #ffe082;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
+            align-items: stretch;
+            padding: 10px 12px;
             gap: 8px;
-            font-size: 12.5px;
-            color: #5d4037;
-            z-index: 99;
         }
 
-            .notice-bar a {
-                color: var(--blue-mid);
-                font-weight: 600;
-                text-decoration: none;
+            .filter-bar > div {
+                flex-wrap: wrap;
             }
 
-        ::-webkit-scrollbar {
-            width: 5px;
+        .date-input {
+            width: 100%;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #ddd;
-            border-radius: 4px;
+        .apply-btn {
+            width: 100%;
         }
-    </style>
-</head>
-<body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-icon">C</div>
-            <span class="logo-text">CuaHang</span>
-        </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section-title">Tổng quan</div>
-            <a class="nav-item active" href="/Dashboard"><i class="bi bi-grid-1x2"></i> Tổng quan</a>
+        .quick-btn {
+            font-size: 11.5px;
+            height: 28px;
+            padding: 0 8px;
+        }
+        /* Two-col stack */
+        .two-col {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
 
-            <div class="nav-section-title">Bán hàng</div>
-            <a class="nav-item" href="/BanHang"><i class="bi bi-bag"></i> Bán hàng</a>
-            <a class="nav-item" href="#"><i class="bi bi-receipt"></i> Hóa đơn</a>
-
-            <div class="nav-section-title">Kho hàng</div>
-            <a class="nav-item" href="#"><i class="bi bi-box-seam"></i> Hàng hóa</a>
-            <a class="nav-item" href="#"><i class="bi bi-truck"></i> Nhập hàng</a>
-
-            <div class="nav-section-title">Danh mục</div>
-            <a class="nav-item" href="#"><i class="bi bi-people"></i> Nhà cung cấp</a>
-            <a class="nav-item" href="/NhanVien"><i class="bi bi-person-badge"></i> Nhân viên</a>
-
-            <div class="nav-section-title">Báo cáo</div>
-            <a class="nav-item" href="/BaoCao"><i class="bi bi-bar-chart-line"></i> Doanh thu</a>
-        </nav>
-    </aside>
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-        <span class="topbar-title">Báo cáo</span>
-        <div class="topbar-right">
-            <button class="topbar-btn" onclick="loadAll()"><i class="bi bi-arrow-clockwise"></i> Làm mới</button>
-            <button class="topbar-btn" onclick="inBaoCao()"><i class="bi bi-printer"></i> In báo cáo</button>
-            <button class="topbar-btn primary" onclick="xuatExcel()"><i class="bi bi-file-earmark-excel"></i> Xuất Excel</button>
-            <div class="topbar-avatar">A</div>
-        </div>
-    </header>
-
-    <!-- MAIN -->
-    <main class="main" id="printArea">
-
-        <!-- BỘ LỌC -->
-        <div class="filter-bar">
-            <span class="filter-label"><i class="bi bi-funnel me-1"></i>Lọc theo ngày:</span>
-            <div class="filter-group">
-                <span style="font-size:13px;color:var(--text-muted)">Từ</span>
-                <input type="date" class="date-input" id="tuNgay" />
-                <span style="font-size:13px;color:var(--text-muted)">Đến</span>
-                <input type="date" class="date-input" id="denNgay" />
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <button class="quick-btn active" onclick="quickFilter('today',this)">Hôm nay</button>
-                <button class="quick-btn" onclick="quickFilter('yesterday',this)">Hôm qua</button>
-                <button class="quick-btn" onclick="quickFilter('week',this)">7 ngày qua</button>
-                <button class="quick-btn" onclick="quickFilter('month',this)">Tháng này</button>
-                <button class="quick-btn" onclick="quickFilter('lastmonth',this)">Tháng trước</button>
-            </div>
-            <button class="apply-btn" onclick="loadAll()"><i class="bi bi-search me-1"></i>Xem báo cáo</button>
-        </div>
-
-        <!-- STAT CARDS -->
-        <div class="stat-grid">
-            <div class="stat-card">
-                <div class="stat-card-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
-                <div class="stat-card-info">
-                    <div class="stat-card-label">Doanh thu</div>
-                    <div class="stat-card-value" id="bcDoanhThu">—</div>
-                    <div class="stat-card-sub" id="bcDoanhThuSub">Đang tải...</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-icon green"><i class="bi bi-receipt"></i></div>
-                <div class="stat-card-info">
-                    <div class="stat-card-label">Số hóa đơn</div>
-                    <div class="stat-card-value" id="bcHoaDon">—</div>
-                    <div class="stat-card-sub" id="bcHoaDonSub">Đang tải...</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-icon orange"><i class="bi bi-box-arrow-in-down"></i></div>
-                <div class="stat-card-info">
-                    <div class="stat-card-label">Tổng nhập hàng</div>
-                    <div class="stat-card-value" id="bcNhapHang">—</div>
-                    <div class="stat-card-sub" id="bcNhapHangSub">Đang tải...</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-icon purple"><i class="bi bi-calculator"></i></div>
-                <div class="stat-card-info">
-                    <div class="stat-card-label">Lợi nhuận ước tính</div>
-                    <div class="stat-card-value" id="bcLoiNhuan">—</div>
-                    <div class="stat-card-sub" id="bcLoiNhuanSub">Đang tải...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BIỂU ĐỒ DOANH THU -->
-        <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-                <div class="card-title" style="margin:0"><i class="bi bi-bar-chart-line"></i> Biểu đồ doanh thu</div>
-                <select class="select-sm" id="chartType" onchange="renderDoanhThuChart()">
-                    <option value="bar">Biểu đồ cột</option>
-                    <option value="line">Biểu đồ đường</option>
-                </select>
-            </div>
-            <canvas id="doanhThuChart" height="80"></canvas>
-        </div>
-
-        <!-- TOP SP + NHẬP HÀNG -->
-        <div class="two-col">
-
-            <!-- Top sản phẩm bán chạy -->
-            <div class="card">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-                    <div class="card-title" style="margin:0"><i class="bi bi-trophy"></i> Top sản phẩm bán chạy</div>
-                    <select class="select-sm" id="sortTopBC" onchange="renderTopSanPham()">
-                        <option value="revenue">Theo doanh thu</option>
-                        <option value="quantity">Theo số lượng</option>
-                    </select>
-                </div>
-                <div id="topSanPhamBC">
-                    <div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>
-                </div>
-            </div>
-
-            <!-- Thống kê nhập hàng -->
-            <div class="card">
-                <div class="card-title"><i class="bi bi-truck"></i> Thống kê nhập hàng</div>
-                <div id="nhapHangStats">
-                    <div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- BẢNG CHI TIẾT HÓA ĐƠN -->
-        <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-                <div class="card-title" style="margin:0"><i class="bi bi-table"></i> Chi tiết hóa đơn trong kỳ</div>
-                <span id="hoaDonCount" style="font-size:12px;color:var(--text-muted)"></span>
-            </div>
-            <div style="overflow-x:auto">
-                <table class="data-table" id="hoaDonTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Mã đơn</th>
-                            <th>Ngày lập</th>
-                            <th>Nhân viên</th>
-                            <th>Tổng tiền</th>
-                            <th>Giảm giá</th>
-                            <th>Thực thu</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hoaDonBody">
-                        <tr><td colspan="8" style="text-align:center;padding:30px;color:#bbb">Đang tải...</td></tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" style="text-align:right">Tổng cộng:</td>
-                            <td id="footTongTien">0 ₫</td>
-                            <td>—</td>
-                            <td id="footThucThu">0 ₫</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- NOTICE -->
-    <div class="notice-bar">
-        <i class="bi bi-info-circle" style="color:#f57c00"></i>
-        Hệ thống quản lý bán hàng &nbsp;|&nbsp;
-        <a href="/BanHang">Bắt đầu bán hàng</a>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script>
-    // ── STATE ──────────────────────────────────────────
-    let bcData = null; // lưu data từ API để dùng lại khi đổi chart/sort
-    let doanhThuChartInst;
-
-    // ── INIT NGÀY MẶC ĐỊNH: hôm nay ──────────────────
-    function formatDate(d) {
-        return d.toISOString().split('T')[0];
+            .two-col .card {
+                margin-bottom: 14px !important;
+            }
+        /* Bảng chi tiết scroll */
+        .data-table th:nth-child(4),
+        .data-table td:nth-child(4) {
+            display: none;
+        }
+        /* ẩn cột Nhân viên */
+        /* Topbar buttons ẩn text */
+        .topbar-btn span {
+            display: none;
+        }
     }
 
+    @@media (max-width: 480px) {
+        .stat-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .stat-card {
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        .stat-card-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 17px;
+        }
+
+        .stat-card-value {
+            font-size: 15px;
+        }
+
+        .stat-card-label {
+            font-size: 11px;
+        }
+
+        .card {
+            padding: 12px;
+        }
+        /* Ẩn thêm cột */
+        .data-table th:nth-child(5),
+        .data-table td:nth-child(5), /* tổng tiền */
+        .data-table th:nth-child(6),
+        .data-table td:nth-child(6) /* giảm giá */ {
+            display: none;
+        }
+    }
+
+    /* Hamburger */
+    .hamburger {
+        display: none;
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: none;
+        color: var(--text);
+        font-size: 22px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+        .hamburger:hover {
+            background: var(--bg);
+        }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.4);
+        z-index: 199;
+    }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+</style>
+
+<!-- TOPBAR EXTRA BUTTONS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hamburger
+        let topbar = document.querySelector('.topbar');
+        if (topbar) {
+            let btn = document.createElement('button');
+            btn.className = 'hamburger';
+            btn.innerHTML = '<i class="bi bi-list"></i>';
+            btn.onclick = toggleSidebar;
+            topbar.insertBefore(btn, topbar.firstChild);
+        }
+
+        // Overlay
+        let ov = document.createElement('div');
+        ov.className = 'sidebar-overlay'; ov.id = 'sidebarOverlay';
+        ov.onclick = closeSidebar;
+        document.body.appendChild(ov);
+
+        // Topbar buttons
+        let tr = document.querySelector('.topbar-right');
+        if (tr) {
+            tr.insertAdjacentHTML('afterbegin',
+                `<button class="topbar-btn" onclick="loadAll()"><i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span></button>
+             <button class="topbar-btn" onclick="window.print()"><i class="bi bi-printer"></i> <span>In</span></button>
+             <button class="topbar-btn" onclick="xuatExcel()" style="background:var(--blue);color:white;border-color:var(--blue)"><i class="bi bi-file-earmark-excel"></i> <span>Xuất Excel</span></button>`
+            );
+        }
+    });
+
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('show');
+    }
+    function closeSidebar() {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+</script>
+
+<!-- BỘ LỌC -->
+<div class="filter-bar">
+    <span class="filter-label"><i class="bi bi-funnel me-1"></i>Lọc theo ngày:</span>
+    <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;color:var(--text-muted)">Từ</span>
+        <input type="date" class="date-input" id="tuNgay" />
+        <span style="font-size:13px;color:var(--text-muted)">Đến</span>
+        <input type="date" class="date-input" id="denNgay" />
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="quick-btn active" onclick="quickFilter('today',this)">Hôm nay</button>
+        <button class="quick-btn" onclick="quickFilter('yesterday',this)">Hôm qua</button>
+        <button class="quick-btn" onclick="quickFilter('week',this)">7 ngày qua</button>
+        <button class="quick-btn" onclick="quickFilter('month',this)">Tháng này</button>
+        <button class="quick-btn" onclick="quickFilter('lastmonth',this)">Tháng trước</button>
+    </div>
+    <button class="apply-btn" onclick="loadAll()"><i class="bi bi-search me-1"></i>Xem báo cáo</button>
+</div>
+
+<!-- STAT CARDS -->
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-card-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
+        <div><div class="stat-card-label">Doanh thu</div><div class="stat-card-value" id="bcDoanhThu">—</div><div class="stat-card-sub" id="bcDoanhThuSub">Đang tải...</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon green"><i class="bi bi-receipt"></i></div>
+        <div><div class="stat-card-label">Số hóa đơn</div><div class="stat-card-value" id="bcHoaDon">—</div><div class="stat-card-sub" id="bcHoaDonSub">Đang tải...</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon orange"><i class="bi bi-box-arrow-in-down"></i></div>
+        <div><div class="stat-card-label">Tổng nhập hàng</div><div class="stat-card-value" id="bcNhapHang">—</div><div class="stat-card-sub" id="bcNhapHangSub">Đang tải...</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon purple"><i class="bi bi-calculator"></i></div>
+        <div><div class="stat-card-label">Lợi nhuận ước tính</div><div class="stat-card-value" id="bcLoiNhuan">—</div><div class="stat-card-sub" id="bcLoiNhuanSub">Đang tải...</div></div>
+    </div>
+</div>
+
+<!-- BIỂU ĐỒ -->
+<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-title" style="margin:0"><i class="bi bi-bar-chart-line"></i> Biểu đồ doanh thu</div>
+        <select class="select-sm" id="chartType" onchange="renderDoanhThuChart()">
+            <option value="bar">Biểu đồ cột</option>
+            <option value="line">Biểu đồ đường</option>
+        </select>
+    </div>
+    <canvas id="doanhThuChart" height="80"></canvas>
+</div>
+
+<!-- TOP SP + NHẬP HÀNG -->
+<div class="two-col">
+    <div class="card" style="margin-bottom:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="card-title" style="margin:0"><i class="bi bi-trophy"></i> Top sản phẩm bán chạy</div>
+            <select class="select-sm" id="sortTopBC" onchange="renderTopSanPham()">
+                <option value="revenue">Theo doanh thu</option>
+                <option value="quantity">Theo số lượng</option>
+            </select>
+        </div>
+        <div id="topSanPhamBC"><div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+        <div class="card-title"><i class="bi bi-truck"></i> Thống kê nhập hàng</div>
+        <div id="nhapHangStats"><div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div></div>
+    </div>
+</div>
+
+<!-- BẢNG CHI TIẾT -->
+<div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-title" style="margin:0"><i class="bi bi-table"></i> Chi tiết hóa đơn trong kỳ</div>
+        <span id="hoaDonCount" style="font-size:12px;color:var(--text-muted)"></span>
+    </div>
+    <div style="overflow-x:auto">
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>Mã đơn</th><th>Ngày lập</th><th>Nhân viên</th><th>Tổng tiền</th><th>Giảm giá</th><th>Thực thu</th><th>Trạng thái</th></tr>
+            </thead>
+            <tbody id="hoaDonBody">
+                <tr><td colspan="8" style="text-align:center;padding:30px;color:#bbb">Đang tải...</td></tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" style="text-align:right">Tổng cộng:</td>
+                    <td id="footTongTien">0 ₫</td>
+                    <td>—</td>
+                    <td id="footThucThu">0 ₫</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script>
+    let bcData = null, doanhThuChartInst, _topData = [];
+
+    function formatDate(d) { return d.toISOString().split('T')[0]; }
+
     function initDates() {
-        let today = new Date();
-        $('#tuNgay').val(formatDate(today));
-        $('#denNgay').val(formatDate(today));
+        let t = new Date();
+        $('#tuNgay').val(formatDate(t)); $('#denNgay').val(formatDate(t));
     }
 
     function quickFilter(type, btn) {
         document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
-        let today = new Date();
-        let from, to = today;
-
-        if (type === 'today')     { from = today; }
-        else if (type === 'yesterday') { let y = new Date(today); y.setDate(y.getDate()-1); from = to = y; }
-        else if (type === 'week') { from = new Date(today); from.setDate(from.getDate()-6); }
+        let today = new Date(), from, to = today;
+        if (type === 'today') { from = today; }
+        else if (type === 'yesterday') { let y = new Date(today); y.setDate(y.getDate() - 1); from = to = y; }
+        else if (type === 'week') { from = new Date(today); from.setDate(from.getDate() - 6); }
         else if (type === 'month') { from = new Date(today.getFullYear(), today.getMonth(), 1); }
-        else if (type === 'lastmonth') {
-            from = new Date(today.getFullYear(), today.getMonth()-1, 1);
-            to   = new Date(today.getFullYear(), today.getMonth(), 0);
-        }
-
-        $('#tuNgay').val(formatDate(from));
-        $('#denNgay').val(formatDate(to));
+        else if (type === 'lastmonth') { from = new Date(today.getFullYear(), today.getMonth() - 1, 1); to = new Date(today.getFullYear(), today.getMonth(), 0); }
+        $('#tuNgay').val(formatDate(from)); $('#denNgay').val(formatDate(to));
         loadAll();
     }
 
-    // ── LOAD TẤT CẢ ──────────────────────────────────
     function loadAll() {
-        let tuNgay  = $('#tuNgay').val();
-        let denNgay = $('#denNgay').val();
+        let tuNgay = $('#tuNgay').val(), denNgay = $('#denNgay').val();
         if (!tuNgay || !denNgay) { alert('Vui lòng chọn khoảng ngày!'); return; }
-
         loadBaoCaoTong(tuNgay, denNgay);
         loadHoaDonChiTiet(tuNgay, denNgay);
         loadTopSanPhamBC(tuNgay, denNgay);
         loadNhapHang(tuNgay, denNgay);
     }
 
-    // ── API: TỔNG HỢP ────────────────────────────────
     function loadBaoCaoTong(tuNgay, denNgay) {
         $.get('/BaoCao/GetTongHop', { tuNgay, denNgay }, function (res) {
             if (!res.success) return;
-
             $('#bcDoanhThu').text(res.doanhThuText);
             $('#bcDoanhThuSub').text(res.soHoaDon + ' hóa đơn');
             $('#bcHoaDon').text(res.soHoaDon);
@@ -821,58 +660,39 @@
             $('#bcNhapHang').text(res.tongNhapText);
             $('#bcNhapHangSub').text(res.soPhieuNhap + ' phiếu nhập');
             $('#bcLoiNhuan').text(res.loiNhuanText);
-            $('#bcLoiNhuanSub').html('<span style="color:' + (res.loiNhuan >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (res.loiNhuan >= 0 ? '▲' : '▼') + ' so với kỳ trước</span>');
-
-            // Vẽ chart
-            bcData = res;
-            renderDoanhThuChart();
+            $('#bcLoiNhuanSub').html('<span style="color:' + (res.loiNhuan >= 0 ? '#2e7d32' : '#c62828') + '">' + (res.loiNhuan >= 0 ? '▲' : '▼') + ' lợi nhuận</span>');
+            bcData = res; renderDoanhThuChart();
         });
     }
 
-    // ── API: CHI TIẾT HÓA ĐƠN ───────────────────────
     function loadHoaDonChiTiet(tuNgay, denNgay) {
         $('#hoaDonBody').html('<tr><td colspan="8" style="text-align:center;padding:30px;color:#bbb">Đang tải...</td></tr>');
-
         $.get('/BaoCao/GetChiTietHoaDon', { tuNgay, denNgay }, function (res) {
             if (!res.success || !res.data.length) {
                 $('#hoaDonBody').html('<tr><td colspan="8" style="text-align:center;padding:30px;color:#bbb">Không có dữ liệu</td></tr>');
-                $('#hoaDonCount').text('');
-                return;
+                $('#hoaDonCount').text(''); return;
             }
-
             $('#hoaDonCount').text('Tổng ' + res.data.length + ' hóa đơn');
-
-            let html = '';
-            let tongTT = 0, tongThu = 0;
+            let html = '', tongTT = 0, tongThu = 0;
             res.data.forEach((hd, i) => {
-                tongTT  += hd.tongTien;
-                tongThu += hd.thucThu;
+                tongTT += hd.tongTien; tongThu += hd.thucThu;
                 let badge = hd.trangThai === 'Hoàn thành'
                     ? '<span class="badge-success">Hoàn thành</span>'
                     : '<span class="badge-warning">' + hd.trangThai + '</span>';
-                html += `<tr>
-                    <td>${i+1}</td>
-                    <td><strong>${hd.maDon}</strong></td>
-                    <td>${hd.ngayLap}</td>
-                    <td>${hd.nhanVien}</td>
+                html += `<tr><td>${i + 1}</td><td><strong>${hd.maDon}</strong></td><td>${hd.ngayLap}</td><td>${hd.nhanVien}</td>
                     <td>${Number(hd.tongTien).toLocaleString('vi-VN')} ₫</td>
                     <td>${hd.phanTramGiam > 0 ? hd.phanTramGiam + '%' : '—'}</td>
                     <td><strong style="color:var(--blue)">${Number(hd.thucThu).toLocaleString('vi-VN')} ₫</strong></td>
-                    <td>${badge}</td>
-                </tr>`;
+                    <td>${badge}</td></tr>`;
             });
-
             $('#hoaDonBody').html(html);
             $('#footTongTien').text(tongTT.toLocaleString('vi-VN') + ' ₫');
             $('#footThucThu').text(tongThu.toLocaleString('vi-VN') + ' ₫');
         });
     }
 
-    // ── API: TOP SẢN PHẨM ───────────────────────────
-    let _topData = [];
     function loadTopSanPhamBC(tuNgay, denNgay) {
         $('#topSanPhamBC').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
-
         $.get('/BaoCao/GetTopSanPham', { tuNgay, denNgay }, function (res) {
             _topData = (res.success && res.data) ? res.data : [];
             renderTopSanPham();
@@ -880,97 +700,62 @@
     }
 
     function renderTopSanPham() {
-        if (!_topData.length) {
-            $('#topSanPhamBC').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
-            return;
-        }
-
+        if (!_topData.length) { $('#topSanPhamBC').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>'); return; }
         let sortBy = $('#sortTopBC').val();
-        let sorted = [..._topData].sort((a, b) =>
-            sortBy === 'quantity' ? b.tongSoLuong - a.tongSoLuong : b.tongDoanhThu - a.tongDoanhThu
-        );
-
+        let sorted = [..._topData].sort((a, b) => sortBy === 'quantity' ? b.tongSoLuong - a.tongSoLuong : b.tongDoanhThu - a.tongDoanhThu);
         let maxVal = sortBy === 'quantity' ? sorted[0].tongSoLuong : sorted[0].tongDoanhThu;
         let html = '';
         sorted.forEach((sp, i) => {
-            let rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
-            let val    = sortBy === 'quantity' ? sp.tongSoLuong + ' cái' : Number(sp.tongDoanhThu).toLocaleString('vi-VN') + ' ₫';
+            let rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
+            let val = sortBy === 'quantity' ? sp.tongSoLuong + ' cái' : Number(sp.tongDoanhThu).toLocaleString('vi-VN') + ' ₫';
             let curVal = sortBy === 'quantity' ? sp.tongSoLuong : sp.tongDoanhThu;
-            let pct    = maxVal > 0 ? Math.round(curVal / maxVal * 100) : 0;
-
+            let pct = maxVal > 0 ? Math.round(curVal / maxVal * 100) : 0;
             html += `<div style="padding:7px 0;border-bottom:1px solid #f5f5f5">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                    <span class="rank-badge ${rankClass}">${i+1}</span>
-                    <span style="flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${sp.tenSanPham}">${sp.tenSanPham}</span>
+                    <span class="rank-badge ${rc}">${i + 1}</span>
+                    <span style="flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sp.tenSanPham}</span>
                     <span style="font-weight:600;color:var(--blue);font-size:12.5px;white-space:nowrap">${val}</span>
                 </div>
                 <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
             </div>`;
         });
-
         $('#topSanPhamBC').html(html);
     }
 
-    // ── API: NHẬP HÀNG ───────────────────────────────
     function loadNhapHang(tuNgay, denNgay) {
         $('#nhapHangStats').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-hourglass-split"></i></div><span>Đang tải...</span></div>');
-
         $.get('/BaoCao/GetNhapHang', { tuNgay, denNgay }, function (res) {
-            if (!res.success || !res.data.length) {
-                $('#nhapHangStats').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>');
-                return;
-            }
-
-            let html = `<table class="data-table">
-                <thead><tr><th>Nhà cung cấp</th><th>Số phiếu</th><th>Tổng tiền</th></tr></thead>
-                <tbody>`;
-            res.data.forEach(r => {
-                html += `<tr>
-                    <td>${r.nhaCungCap}</td>
-                    <td>${r.soPhieu}</td>
-                    <td><strong>${Number(r.tongTien).toLocaleString('vi-VN')} ₫</strong></td>
-                </tr>`;
-            });
+            if (!res.success || !res.data.length) { $('#nhapHangStats').html('<div class="empty-box"><div class="empty-box-icon"><i class="bi bi-inbox"></i></div><span>Chưa có dữ liệu</span></div>'); return; }
+            let html = `<table class="data-table"><thead><tr><th>Nhà cung cấp</th><th>Số phiếu</th><th>Tổng tiền</th></tr></thead><tbody>`;
+            res.data.forEach(r => { html += `<tr><td>${r.nhaCungCap}</td><td>${r.soPhieu}</td><td><strong>${Number(r.tongTien).toLocaleString('vi-VN')} ₫</strong></td></tr>`; });
             html += `</tbody></table>`;
             $('#nhapHangStats').html(html);
         });
     }
 
-    // ── CHART DOANH THU ──────────────────────────────
     function renderDoanhThuChart() {
         if (!bcData || !bcData.chartLabels) return;
-
         const ctx = document.getElementById('doanhThuChart').getContext('2d');
         if (doanhThuChartInst) doanhThuChartInst.destroy();
-
         let type = $('#chartType').val();
-
         doanhThuChartInst = new Chart(ctx, {
-            type: type,
+            type,
             data: {
-                labels: bcData.chartLabels,
-                datasets: [{
-                    label: 'Doanh thu',
-                    data: bcData.chartData,
+                labels: bcData.chartLabels, datasets: [{
+                    label: 'Doanh thu', data: bcData.chartData,
                     backgroundColor: type === 'bar' ? 'rgba(66,133,244,.7)' : 'rgba(66,133,244,.08)',
-                    borderColor: '#4285f4',
-                    borderWidth: type === 'bar' ? 0 : 2,
-                    borderRadius: type === 'bar' ? 4 : 0,
-                    pointRadius: 3,
-                    fill: type === 'line',
-                    tension: 0.4
+                    borderColor: '#4285f4', borderWidth: type === 'bar' ? 0 : 2,
+                    borderRadius: type === 'bar' ? 4 : 0, pointRadius: 3, fill: type === 'line', tension: 0.4
                 }]
             },
             options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
+                responsive: true, plugins: { legend: { display: false } },
                 scales: {
                     x: { grid: { color: '#f5f5f5' }, ticks: { font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e' } },
                     y: {
-                        grid: { color: '#f5f5f5' }, beginAtZero: true,
-                        ticks: {
+                        grid: { color: '#f5f5f5' }, beginAtZero: true, ticks: {
                             font: { size: 11, family: 'Be Vietnam Pro' }, color: '#9e9e9e',
-                            callback: v => v === 0 ? '0' : v >= 1000000 ? (v/1000000).toFixed(0)+'tr' : v >= 1000 ? (v/1000).toFixed(0)+'k' : v
+                            callback: v => v === 0 ? '0' : v >= 1000000 ? (v / 1000000).toFixed(0) + 'tr' : v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
                         }
                     }
                 }
@@ -978,32 +763,19 @@
         });
     }
 
-    // ── XUẤT EXCEL ───────────────────────────────────
     function xuatExcel() {
-        let rows = [['#','Mã đơn','Ngày lập','Nhân viên','Tổng tiền','Giảm giá (%)','Thực thu','Trạng thái']];
-        let i = 1;
+        let rows = [['#', 'Mã đơn', 'Ngày lập', 'Nhân viên', 'Tổng tiền', 'Giảm giá (%)', 'Thực thu', 'Trạng thái']];
         $('#hoaDonBody tr').each(function () {
             let cols = [];
             $(this).find('td').each(function () { cols.push($(this).text().trim()); });
             if (cols.length > 1) rows.push(cols);
-            i++;
         });
-
         let wb = XLSX.utils.book_new();
         let ws = XLSX.utils.aoa_to_sheet(rows);
-        ws['!cols'] = [8,15,14,18,16,12,16,14].map(w => ({ wch: w }));
+        ws['!cols'] = [8, 15, 14, 18, 16, 12, 16, 14].map(w => ({ wch: w }));
         XLSX.utils.book_append_sheet(wb, ws, 'BaoCao');
         XLSX.writeFile(wb, 'BaoCao_' + $('#tuNgay').val() + '_' + $('#denNgay').val() + '.xlsx');
     }
 
-    // ── IN BÁO CÁO ───────────────────────────────────
-    function inBaoCao() { window.print(); }
-
-    // ── KHỞI CHẠY ────────────────────────────────────
-    $(function () {
-        initDates();
-        loadAll();
-    });
-    </script>
-</body>
-</html>
+    $(function () { initDates(); loadAll(); });
+</script>

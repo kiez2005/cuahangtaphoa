@@ -106,6 +106,20 @@
                         <td>@(item.NgayTao?.ToString("dd/MM/yyyy"))</td>
 
                         <td>
+                            @if (item.SoLuong <= item.SoLuongToiThieu)
+                            {
+                                <span style="color:red">⚠ Tồn kho thấp</span>
+                            }
+                            else
+                            {
+                                <span style="color:green">OK</span>
+                            }
+                        </td>
+
+                        <td>@(item.HanSuDung?.ToString("dd/MM/yyyy"))</td>
+                        <td>@(item.NgayTao?.ToString("dd/MM/yyyy"))</td>
+
+                        <td>
                             <button class="btn btn-warning btn-sm"
                                     data-id="@item.MaSanPham"
                                     data-ten="@item.TenSanPham"
@@ -133,6 +147,7 @@
                                     data-giaban="@item.GiaBan"
                                     onclick="openPriceModal(this)">
                                 <i class="bi bi-cash-stack"></i> Giá
+                                Giá
                             </button>
 
                             <button class="btn btn-secondary btn-sm"
@@ -141,6 +156,7 @@
                                     data-giaban="@item.GiaBan.ToString()"
                                     onclick="openBarcodeModal(this)">
                                 <i class="bi bi-barcode"></i> Barcode
+                                Barcode
                             </button>
                         </td>
                     </tr>
@@ -222,11 +238,13 @@
                             <div class="col-md-6">
                                 <label>Danh mục</label>
                                 @Html.DropDownList("MaDanhMuc", ViewBag.MaDanhMuc as SelectList, "-- Chọn danh mục --", new { @class = "form-select" })
+                                @Html.DropDownList("MaDanhMuc", ViewBag.MaDanhMuc as SelectList, "-- Chọn danh mục --", new { @class = "form-control" })
                             </div>
 
                             <div class="col-md-6">
                                 <label>Nhà cung cấp</label>
                                 @Html.DropDownList("MaNhaCungCap", ViewBag.MaNhaCungCap as SelectList, "-- Chọn NCC --", new { @class = "form-select" })
+                                @Html.DropDownList("MaNhaCungCap", ViewBag.MaNhaCungCap as SelectList, "-- Chọn NCC --", new { @class = "form-control" })
                             </div>
 
                         </div>
@@ -299,6 +317,7 @@
                             ViewBag.MaDanhMuc as SelectList,
                             "-- Chọn danh mục --",
                             new { @class = "form-select", id = "editMaDanhMuc" })
+                            new { @class = "form-control", id = "editMaDanhMuc" })
                     </div>
 
                     <div class="mb-3">
@@ -307,6 +326,7 @@
                             ViewBag.MaNhaCungCap as SelectList,
                             "-- Chọn NCC --",
                             new { @class = "form-select", id = "editMaNhaCungCap" })
+                            new { @class = "form-control", id = "editMaNhaCungCap" })
                     </div>
 
                 </div>
@@ -471,4 +491,5 @@
             });
         }
     });
+</script>
 </script>

@@ -50,7 +50,7 @@
             background: white;
             border-radius: 6px;
             height: 34px;
-            width: 320px;
+            width: 460px;
             padding: 0 10px;
             gap: 6px;
         }
@@ -67,6 +67,7 @@
             background: #f1f3f5;
             padding: 2px 6px;
             border-radius: 4px;
+            color: #555;
         }
 
         .icon-btn {
@@ -94,7 +95,7 @@
             cursor: pointer;
         }
 
-        /* ===== DROPDOWN TÌM KIẾM (STYLE MỚI) ===== */
+        /* ===== DROPDOWN TÌM KIẾM ===== */
         .search-dropdown {
             position: absolute;
             top: 38px;
@@ -179,6 +180,21 @@
             color: #1565c0;
             white-space: nowrap;
             flex-shrink: 0;
+        }
+
+        .search-item-disabled {
+            cursor: not-allowed !important;
+            opacity: 0.55;
+            background: #fafafa !important;
+        }
+
+            .search-item-disabled:hover {
+                background: #fafafa !important;
+            }
+
+        .het-hang {
+            color: #ef4444 !important;
+            font-weight: 600;
         }
 
         .search-empty {
@@ -350,6 +366,7 @@
             font-weight: 700;
             cursor: pointer;
             font-size: 15px;
+            font-family: 'Be Vietnam Pro', sans-serif;
         }
 
             .checkout-btn:hover {
@@ -361,7 +378,7 @@
                 cursor: not-allowed;
             }
 
-        /* ===== TOAST QUÉT MÃ VẠCH ===== */
+        /* ===== TOAST ===== */
         .scan-toast {
             position: fixed;
             top: 64px;
@@ -394,8 +411,12 @@
                 background: #991b1b;
             }
 
-        /* ===== MODAL IN HÓA ĐƠN ===== */
-        .print-overlay {
+            .scan-toast.info {
+                background: #1565c0;
+            }
+
+        /* ===== MODAL CHUNG ===== */
+        .modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,.55);
@@ -405,7 +426,7 @@
             justify-content: center;
         }
 
-        .print-modal {
+        .modal-box {
             background: white;
             border-radius: 12px;
             width: 420px;
@@ -415,7 +436,7 @@
             box-shadow: 0 8px 40px rgba(0,0,0,.25);
         }
 
-        .print-modal-header {
+        .modal-header {
             padding: 14px 18px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
@@ -425,7 +446,7 @@
             font-size: 15px;
         }
 
-        .print-modal-close {
+        .modal-close {
             border: none;
             background: none;
             font-size: 20px;
@@ -434,13 +455,13 @@
             line-height: 1;
         }
 
-        .print-modal-body {
+        .modal-body {
             flex: 1;
             overflow-y: auto;
             padding: 10px;
         }
 
-        .print-modal-footer {
+        .modal-footer {
             padding: 12px 18px;
             border-top: 1px solid #e5e7eb;
             display: flex;
@@ -448,7 +469,7 @@
             justify-content: flex-end;
         }
 
-        .btn-print {
+        .btn-primary {
             height: 38px;
             padding: 0 20px;
             background: var(--blue);
@@ -464,11 +485,11 @@
             font-family: 'Be Vietnam Pro', sans-serif;
         }
 
-            .btn-print:hover {
+            .btn-primary:hover {
                 background: var(--blue-dark);
             }
 
-        .btn-cancel-print {
+        .btn-secondary {
             height: 38px;
             padding: 0 16px;
             background: white;
@@ -479,6 +500,134 @@
             cursor: pointer;
             font-family: 'Be Vietnam Pro', sans-serif;
         }
+
+        /* ===== MODAL XÁC NHẬN IN ===== */
+        .confirm-modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 360px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.25);
+            overflow: hidden;
+        }
+
+        .confirm-icon {
+            width: 64px;
+            height: 64px;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 28px auto 14px;
+            font-size: 28px;
+            color: var(--blue);
+        }
+
+        .confirm-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+            padding: 0 24px 8px;
+        }
+
+        .confirm-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+            padding: 0 24px 24px;
+            line-height: 1.6;
+        }
+
+        .confirm-actions {
+            display: flex;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background .15s;
+        }
+
+            .confirm-btn.no {
+                background: #f9fafb;
+                color: #374151;
+                border-right: 1px solid #f3f4f6;
+                border-radius: 0 0 0 16px;
+            }
+
+                .confirm-btn.no:hover {
+                    background: #f3f4f6;
+                }
+
+            .confirm-btn.yes {
+                background: var(--blue);
+                color: white;
+                border-radius: 0 0 16px 0;
+            }
+
+                .confirm-btn.yes:hover {
+                    background: var(--blue-dark);
+                }
+
+        /* ===== MODAL THÀNH CÔNG ===== */
+        .success-modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 340px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.25);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 28px auto 14px;
+            font-size: 32px;
+            color: #16a34a;
+        }
+
+        .success-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            padding: 0 24px 8px;
+        }
+
+        .success-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            padding: 0 24px 24px;
+            line-height: 1.6;
+        }
+
+        .success-close-btn {
+            width: 100%;
+            height: 48px;
+            border: none;
+            background: #16a34a;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+            .success-close-btn:hover {
+                background: #15803d;
+            }
 
         /* ===== HÓA ĐƠN IN (khổ 80mm) ===== */
         #receiptContent {
@@ -533,26 +682,6 @@
             margin: 3px 0;
         }
 
-        .receipt-item-name {
-            flex: 1;
-        }
-
-        .receipt-item-qty {
-            width: 30px;
-            text-align: center;
-        }
-
-        .receipt-item-price {
-            width: 70px;
-            text-align: right;
-        }
-
-        .receipt-item-total {
-            width: 80px;
-            text-align: right;
-            font-weight: 600;
-        }
-
         .receipt-summary {
             font-size: 12px;
             margin-top: 4px;
@@ -578,6 +707,56 @@
             color: #666;
             margin-top: 10px;
         }
+
+        /* ===== MENU 3 GẠCH ===== */
+        .menu-wrap {
+            position: relative;
+        }
+
+        .nav-menu-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.18);
+            min-width: 190px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .nav-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: #1a1a2e;
+            text-decoration: none;
+            font-size: 13.5px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            background: white;
+            width: 100%;
+            border: none;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            text-align: left;
+        }
+
+            .nav-menu-item:last-child {
+                border-bottom: none;
+            }
+
+            .nav-menu-item:hover {
+                background: #f0f7ff;
+            }
+
+            .nav-menu-item.danger {
+                color: #dc2626;
+            }
+
+                .nav-menu-item.danger:hover {
+                    background: #fff5f5;
+                }
 
         @@media print {
             body > *:not(#printArea) {
@@ -609,9 +788,21 @@
         <button class="icon-btn"><i class="bi bi-upc-scan"></i></button>
         <div class="topbar-right">
             <button class="nav-icon" onclick="resetCart()" title="Tạo đơn mới"><i class="bi bi-arrow-clockwise"></i></button>
-            <button class="nav-icon" onclick="moModalIn()" title="In hóa đơn (F8)"><i class="bi bi-printer"></i></button>
-            <span>Nhân viên</span>
-            <button class="nav-icon"><i class="bi bi-list"></i></button>
+            <button class="nav-icon" onclick="moModalIn()" title="Xem trước hóa đơn (F8)"><i class="bi bi-printer"></i></button>
+            <span style="font-size:13px;">Nhân viên</span>
+            <div class="menu-wrap">
+                <button class="nav-icon" onclick="toggleMenu(event)" title="Menu"><i class="bi bi-list"></i></button>
+                <div id="navMenuDropdown" class="nav-menu-dropdown" style="display:none;">
+                    <a href="/Dashboard" class="nav-menu-item">
+                        <i class="bi bi-grid-3x3-gap" style="color:#1565c0;font-size:16px;"></i>
+                        Trang quản lý
+                    </a>
+                    <a href="/Login" class="nav-menu-item danger">
+                        <i class="bi bi-box-arrow-right" style="font-size:16px;"></i>
+                        Đăng xuất
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -661,7 +852,6 @@
                     <span id="tienThua">—</span>
                 </div>
             </div>
-
             <div class="payment-section">
                 <div class="payment-input">
                     <input type="number" id="tienKhachDua" placeholder="Nhập số tiền khách đưa" min="0" />
@@ -675,22 +865,53 @@
 
     </div>
 
-    <!-- TOAST QUÉT MÃ VẠCH -->
+    <!-- TOAST -->
     <div class="scan-toast" id="scanToast"></div>
 
-    <!-- MODAL IN HÓA ĐƠN -->
-    <div class="print-overlay" id="printOverlay" style="display:none">
-        <div class="print-modal">
-            <div class="print-modal-header">
-                <span><i class="bi bi-printer me-2"></i>Xem trước hóa đơn</span>
-                <button class="print-modal-close" onclick="dongModalIn()">×</button>
+    <!-- ===== MODAL XÁC NHẬN IN ===== -->
+    <div class="modal-overlay" id="confirmPrintOverlay" style="display:none;">
+        <div class="confirm-modal-box">
+            <div class="confirm-icon"><i class="bi bi-printer-fill"></i></div>
+            <div class="confirm-title" id="confirmTitle">Thanh toán thành công!</div>
+            <div class="confirm-subtitle" id="confirmSubtitle">
+                Bạn có muốn in hóa đơn không?
             </div>
-            <div class="print-modal-body">
+            <div class="confirm-actions">
+                <button class="confirm-btn no" onclick="khongIn()">
+                    <i class="bi bi-x-lg me-1"></i> Không in
+                </button>
+                <button class="confirm-btn yes" onclick="inNgay()">
+                    <i class="bi bi-printer-fill me-1"></i> In hóa đơn
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL THÀNH CÔNG (không in) ===== -->
+    <div class="modal-overlay" id="successOverlay" style="display:none;">
+        <div class="success-modal-box">
+            <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+            <div class="success-title">Hoàn thành đơn hàng!</div>
+            <div class="success-subtitle" id="successMsg">
+                Hóa đơn đã được lưu thành công.<br>Cảm ơn quý khách!
+            </div>
+            <button class="success-close-btn" onclick="dongSuccess()">Xác nhận</button>
+        </div>
+    </div>
+
+    <!-- ===== MODAL IN HÓA ĐƠN ===== -->
+    <div class="modal-overlay" id="printOverlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span><i class="bi bi-printer me-2"></i>Xem trước hóa đơn</span>
+                <button class="modal-close" onclick="dongModalIn()">×</button>
+            </div>
+            <div class="modal-body">
                 <div id="receiptContent"></div>
             </div>
-            <div class="print-modal-footer">
-                <button class="btn-cancel-print" onclick="dongModalIn()">Đóng</button>
-                <button class="btn-print" onclick="inHoaDon()">
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="dongModalIn()">Đóng</button>
+                <button class="btn-primary" onclick="inHoaDon()">
                     <i class="bi bi-printer-fill"></i> In hóa đơn
                 </button>
             </div>
@@ -702,13 +923,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script>
+
         // ===== STATE =====
         let cart = [];
+        let pendingReceiptData = null; // Lưu dữ liệu hóa đơn sau khi thanh toán xong
 
         // ===== ĐỊNH DẠNG TIỀN =====
         function formatMoney(n) {
             return Number(n).toLocaleString('vi-VN') + ' ₫';
         }
+
+        // ===== MENU 3 GẠCH =====
+        function toggleMenu(e) {
+            e.stopPropagation();
+            let m = document.getElementById('navMenuDropdown');
+            m.style.display = m.style.display === 'none' ? 'block' : 'none';
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.menu-wrap'))
+                document.getElementById('navMenuDropdown').style.display = 'none';
+        });
 
         // ===== TÌM SẢN PHẨM =====
         let searchTimer;
@@ -725,32 +960,34 @@
                     }
                     let html = '';
                     data.forEach(sp => {
-                        // Render ảnh hoặc placeholder
-                        let imgHtml = sp.HinhAnh
-                            ? `<img class="sp-img" src="${sp.HinhAnh}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-                                   <div class="sp-img-placeholder" style="display:none"><i class="bi bi-image"></i></div>`
+                        let imgUrl = sp.HinhAnh ? sp.HinhAnh.trim().replace(/ /g, '%20') : '';
+                        let imgHtml = imgUrl
+                            ? `<img class="sp-img" src="${imgUrl}"
+                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                                       <div class="sp-img-placeholder" style="display:none"><i class="bi bi-image"></i></div>`
                             : `<div class="sp-img-placeholder"><i class="bi bi-image"></i></div>`;
 
-                        // Escape tên sản phẩm tránh lỗi khi có dấu nháy
                         let tenEscaped = sp.TenSanPham.replace(/'/g, "\\'");
+                        let hetHang = sp.SoLuong <= 0;
 
-                        html += `<div class="search-item"
-                                        onclick="addToCart(${sp.MaSanPham},'${tenEscaped}',${sp.GiaBan},${sp.SoLuong})">
-                                ${imgHtml}
-                                <div class="sp-info">
-                                    <div class="sp-ten">${sp.TenSanPham}</div>
-                                    <div class="sp-mavach">${sp.MaVach || ''}</div>
-                                    <div class="sp-ton">Tồn: ${sp.SoLuong}&nbsp;&nbsp;|&nbsp;&nbsp;KH đặt: 0</div>
-                                </div>
-                                <div class="sp-gia">${Number(sp.GiaBan).toLocaleString('vi-VN')}</div>
-                            </div>`;
+                        html += `<div class="search-item ${hetHang ? 'search-item-disabled' : ''}"
+                                              ${hetHang ? '' : `onclick="addToCart(${sp.MaSanPham},'${tenEscaped}',${sp.GiaBan},${sp.SoLuong})"`}>
+                                            ${imgHtml}
+                                            <div class="sp-info">
+                                                <div class="sp-ten">${sp.TenSanPham}</div>
+                                                <div class="sp-mavach">${sp.MaVach || ''}</div>
+                                                <div class="sp-ton ${hetHang ? 'het-hang' : ''}">
+                                                    ${hetHang ? '<i class=\"bi bi-x-circle-fill\"></i> Hết hàng' : 'Tồn: ' + sp.SoLuong}
+                                                </div>
+                                            </div>
+                                            <div class="sp-gia" style="${hetHang ? 'color:#9ca3af' : ''}">${Number(sp.GiaBan).toLocaleString('vi-VN')}</div>
+                                        </div>`;
                     });
                     $('#searchDropdown').html(html).show();
                 });
             }, 300);
         });
 
-        // Ẩn dropdown khi click ra ngoài
         $(document).on('click', function (e) {
             if (!$(e.target).closest('.pos-search').length)
                 $('#searchDropdown').hide();
@@ -763,9 +1000,7 @@
 
             let existing = cart.find(x => x.MaSanPham === maSP);
             if (existing) {
-                if (existing.SoLuong >= soLuongTon) {
-                    alert('Không đủ tồn kho!'); return;
-                }
+                if (existing.SoLuong >= soLuongTon) { alert('Không đủ tồn kho!'); return; }
                 existing.SoLuong++;
             } else {
                 cart.push({ MaSanPham: maSP, TenSanPham: tenSP, GiaBan: giaBan, SoLuong: 1, TonKho: soLuongTon });
@@ -788,26 +1023,25 @@
             cart.forEach((item, i) => {
                 let thanhTien = item.SoLuong * item.GiaBan;
                 html += `<tr>
-                        <td>${i + 1}</td>
-                        <td>${item.TenSanPham}</td>
-                        <td>${formatMoney(item.GiaBan)}</td>
-                        <td>
-                            <div class="qty-control">
-                                <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-                                <input class="qty-input" type="number" value="${item.SoLuong}"
-                                    onchange="setQty(${i}, this.value)" min="1" max="${item.TonKho}"/>
-                                <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
-                            </div>
-                        </td>
-                        <td><strong>${formatMoney(thanhTien)}</strong></td>
-                        <td><button class="del-btn" onclick="removeItem(${i})"><i class="bi bi-trash"></i></button></td>
-                    </tr>`;
+                            <td>${i + 1}</td>
+                            <td>${item.TenSanPham}</td>
+                            <td>${formatMoney(item.GiaBan)}</td>
+                            <td>
+                                <div class="qty-control">
+                                    <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+                                    <input class="qty-input" type="number" value="${item.SoLuong}"
+                                        onchange="setQty(${i}, this.value)" min="1" max="${item.TonKho}"/>
+                                    <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+                                </div>
+                            </td>
+                            <td><strong>${formatMoney(thanhTien)}</strong></td>
+                            <td><button class="del-btn" onclick="removeItem(${i})"><i class="bi bi-trash"></i></button></td>
+                        </tr>`;
             });
             $('#cartBody').html(html);
             tinhToan();
         }
 
-        // ===== THAY ĐỔI SỐ LƯỢNG =====
         function changeQty(index, delta) {
             let item = cart[index];
             let newQty = item.SoLuong + delta;
@@ -833,9 +1067,9 @@
         function resetCart() {
             if (cart.length && !confirm('Bạn có chắc muốn hủy đơn hàng này?')) return;
             cart = [];
-            renderCart();
             $('#phanTramGiam').val(0);
             $('#tienKhachDua').val('');
+            renderCart();
         }
 
         // ===== TÍNH TIỀN =====
@@ -886,18 +1120,28 @@
                 data: JSON.stringify(data),
                 success: function (res) {
                     if (res.success) {
-                        // Lưu cart lại để in trước khi reset
-                        let cartSnapshot = JSON.parse(JSON.stringify(cart));
-                        let pct = parseFloat($('#phanTramGiam').val()) || 0;
-                        let tong = cartSnapshot.reduce((s, x) => s + x.SoLuong * x.GiaBan, 0);
-                        let sau = tong * (1 - pct / 100);
-                        let kh = parseFloat($('#tienKhachDua').val()) || 0;
+                        // Lưu snapshot cart + thông tin để in sau
+                        pendingReceiptData = {
+                            maDon: res.maDon,
+                            cart: JSON.parse(JSON.stringify(cart)),
+                            phanTram: phanTram,
+                            tong: tong,
+                            tienSauGiam: tienSauGiam,
+                            tienKhach: tienKhach
+                        };
 
-                        resetCart();
+                        // Reset giỏ hàng
+                        cart = [];
+                        $('#phanTramGiam').val(0);
+                        $('#tienKhachDua').val('');
+                        renderCart(); // gọi sau khi reset input để tinhToan tính lại đúng
 
-                        // Mở modal in với mã đơn thật
-                        document.getElementById('receiptContent').innerHTML = taoNoiDungHoaDon(res.maDon);
-                        document.getElementById('printOverlay').style.display = 'flex';
+                        // Hiện modal hỏi có in không
+                        document.getElementById('confirmTitle').textContent = 'Thanh toán thành công! 🎉';
+                        document.getElementById('confirmSubtitle').innerHTML =
+                            `Mã đơn: <strong>${res.maDon}</strong><br>Bạn có muốn in hóa đơn không?`;
+                        document.getElementById('confirmPrintOverlay').style.display = 'flex';
+
                     } else {
                         alert('❌ Lỗi: ' + res.message);
                     }
@@ -909,6 +1153,31 @@
                     $('#btnThanhToan').prop('disabled', false).text('THANH TOÁN');
                 }
             });
+        }
+
+        // ===== XỬ LÝ SAU KHI HỎI IN =====
+        function inNgay() {
+            document.getElementById('confirmPrintOverlay').style.display = 'none';
+            if (!pendingReceiptData) return;
+
+            // Render hóa đơn với dữ liệu đã lưu
+            document.getElementById('receiptContent').innerHTML =
+                taoNoiDungHoaDon(pendingReceiptData);
+            document.getElementById('printOverlay').style.display = 'flex';
+        }
+
+        function khongIn() {
+            document.getElementById('confirmPrintOverlay').style.display = 'none';
+            // Hiện modal thành công
+            let maDon = pendingReceiptData ? pendingReceiptData.maDon : '';
+            document.getElementById('successMsg').innerHTML =
+                `Mã đơn <strong>${maDon}</strong> đã được lưu thành công.<br>Cảm ơn quý khách! 😊`;
+            document.getElementById('successOverlay').style.display = 'flex';
+            pendingReceiptData = null;
+        }
+
+        function dongSuccess() {
+            document.getElementById('successOverlay').style.display = 'none';
         }
 
         // ===== PHÍM TẮT =====
@@ -930,36 +1199,28 @@
         }
 
         // ===== MÁY QUÉT MÃ VẠCH USB =====
-        // Máy quét USB hoạt động như bàn phím: gõ nhanh chuỗi ký tự rồi Enter
-        // Ta bắt các ký tự gõ nhanh (< 50ms giữa các ký tự) + kết thúc bằng Enter
         let barcodeBuffer = '';
         let barcodeTimer = null;
-        const BARCODE_TIMEOUT = 80; // ms — máy quét thường gõ nhanh hơn người
+        const BARCODE_TIMEOUT = 80;
 
         document.addEventListener('keypress', function (e) {
-            // Nếu đang focus vào input thường thì bỏ qua (để không can thiệp gõ tay)
             let tag = document.activeElement.tagName;
             let isInput = (tag === 'INPUT' || tag === 'TEXTAREA');
 
-            // Nếu Enter được bấm khi buffer có dữ liệu → đây là lần quét xong
             if (e.key === 'Enter' && barcodeBuffer.length >= 3) {
                 e.preventDefault();
                 let code = barcodeBuffer.trim();
                 barcodeBuffer = '';
                 clearTimeout(barcodeTimer);
 
-                // Nếu đang focus input search thì dùng luôn giá trị đó
-                if (isInput && document.activeElement.id === 'searchInput') {
+                if (isInput && document.activeElement.id === 'searchInput')
                     document.activeElement.blur();
-                }
 
                 xuLyMaVach(code);
                 return;
             }
 
-            // Tích lũy buffer nếu ký tự đến liên tục
             if (!isInput || document.activeElement.id === 'searchInput') {
-                // Reset buffer nếu quá lâu giữa 2 ký tự
                 clearTimeout(barcodeTimer);
                 barcodeBuffer += e.key;
                 barcodeTimer = setTimeout(() => { barcodeBuffer = ''; }, BARCODE_TIMEOUT * 3);
@@ -969,71 +1230,83 @@
         function xuLyMaVach(code) {
             showToast('Đang tìm: ' + code);
             $.get('/BanHang/TimSanPham', { keyword: code }, function (data) {
-                if (!data.length) {
-                    showToast('Không tìm thấy mã: ' + code, 'error');
-                    return;
-                }
-                // Nếu tìm thấy đúng 1 sản phẩm hoặc có sản phẩm khớp mã vạch chính xác
+                if (!data.length) { showToast('Không tìm thấy mã: ' + code, 'error'); return; }
                 let sp = data.find(x => x.MaVach === code) || data[0];
                 addToCart(sp.MaSanPham, sp.TenSanPham, sp.GiaBan, sp.SoLuong);
                 showToast('Đã thêm: ' + sp.TenSanPham, 'success');
             }).fail(() => showToast('Lỗi kết nối!', 'error'));
         }
 
-        // ===== IN HÓA ĐƠN =====
-        function taoNoiDungHoaDon(maDon) {
+        // ===== TẠO NỘI DUNG HÓA ĐƠN =====
+        // Nhận object data (có thể là pendingReceiptData hoặc null để dùng cart hiện tại)
+        function taoNoiDungHoaDon(data) {
             let now = new Date();
             let ngay = now.toLocaleDateString('vi-VN');
             let gio = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-            let tong = cart.reduce((s, x) => s + x.SoLuong * x.GiaBan, 0);
-            let pct = parseFloat($('#phanTramGiam').val()) || 0;
-            let sau = tong * (1 - pct / 100);
-            let khach = parseFloat($('#tienKhachDua').val()) || 0;
-            let thua = Math.max(0, khach - sau);
-            let line = '─'.repeat(36);
+
+            let items, maDon, pct, tong, sau, khach, thua;
+
+            if (data) {
+                // Dùng dữ liệu đã lưu sau khi thanh toán
+                items = data.cart;
+                maDon = data.maDon;
+                pct = data.phanTram;
+                tong = data.tong;
+                sau = data.tienSauGiam;
+                khach = data.tienKhach;
+            } else {
+                // Dùng cart hiện tại (preview trước khi thanh toán)
+                items = cart;
+                maDon = null;
+                pct = parseFloat($('#phanTramGiam').val()) || 0;
+                tong = items.reduce((s, x) => s + x.SoLuong * x.GiaBan, 0);
+                sau = tong * (1 - pct / 100);
+                khach = parseFloat($('#tienKhachDua').val()) || 0;
+            }
+
+            thua = Math.max(0, khach - sau);
 
             let itemsHtml = '';
-            cart.forEach(item => {
+            items.forEach(item => {
                 let tt = item.SoLuong * item.GiaBan;
                 itemsHtml += `
-                    <div class="receipt-item-row">
-                        <span class="receipt-item-name">${item.TenSanPham}</span>
-                    </div>
-                    <div class="receipt-item-row" style="color:#555;padding-left:8px">
-                        <span>${item.SoLuong} x ${item.GiaBan.toLocaleString('vi-VN')}</span>
-                        <span style="font-weight:600">${tt.toLocaleString('vi-VN')} ₫</span>
-                    </div>`;
+                            <div class="receipt-item-row">
+                                <span>${item.TenSanPham}</span>
+                            </div>
+                            <div class="receipt-item-row" style="color:#555;padding-left:8px">
+                                <span>${item.SoLuong} x ${item.GiaBan.toLocaleString('vi-VN')}</span>
+                                <span style="font-weight:600">${tt.toLocaleString('vi-VN')} ₫</span>
+                            </div>`;
             });
 
             return `
-                <div class="receipt-shop">🏪 CỬA HÀNG TẠP HÓA</div>
-                <div class="receipt-addr">Địa chỉ: ___________________<br>SĐT: 0xxx xxx xxx</div>
-                <hr class="receipt-divider"/>
-                <div class="receipt-title">HÓA ĐƠN BÁN HÀNG</div>
-                <div class="receipt-meta">
-                    Mã đơn: <strong>${maDon || 'TẠM TÍNH'}</strong><br>
-                    Ngày: ${ngay} &nbsp; Giờ: ${gio}<br>
-                    Thu ngân: Nhân viên
-                </div>
-                <hr class="receipt-divider"/>
-                <div style="font-size:11px;color:#666;margin-bottom:4px">Tên SP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thành tiền</div>
-                <hr class="receipt-divider"/>
-                ${itemsHtml}
-                <hr class="receipt-divider"/>
-                <div class="receipt-summary">
-                    <div class="receipt-summary-row"><span>Tổng tiền hàng:</span><span>${tong.toLocaleString('vi-VN')} ₫</span></div>
-                    ${pct > 0 ? `<div class="receipt-summary-row"><span>Giảm giá (${pct}%):</span><span>-${(tong - sau).toLocaleString('vi-VN')} ₫</span></div>` : ''}
-                    <div class="receipt-summary-row big"><span>Khách phải trả:</span><span>${sau.toLocaleString('vi-VN')} ₫</span></div>
-                    ${khach > 0 ? `<div class="receipt-summary-row"><span>Tiền khách đưa:</span><span>${khach.toLocaleString('vi-VN')} ₫</span></div>
-                    <div class="receipt-summary-row"><span>Tiền thừa:</span><span>${thua.toLocaleString('vi-VN')} ₫</span></div>` : ''}
-                </div>
-                <hr class="receipt-divider"/>
-                <div class="receipt-footer">
-                    Cảm ơn quý khách đã mua hàng!<br>
-                    Hẹn gặp lại 😊
-                </div>`;
+                        <div class="receipt-shop">🏪 CỬA HÀNG TẠP HÓA</div>
+                        <div class="receipt-addr">Địa chỉ: ___________________<br>SĐT: 0xxx xxx xxx</div>
+                        <hr class="receipt-divider"/>
+                        <div class="receipt-title">HÓA ĐƠN BÁN HÀNG</div>
+                        <div class="receipt-meta">
+                            Mã đơn: <strong>${maDon || 'TẠM TÍNH'}</strong><br>
+                            Ngày: ${ngay} &nbsp; Giờ: ${gio}<br>
+                            Thu ngân: Nhân viên
+                        </div>
+                        <hr class="receipt-divider"/>
+                        <div style="font-size:11px;color:#666;margin-bottom:4px">Tên SP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thành tiền</div>
+                        <hr class="receipt-divider"/>
+                        ${itemsHtml}
+                        <hr class="receipt-divider"/>
+                        <div class="receipt-summary">
+                            <div class="receipt-summary-row"><span>Tổng tiền hàng:</span><span>${tong.toLocaleString('vi-VN')} ₫</span></div>
+                            ${pct > 0 ? `<div class="receipt-summary-row"><span>Giảm giá (${pct}%):</span><span>-${(tong - sau).toLocaleString('vi-VN')} ₫</span></div>` : ''}
+                            <div class="receipt-summary-row big"><span>Khách phải trả:</span><span>${sau.toLocaleString('vi-VN')} ₫</span></div>
+                            ${khach > 0 ? `
+                            <div class="receipt-summary-row"><span>Tiền khách đưa:</span><span>${khach.toLocaleString('vi-VN')} ₫</span></div>
+                            <div class="receipt-summary-row"><span>Tiền thừa:</span><span>${thua.toLocaleString('vi-VN')} ₫</span></div>` : ''}
+                        </div>
+                        <hr class="receipt-divider"/>
+                        <div class="receipt-footer">Cảm ơn quý khách đã mua hàng!<br>Hẹn gặp lại 😊</div>`;
         }
 
+        // ===== MODAL XEM TRƯỚC (nút printer trên topbar) =====
         function moModalIn() {
             if (!cart.length) { showToast('Chưa có sản phẩm trong đơn!', 'error'); return; }
             document.getElementById('receiptContent').innerHTML = taoNoiDungHoaDon(null);
@@ -1042,34 +1315,31 @@
 
         function dongModalIn() {
             document.getElementById('printOverlay').style.display = 'none';
+            pendingReceiptData = null;
         }
 
         function inHoaDon() {
             let content = document.getElementById('receiptContent').innerHTML;
             let printArea = document.getElementById('printArea');
             printArea.innerHTML = `<style>
-                    body { font-family: 'Courier New', monospace; font-size: 12px; }
-                    @@page { size: 80mm auto; margin: 4mm; }
-                    .receipt-shop  { text-align:center; font-size:15px; font-weight:bold; }
-                    .receipt-addr  { text-align:center; font-size:11px; color:#555; }
-                    .receipt-title { text-align:center; font-size:14px; font-weight:bold; letter-spacing:1px; margin:6px 0; }
-                    .receipt-meta  { font-size:11px; margin-bottom:6px; }
-                    .receipt-divider { border:none; border-top:1px dashed #aaa; margin:4px 0; }
-                    .receipt-item-row { display:flex; justify-content:space-between; font-size:12px; margin:2px 0; }
-                    .receipt-summary-row { display:flex; justify-content:space-between; padding:2px 0; }
-                    .receipt-summary-row.big { font-size:14px; font-weight:bold; border-top:1px solid #aaa; padding-top:4px; }
-                    .receipt-footer { text-align:center; font-size:11px; color:#666; margin-top:8px; }
-                </style>` + content;
+                        body { font-family: 'Courier New', monospace; font-size: 12px; }
+                        @@page { size: 80mm auto; margin: 4mm; }
+                        .receipt-shop  { text-align:center; font-size:15px; font-weight:bold; }
+                        .receipt-addr  { text-align:center; font-size:11px; color:#555; }
+                        .receipt-title { text-align:center; font-size:14px; font-weight:bold; letter-spacing:1px; margin:6px 0; }
+                        .receipt-meta  { font-size:11px; margin-bottom:6px; }
+                        .receipt-divider { border:none; border-top:1px dashed #aaa; margin:4px 0; }
+                        .receipt-item-row { display:flex; justify-content:space-between; font-size:12px; margin:2px 0; }
+                        .receipt-summary-row { display:flex; justify-content:space-between; padding:2px 0; }
+                        .receipt-summary-row.big { font-size:14px; font-weight:bold; border-top:1px solid #aaa; padding-top:4px; }
+                        .receipt-footer { text-align:center; font-size:11px; color:#666; margin-top:8px; }
+                    </style>` + content;
             printArea.style.display = 'block';
             window.print();
             printArea.style.display = 'none';
+            dongModalIn();
         }
 
-        // Cập nhật hóa đơn sau khi thanh toán thành công → in luôn với mã đơn thật
-        function thanhToanVaIn(maDon) {
-            document.getElementById('receiptContent').innerHTML = taoNoiDungHoaDon(maDon);
-            document.getElementById('printOverlay').style.display = 'flex';
-        }
     </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="testModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="testModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="ChiTietHoaDon">
           <Key>
             <PropertyRef Name="MaChiTiet" />
@@ -99,6 +99,7 @@
           <Property Name="SoLuongToiThieu" Type="int" />
           <Property Name="HanSuDung" Type="date" />
           <Property Name="NgayTao" Type="datetime" />
+          <Property Name="HinhAnh" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="ThanhToan">
           <Key>
@@ -213,30 +214,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__SanPham__MaDanhM__59FA5E80">
-          <End Role="DanhMuc" Type="Self.DanhMuc" Multiplicity="0..1" />
-          <End Role="SanPham" Type="Self.SanPham" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DanhMuc">
-              <PropertyRef Name="MaDanhMuc" />
-            </Principal>
-            <Dependent Role="SanPham">
-              <PropertyRef Name="MaDanhMuc" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__SanPham__MaNhaCu__5AEE82B9">
-          <End Role="NhaCungCap" Type="Self.NhaCungCap" Multiplicity="0..1" />
-          <End Role="SanPham" Type="Self.SanPham" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NhaCungCap">
-              <PropertyRef Name="MaNhaCungCap" />
-            </Principal>
-            <Dependent Role="SanPham">
-              <PropertyRef Name="MaNhaCungCap" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__ThanhToan__MaHoa__75A278F5">
           <End Role="HoaDon" Type="Self.HoaDon" Multiplicity="1" />
           <End Role="ThanhToan" Type="Self.ThanhToan" Multiplicity="*" />
@@ -292,21 +269,12 @@
             <End Role="NhaCungCap" EntitySet="NhaCungCap" />
             <End Role="PhieuNhap" EntitySet="PhieuNhap" />
           </AssociationSet>
-          <AssociationSet Name="FK__SanPham__MaDanhM__59FA5E80" Association="Self.FK__SanPham__MaDanhM__59FA5E80">
-            <End Role="DanhMuc" EntitySet="DanhMuc" />
-            <End Role="SanPham" EntitySet="SanPham" />
-          </AssociationSet>
-          <AssociationSet Name="FK__SanPham__MaNhaCu__5AEE82B9" Association="Self.FK__SanPham__MaNhaCu__5AEE82B9">
-            <End Role="NhaCungCap" EntitySet="NhaCungCap" />
-            <End Role="SanPham" EntitySet="SanPham" />
-          </AssociationSet>
           <AssociationSet Name="FK__ThanhToan__MaHoa__75A278F5" Association="Self.FK__ThanhToan__MaHoa__75A278F5">
             <End Role="HoaDon" EntitySet="HoaDon" />
             <End Role="ThanhToan" EntitySet="ThanhToan" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="testModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -424,6 +392,7 @@
           <NavigationProperty Name="ChiTietPhieuNhaps" Relationship="Self.FK__ChiTietPh__MaSan__656C112C" FromRole="SanPham" ToRole="ChiTietPhieuNhap" />
           <NavigationProperty Name="DanhMuc" Relationship="Self.FK__SanPham__MaDanhM__59FA5E80" FromRole="SanPham" ToRole="DanhMuc" />
           <NavigationProperty Name="NhaCungCap" Relationship="Self.FK__SanPham__MaNhaCu__5AEE82B9" FromRole="SanPham" ToRole="NhaCungCap" />
+          <Property Name="HinhAnh" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ThanhToan">
           <Key>
@@ -727,6 +696,7 @@
           <EntitySetMapping Name="SanPhams">
             <EntityTypeMapping TypeName="testModel.SanPham">
               <MappingFragment StoreEntitySet="SanPham">
+                <ScalarProperty Name="HinhAnh" ColumnName="HinhAnh" />
                 <ScalarProperty Name="MaSanPham" ColumnName="MaSanPham" />
                 <ScalarProperty Name="TenSanPham" ColumnName="TenSanPham" />
                 <ScalarProperty Name="MaVach" ColumnName="MaVach" />
