@@ -1,22 +1,57 @@
 ﻿@model List<cuahangtaphoa.Models.SanPham>
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Layout/index.cshtml";
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
 <div class="container mt-4">
 
-    <h3>Danh sách sản phẩm</h3>
+    <h3 class="mb-4">Danh sách sản phẩm</h3>
 
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <form method="get">
-            <input type="text" name="search" class="form-control" placeholder="Tìm theo tên hoặc mã vạch">
+        <form method="get" class="row g-2 flex-grow-1">
+
+            <!-- search -->
+            <div class="col-md-3">
+                <input type="text" name="search"
+                       class="form-control"
+                       placeholder="🔍 Tìm sản phẩm..."
+                       value="@Request["search"]">
+            </div>
+
+            <!-- danh mục -->
+            <div class="col-md-3">
+                @Html.DropDownList("maDanhMuc",
+                    ViewBag.MaDanhMuc as SelectList,
+                    "-- Tất cả danh mục --",
+                    new { @class = "form-select" })
+            </div>
+
+            <!-- sort -->
+            <div class="col-md-3">
+                <select name="sort" class="form-select">
+                    <option value="">-- Sắp xếp --</option>
+                    <option value="ten" @(Request["sort"] == "ten" ? "selected" : "")>Tên A-Z</option>
+                    <option value="gia_asc" @(Request["sort"] == "gia_asc" ? "selected" : "")>Giá tăng</option>
+                    <option value="gia_desc" @(Request["sort"] == "gia_desc" ? "selected" : "")>Giá giảm</option>
+                </select>
+            </div>
+
+            <!-- reset -->
+            <div class="col-md-1">
+                <a href="/HangHoa/Index" class="btn btn-secondary w-100">↺</a>
+            </div>
+
         </form>
 
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSanPham">
-            + Thêm mới
+        <!-- nút thêm -->
+        <button class="btn btn-primary ms-3"
+                data-bs-toggle="modal"
+                data-bs-target="#modalSanPham">
+            <i class="bi bi-plus-circle"></i> Thêm mới
         </button>
 
     </div>
@@ -25,13 +60,13 @@
 
         <thead class="table-light">
             <tr>
+                <th>Ảnh</th>
                 <th>Mã SP</th>
                 <th>Tên sản phẩm</th>
                 <th>Mã vạch</th>
                 <th>Giá nhập</th>
                 <th style="width:140px">Giá bán</th>
                 <th>Số lượng</th>
-                <th>Cảnh báo</th>
                 <th>Hạn sử dụng</th>
                 <th>Ngày tạo</th>
                 <th>Chức năng</th>
@@ -45,6 +80,16 @@
                 foreach (var item in Model)
                 {
                     <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                            {
+                                <img src="@item.HinhAnh" style="width:60px;height:60px;object-fit:cover" />
+                            }
+                            else
+                            {
+                                <span>Không có</span>
+                            }
+                        </td>
 
                         <td>@item.MaSanPham</td>
                         <td>@item.TenSanPham</td>
@@ -57,6 +102,8 @@
                         </td>
 
                         <td>@item.SoLuong</td>
+                        <td>@(item.HanSuDung?.ToString("dd/MM/yyyy"))</td>
+                        <td>@(item.NgayTao?.ToString("dd/MM/yyyy"))</td>
 
                         <td>
                             @if (item.SoLuong <= item.SoLuongToiThieu)
@@ -69,16 +116,10 @@
                             }
                         </td>
 
-                        <td>
-                            @(item.HanSuDung?.ToString("dd/MM/yyyy"))
-                        </td>
+                        <td>@(item.HanSuDung?.ToString("dd/MM/yyyy"))</td>
+                        <td>@(item.NgayTao?.ToString("dd/MM/yyyy"))</td>
 
                         <td>
-                            @(item.NgayTao?.ToString("dd/MM/yyyy"))
-                        </td>
-
-                        <td>
-
                             <button class="btn btn-warning btn-sm"
                                     data-id="@item.MaSanPham"
                                     data-ten="@item.TenSanPham"
@@ -86,15 +127,17 @@
                                     data-gianhap="@item.GiaNhap"
                                     data-giaban="@item.GiaBan"
                                     data-soluong="@item.SoLuong"
-                                    data-hansudung="@item.HanSuDung"
+                                    data-hansudung="@item.HanSuDung?.ToString(" yyyy-MM-dd")"
+                                    data-madanhmuc="@item.MaDanhMuc"
+                                    data-mancc="@item.MaNhaCungCap"
                                     onclick="openEditModal(this)">
-                                Sửa
+                                <i class="bi bi-pencil"></i> Sửa
                             </button>
 
                             <a href="@Url.Action("Delete","HangHoa", new { id = item.MaSanPham })"
                                class="btn btn-danger btn-sm"
                                onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                Xóa
+                                <i class="bi bi-trash"></i> Xóa
                             </a>
 
                             <button class="btn btn-info btn-sm"
@@ -103,7 +146,8 @@
                                     data-gianhap="@item.GiaNhap"
                                     data-giaban="@item.GiaBan"
                                     onclick="openPriceModal(this)">
-                                Thiết lập giá
+                                <i class="bi bi-cash-stack"></i> Giá
+                                Giá
                             </button>
 
                             <button class="btn btn-secondary btn-sm"
@@ -111,11 +155,10 @@
                                     data-mavach="@item.MaVach"
                                     data-giaban="@item.GiaBan.ToString()"
                                     onclick="openBarcodeModal(this)">
-                                In tem mã
+                                <i class="bi bi-barcode"></i> Barcode
+                                Barcode
                             </button>
-
                         </td>
-
                     </tr>
                 }
             }
@@ -125,7 +168,6 @@
     </table>
 
 </div>
-
 
 <!-- MODAL THÊM -->
 <div class="modal fade" id="modalSanPham">
@@ -138,6 +180,7 @@
             </div>
 
             <form action="/HangHoa/Create" method="post">
+            <form action="/HangHoa/Create" method="post" enctype="multipart/form-data">
 
                 <div class="modal-body">
 
@@ -187,6 +230,25 @@
                             <label>Hạn sử dụng</label>
                             <input type="date" name="HanSuDung" class="form-control">
                         </div>
+                        <div class="col-md-6 mt-3">
+                            <label>Hình ảnh</label>
+                            <input type="file" name="fileAnh" class="form-control">
+                        </div>
+                        <div class="row mt-3">
+
+                            <div class="col-md-6">
+                                <label>Danh mục</label>
+                                @Html.DropDownList("MaDanhMuc", ViewBag.MaDanhMuc as SelectList, "-- Chọn danh mục --", new { @class = "form-select" })
+                                @Html.DropDownList("MaDanhMuc", ViewBag.MaDanhMuc as SelectList, "-- Chọn danh mục --", new { @class = "form-control" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Nhà cung cấp</label>
+                                @Html.DropDownList("MaNhaCungCap", ViewBag.MaNhaCungCap as SelectList, "-- Chọn NCC --", new { @class = "form-select" })
+                                @Html.DropDownList("MaNhaCungCap", ViewBag.MaNhaCungCap as SelectList, "-- Chọn NCC --", new { @class = "form-control" })
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -196,13 +258,11 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
-
             </form>
 
         </div>
     </div>
 </div>
-
 
 <!-- MODAL SỬA -->
 <div class="modal fade" id="modalEdit">
@@ -216,6 +276,7 @@
 
             <form action="/HangHoa/Edit" method="post">
 
+            <form action="/HangHoa/Edit" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
 
                     <input type="hidden" id="editMaSanPham" name="MaSanPham">
@@ -249,6 +310,27 @@
                         <label>Hạn sử dụng</label>
                         <input type="date" id="editHanSuDung" name="HanSuDung" class="form-control">
                     </div>
+                    <div class="mb-3">
+                        <label>Hình ảnh</label>
+                        <input type="file" name="fileAnh" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Danh mục</label>
+                        @Html.DropDownList("MaDanhMuc",
+                            ViewBag.MaDanhMuc as SelectList,
+                            "-- Chọn danh mục --",
+                            new { @class = "form-select", id = "editMaDanhMuc" })
+                            new { @class = "form-control", id = "editMaDanhMuc" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Nhà cung cấp</label>
+                        @Html.DropDownList("MaNhaCungCap",
+                            ViewBag.MaNhaCungCap as SelectList,
+                            "-- Chọn NCC --",
+                            new { @class = "form-select", id = "editMaNhaCungCap" })
+                            new { @class = "form-control", id = "editMaNhaCungCap" })
+                    </div>
 
                 </div>
 
@@ -262,7 +344,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- MODAL THIẾT LẬP GIÁ -->
 <div class="modal fade" id="modalPrice">
@@ -308,7 +389,6 @@
     </div>
 </div>
 
-
 <!-- MODAL BARCODE -->
 <div class="modal fade" id="modalBarcode">
     <div class="modal-dialog">
@@ -338,14 +418,10 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
 <script>
-
     function openEditModal(btn) {
-
         var id = btn.dataset.id;
         var ten = btn.dataset.ten;
         var mavach = btn.dataset.mavach;
@@ -360,6 +436,8 @@
         document.getElementById("editGiaNhap").value = gianhap;
         document.getElementById("editGiaBan").value = giaban;
         document.getElementById("editSoLuong").value = soluong;
+        document.getElementById("editMaDanhMuc").value = btn.dataset.madanhmuc;
+        document.getElementById("editMaNhaCungCap").value = btn.dataset.mancc;
 
         if (hansudung) {
             document.getElementById("editHanSuDung").value = hansudung.split('T')[0];
@@ -367,12 +445,9 @@
 
         var modal = new bootstrap.Modal(document.getElementById('modalEdit'));
         modal.show();
-
     }
 
-
     function openPriceModal(btn) {
-
         document.getElementById("priceMaSanPham").value = btn.dataset.id;
         document.getElementById("priceTenSanPham").value = btn.dataset.ten;
         document.getElementById("priceGiaNhap").value = btn.dataset.gianhap;
@@ -380,12 +455,9 @@
 
         var modal = new bootstrap.Modal(document.getElementById('modalPrice'));
         modal.show();
-
     }
 
-
     function openBarcodeModal(btn) {
-
         var ten = btn.getAttribute("data-ten");
         var mavach = btn.getAttribute("data-mavach");
         var giaban = parseFloat(btn.getAttribute("data-giaban"));
@@ -405,5 +477,22 @@
         var modal = new bootstrap.Modal(document.getElementById('modalBarcode'));
         modal.show();
     }
+</script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var danhMuc = document.querySelector("select[name='maDanhMuc']");
+        if (danhMuc) {
+            danhMuc.addEventListener("change", function () {
+                this.form.submit();
+            });
+        }
+        var sort = document.querySelector("select[name='sort']");
+        if (sort) {
+            sort.addEventListener("change", function () {
+                this.form.submit();
+            });
+        }
+    });
+</script>
 </script>

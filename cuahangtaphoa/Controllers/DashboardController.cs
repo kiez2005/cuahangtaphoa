@@ -2,6 +2,7 @@
 using cuahangtaphoa.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -73,15 +74,11 @@ namespace cuahangtaphoa.Controllers
                     {
                         DateTime ngay = now.Date.AddDays(-i);
                         DateTime ngayKe = ngay.AddDays(1);
-
                         decimal dt = db.HoaDons
-                            .Where(h => h.NgayLap >= ngay && h.NgayLap < ngayKe
-                                     && h.TrangThai == "Hoàn thành")
+                            .Where(h => h.NgayLap >= ngay && h.NgayLap < ngayKe && h.TrangThai == "Hoàn thành")
                             .Sum(h => (decimal?)h.TienSauGiam) ?? 0;
-
                         labels.Add(ngay.ToString("dd/MM"));
-                        data.Add(dt);
-                        tongDoanhThu += dt;
+                        data.Add(dt); tongDoanhThu += dt;
                     }
                 }
                 else if (filter == "year")
@@ -91,15 +88,11 @@ namespace cuahangtaphoa.Controllers
                     {
                         DateTime dauThang = new DateTime(now.Year, i, 1);
                         DateTime cuoiThang = dauThang.AddMonths(1);
-
                         decimal dt = db.HoaDons
-                            .Where(h => h.NgayLap >= dauThang && h.NgayLap < cuoiThang
-                                     && h.TrangThai == "Hoàn thành")
+                            .Where(h => h.NgayLap >= dauThang && h.NgayLap < cuoiThang && h.TrangThai == "Hoàn thành")
                             .Sum(h => (decimal?)h.TienSauGiam) ?? 0;
-
                         labels.Add(tenThang[i - 1]);
-                        data.Add(dt);
-                        tongDoanhThu += dt;
+                        data.Add(dt); tongDoanhThu += dt;
                     }
                 }
                 else
@@ -109,24 +102,20 @@ namespace cuahangtaphoa.Controllers
                     {
                         DateTime ngay = new DateTime(now.Year, now.Month, i);
                         DateTime ngayKe = ngay.AddDays(1);
-
                         decimal dt = db.HoaDons
-                            .Where(h => h.NgayLap >= ngay && h.NgayLap < ngayKe
-                                     && h.TrangThai == "Hoàn thành")
+                            .Where(h => h.NgayLap >= ngay && h.NgayLap < ngayKe && h.TrangThai == "Hoàn thành")
                             .Sum(h => (decimal?)h.TienSauGiam) ?? 0;
-
                         labels.Add(i < 10 ? "0" + i : i.ToString());
-                        data.Add(dt);
-                        tongDoanhThu += dt;
+                        data.Add(dt); tongDoanhThu += dt;
                     }
                 }
 
                 return Json(new
                 {
                     success = true,
-                    labels = labels,
-                    data = data,
-                    tongDoanhThu = tongDoanhThu,
+                    labels,
+                    data,
+                    tongDoanhThu,
                     tongDoanhThuText = FormatMoney(tongDoanhThu)
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -146,22 +135,23 @@ namespace cuahangtaphoa.Controllers
                     ? now.Date.AddDays(-7)
                     : new DateTime(now.Year, now.Month, 1);
 
+                // FIX: Dùng SoLuong * GiaBan thay vì ThanhTien (computed column - EF không sum được trực tiếp)
                 var query = db.ChiTietHoaDons
-                    .Where(ct => ct.HoaDon.NgayLap >= tuNgay
-                              && ct.HoaDon.TrangThai == "Hoàn thành")
+                    .Where(ct => ct.HoaDon.NgayLap >= tuNgay && ct.HoaDon.TrangThai == "Hoàn thành")
                     .GroupBy(ct => new { ct.MaSanPham, ct.SanPham.TenSanPham })
                     .Select(g => new
                     {
                         MaSanPham = g.Key.MaSanPham,
                         TenSanPham = g.Key.TenSanPham,
                         TongSoLuong = g.Sum(x => x.SoLuong),
-                        TongDoanhThu = g.Sum(x => (decimal?)x.ThanhTien) ?? 0
+                        TongDoanhThu = g.Sum(x => (decimal?)x.SoLuong * x.GiaBan) ?? 0
                     });
 
                 var result = (sortBy == "quantity"
                     ? query.OrderByDescending(x => x.TongSoLuong)
                     : query.OrderByDescending(x => x.TongDoanhThu))
                     .Take(10)
+                    .ToList()
                     .Select(x => new
                     {
                         x.MaSanPham,
@@ -181,53 +171,123 @@ namespace cuahangtaphoa.Controllers
         }
 
         [HttpGet]
+        public JsonResult GetTopKhachHang(string filter = "month")
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+                DateTime tuNgay = filter == "week"
+                    ? now.Date.AddDays(-7)
+                    : new DateTime(now.Year, now.Month, 1);
+
+                // FIX: Thêm Include("NguoiDung") để load navigation property trước khi ToList
+                var hoaDons = db.HoaDons
+                    .Include("NguoiDung")
+                    .Where(h => h.NgayLap >= tuNgay && h.TrangThai == "Hoàn thành")
+                    .ToList();
+
+                var result = hoaDons
+                    .GroupBy(h => h.MaNguoiDung)
+                    .Select(g => new
+                    {
+                        MaNguoiDung = g.Key,
+                        HoTen = g.First().NguoiDung != null
+                                        ? g.First().NguoiDung.HoTen ?? "Nhân viên"
+                                        : "Nhân viên",
+                        SoHoaDon = g.Count(),
+                        TongDoanhThu = g.Sum(x => x.TienSauGiam is decimal d ? d : 0m)
+                    })
+                    .OrderByDescending(x => x.TongDoanhThu)
+                    .Take(10)
+                    .Select(x => new
+                    {
+                        x.MaNguoiDung,
+                        x.HoTen,
+                        x.SoHoaDon,
+                        x.TongDoanhThu,
+                        TongDoanhThuText = FormatMoney(x.TongDoanhThu)
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = result }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetSapHetHang()
+        {
+            try
+            {
+                // FIX: Thêm Include("DanhMuc") để load navigation property trước khi ToList
+                var list = db.SanPhams
+                    .Include("DanhMuc")
+                    .Where(s => s.SoLuong <= s.SoLuongToiThieu)
+                    .OrderBy(s => s.SoLuong)
+                    .Take(20)
+                    .ToList()
+                    .Select(s => new
+                    {
+                        maSanPham = s.MaSanPham,
+                        tenSanPham = s.TenSanPham ?? "",
+                        maVach = s.MaVach ?? "",
+                        soLuong = s.SoLuong is int sl ? sl : 0,
+                        soLuongToiThieu = s.SoLuongToiThieu is int stt ? stt : 0,
+                        giaBan = s.GiaBan is decimal gb ? gb : 0m,
+                        danhMuc = s.DanhMuc != null ? s.DanhMuc.TenDanhMuc : "—",
+                        trangThai = (s.SoLuong is int slCheck ? slCheck : 0) <= 0 ? "het" : "sap_het"
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = list, total = list.Count }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
         public JsonResult GetHoatDong()
         {
             try
             {
                 var hoaDons = db.HoaDons
-                    .OrderByDescending(h => h.NgayLap)
-                    .Take(10)
-                    .ToList()
+                    .Include("NguoiDung")
+                    .OrderByDescending(h => h.NgayLap).Take(10).ToList()
                     .Select(h => new
                     {
                         NguoiDung = h.NguoiDung != null ? h.NguoiDung.HoTen : "Nhân viên",
                         HanhDong = "bán đơn hàng",
-                        GiaTri = (decimal)(h.TienSauGiam ?? 0),
+                        GiaTri = (decimal)(h.TienSauGiam is decimal d ? d : 0),
                         ThoiGian = h.NgayLap
                     });
 
                 var phieuNhaps = db.PhieuNhaps
-                    .OrderByDescending(p => p.NgayNhap)
-                    .Take(10)
-                    .ToList()
+                    .Include("NguoiDung")
+                    .OrderByDescending(p => p.NgayNhap).Take(10).ToList()
                     .Select(p => new
                     {
                         NguoiDung = p.NguoiDung != null ? p.NguoiDung.HoTen : "Nhân viên",
                         HanhDong = "nhập hàng",
-                        GiaTri = (decimal)(p.TongTien ?? 0),
+                        GiaTri = (decimal)(p.TongTien is decimal d ? d : 0),
                         ThoiGian = p.NgayNhap
                     });
 
-                var tatCa = hoaDons
-                    .Concat(phieuNhaps)
-                    .OrderByDescending(x => x.ThoiGian)
-                    .Take(20)
+                var tatCa = hoaDons.Concat(phieuNhaps)
+                    .OrderByDescending(x => x.ThoiGian).Take(20)
                     .Select(x => new
                     {
                         nguoiDung = x.NguoiDung,
                         hanhDong = x.HanhDong,
                         giaTri = x.GiaTri.ToString("N0"),
                         thoiGian = FormatTime(x.ThoiGian)
-                    })
-                    .ToList();
+                    }).ToList();
 
-                return Json(new
-                {
-                    success = true,
-                    data = tatCa,
-                    total = tatCa.Count
-                }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, data = tatCa, total = tatCa.Count }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -237,10 +297,8 @@ namespace cuahangtaphoa.Controllers
 
         private string FormatMoney(decimal amount)
         {
-            if (amount >= 1000000000)
-                return string.Format("{0:0.##}", amount / 1000000000) + " tỷ";
-            if (amount >= 1000000)
-                return string.Format("{0:0.##}", amount / 1000000) + " tr";
+            if (amount >= 1_000_000_000) return string.Format("{0:0.##}", amount / 1_000_000_000) + " tỷ";
+            if (amount >= 1_000_000) return string.Format("{0:0.##}", amount / 1_000_000) + " tr";
             return string.Format("{0:N0}", amount);
         }
 
@@ -248,7 +306,6 @@ namespace cuahangtaphoa.Controllers
         {
             if (dt == null) return "";
             TimeSpan diff = DateTime.Now - dt.Value;
-
             if (diff.TotalMinutes < 1) return "vừa xong";
             if (diff.TotalMinutes < 60) return (int)diff.TotalMinutes + " phút trước";
             if (diff.TotalHours < 24) return (int)diff.TotalHours + " giờ trước";
