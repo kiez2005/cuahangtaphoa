@@ -1,0 +1,241 @@
+﻿@model cuahangtaphoa.Models.PhieuNhap
+
+@{
+    Layout = "~/Views/Layout/Index.cshtml";
+    ViewBag.Title = "Nhập hàng";
+}
+
+<style>
+    .pn-wrapper {
+        display: flex;
+        gap: 20px;
+    }
+
+    .pn-left {
+        flex: 3;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .pn-right {
+        flex: 1;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .pn-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+        .pn-table th {
+            background: #eef3fb;
+            padding: 10px;
+        }
+
+        .pn-table td {
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .pn-table input,
+        .pn-table select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+    .pn-btn {
+        margin-top: 10px;
+        padding: 6px 10px;
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 6px;
+    }
+
+    .stt {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .masp {
+        color: #0d6efd;
+        font-weight: bold;
+    }
+
+    .total {
+        font-size: 18px;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+</style>
+
+<h2>Nhập hàng</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="pn-wrapper">
+
+        <!-- LEFT -->
+        <div class="pn-left">
+
+            <p>Nhà cung cấp</p>
+            @Html.DropDownListFor(m => m.MaNhaCungCap,
+                (SelectList)ViewBag.MaNhaCungCap,
+                "-- Chọn --",
+                new { @class = "form-control", id = "nccSelect" })
+
+            <p class="mt-2">Người nhập</p>
+            @Html.DropDownListFor(m => m.MaNguoiDung,
+                (SelectList)ViewBag.MaNguoiDung,
+                "-- Chọn --",
+                new { @class = "form-control" })
+
+            <table class="pn-table" id="productTable">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã SP</th>
+                        <th>Sản phẩm</th>
+                        <th>SL</th>
+                        <th>Giá nhập</th>
+                        <th>Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td class="stt">1</td>
+                        <td class="masp"></td>
+
+                        <td>
+                            <select name="SanPhamId" class="sanpham">
+                                <option value="">-- Chọn NCC trước --</option>
+                            </select>
+                        </td>
+
+                        <td><input type="number" name="SoLuong" value="1" class="qty" /></td>
+                        <td><input type="number" name="GiaNhap" value="0" class="price" /></td>
+                        <td class="thanhtien">0</td>
+                        <td><button type="button" onclick="removeRow(this)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="pn-btn" onclick="addRow()">+ Thêm sản phẩm</button>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="pn-right">
+            <p>Tổng tiền</p>
+            <p class="total" id="tongTien">0</p>
+
+            <button type="submit" class="pn-btn">Lưu phiếu</button>
+        </div>
+
+    </div>
+}
+
+<script>
+    function updateSTT() {
+        document.querySelectorAll("#productTable tbody tr").forEach((row, i) => {
+            row.querySelector(".stt").innerText = i + 1;
+        });
+    }
+
+    function addRow() {
+        let row = `
+    <tr>
+        <td class="stt"></td>
+        <td class="masp"></td>
+
+        <td>
+            <select name="SanPhamId" class="sanpham">
+                <option value="">-- Chọn NCC trước --</option>
+            </select>
+        </td>
+
+        <td><input type="number" name="SoLuong" value="1" class="qty"/></td>
+        <td><input type="number" name="GiaNhap" value="0" class="price"/></td>
+        <td class="thanhtien">0</td>
+
+        <td><button type="button" onclick="removeRow(this)">X</button></td>
+    </tr>`;
+
+        document.querySelector("#productTable tbody")
+            .insertAdjacentHTML("beforeend", row);
+
+        updateSTT();
+    }
+
+    function removeRow(btn) {
+        btn.closest("tr").remove();
+        calcTotal();
+        updateSTT();
+    }
+
+    document.getElementById("nccSelect").addEventListener("change", function () {
+
+        let nccId = this.value;
+
+        fetch('/PhieuNhap/GetSanPhamByNCC?id=' + nccId)
+            .then(res => res.json())
+            .then(data => {
+
+                document.querySelectorAll(".sanpham").forEach(select => {
+
+                    select.innerHTML = '<option value="">-- Chọn --</option>';
+
+                    data.forEach(sp => {
+                        select.innerHTML += `<option value="${sp.id}">${sp.name}</option>`;
+                    });
+
+                });
+
+            });
+    });
+    document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("sanpham")) {
+
+            let id = e.target.value;
+            let row = e.target.closest("tr");
+
+            row.querySelector(".masp").innerText = id;
+
+            fetch('/PhieuNhap/GetGiaNhap?id=' + id)
+                .then(res => res.json())
+                .then(data => {
+                    row.querySelector(".price").value = data;
+                    calcTotal();
+                });
+        }
+    });
+
+    document.addEventListener("input", calcTotal);
+
+    function calcTotal() {
+
+        let total = 0;
+
+        document.querySelectorAll("#productTable tbody tr").forEach(row => {
+
+            let sl = row.querySelector(".qty").value || 0;
+            let gia = row.querySelector(".price").value || 0;
+
+            let tt = sl * gia;
+
+            row.querySelector(".thanhtien").innerText = tt;
+            total += tt;
+        });
+
+        document.getElementById("tongTien").innerText =
+            total.toLocaleString('vi-VN');
+    }
+</script>    

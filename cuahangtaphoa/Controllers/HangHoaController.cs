@@ -12,7 +12,7 @@ namespace cuahangtaphoa.Controllers
         // GET: SanPham
         testEntities db = new testEntities();
 
-        public ActionResult Index(string search)
+        public ActionResult Index(string search, int? MaDanhMuc, string sort)
         {
             var sanpham = db.SanPhams.AsQueryable();
 
@@ -22,65 +22,137 @@ namespace cuahangtaphoa.Controllers
                     s.TenSanPham.Contains(search) ||
                     s.MaVach.Contains(search));
             }
+            if (MaDanhMuc.HasValue)
+            {
+                sanpham = sanpham.Where(s => s.MaDanhMuc == MaDanhMuc);
+            }
+            switch (sort)
+            {
+                case "ten":
+                    sanpham = sanpham.OrderBy(s => s.TenSanPham);
+                    break;
+                case "gia_asc":
+                    sanpham = sanpham.OrderBy(s => s.GiaBan);
+                    break;
+                case "gia_desc":
+                    sanpham = sanpham.OrderByDescending(s => s.GiaBan);
+                    break;
+            }
+            ViewBag.Sort = sort;
+            ViewBag.MaDanhMuc = new SelectList(db.DanhMucs, "MaDanhMuc", "TenDanhMuc");
+            ViewBag.MaNhaCungCap = new SelectList(db.NhaCungCaps, "MaNhaCungCap", "TenNhaCungCap");
 
             return View(sanpham.ToList());
         }
+        // xử lý thêm dữ liệu
         public ActionResult Create()
         {
             return View();
         }
-
-        // xử lý thêm dữ liệu
         [HttpPost]
-        public ActionResult Create(SanPham sp)
+        public ActionResult Create(SanPham sp, HttpPostedFileBase fileAnh)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                sp.NgayTao = DateTime.Now;
-                db.SanPhams.Add(sp);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var sanpham = db.SanPhams.ToList();
+
+                ViewBag.MaDanhMuc = new SelectList(db.DanhMucs, "MaDanhMuc", "TenDanhMuc", sp.MaDanhMuc);
+                ViewBag.MaNhaCungCap = new SelectList(db.NhaCungCaps, "MaNhaCungCap", "TenNhaCungCap", sp.MaNhaCungCap);
+
+                return View("Index", sanpham);
             }
 
-            return View(sp);
+            if (fileAnh != null && fileAnh.ContentLength > 0)
+            {
+                string fileName = System.IO.Path.GetFileName(fileAnh.FileName);
+                string path = Server.MapPath("~/Content/images/" + fileName);
+
+                fileAnh.SaveAs(path);
+
+                sp.HinhAnh = "/Content/images/" + fileName;
+            }
+
+            sp.NgayTao = DateTime.Now;
+            db.SanPhams.Add(sp);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
         public ActionResult Edit(int id)
         {
             var sp = db.SanPhams.Find(id);
+            if (sp == null) return HttpNotFound();
             return View(sp);
         }
 
         // cập nhật dữ liệu
         [HttpPost]
-        public ActionResult Edit(SanPham sp)
+        public ActionResult Edit(SanPham sp, HttpPostedFileBase fileAnh)
         {
-            if (ModelState.IsValid)
+            if (sp == null || sp.MaSanPham <= 0)
+                return HttpNotFound();
+
+            var old = db.SanPhams.FirstOrDefault(x => x.MaSanPham == sp.MaSanPham);
+
+            if (old == null)
+                return HttpNotFound();
+
+            old.TenSanPham = sp.TenSanPham ?? old.TenSanPham;
+            old.MaVach = sp.MaVach ?? old.MaVach;
+            old.SoLuong = sp.SoLuong;
+            if (sp.HanSuDung != null)
             {
-                db.Entry(sp).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                old.HanSuDung = sp.HanSuDung;
+            }
+            old.MaDanhMuc = sp.MaDanhMuc ?? old.MaDanhMuc;
+            old.MaNhaCungCap = sp.MaNhaCungCap ?? old.MaNhaCungCap;
+
+            var giaNhapRaw = Request?.Form["GiaNhap"];
+            var giaBanRaw = Request?.Form["GiaBan"];
+
+            if (decimal.TryParse(giaNhapRaw, out decimal gn))
+                old.GiaNhap = gn;
+
+            if (decimal.TryParse(giaBanRaw, out decimal gb))
+                old.GiaBan = gb;
+
+            if (fileAnh != null && fileAnh.ContentLength > 0)
+            {
+                var fileName = System.IO.Path.GetFileName(fileAnh.FileName);
+                var path = Server.MapPath("~/Content/images/" + fileName);
+                fileAnh.SaveAs(path);
+
+                old.HinhAnh = "/Content/images/" + fileName;
             }
 
-            return View(sp);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
         public ActionResult Delete(int id)
         {
             var sp = db.SanPhams.Find(id);
-
-            db.SanPhams.Remove(sp);
-            db.SaveChanges();
+            if (sp != null)
+            {
+                db.SanPhams.Remove(sp);
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }
         public ActionResult SetPrice(int id)
         {
             var sp = db.SanPhams.Find(id);
+            if (sp == null) return HttpNotFound();
             return View(sp);
         }
         [HttpPost]
         public ActionResult SetPrice(int id, decimal GiaNhap, decimal GiaBan)
         {
-            var sp = db.SanPhams.Find(id);
+            var sp = db.SanPhams.FirstOrDefault(x => x.MaSanPham == id);
+
+            if (sp == null)
+                return HttpNotFound();
 
             sp.GiaNhap = GiaNhap;
             sp.GiaBan = GiaBan;
@@ -92,6 +164,7 @@ namespace cuahangtaphoa.Controllers
         public ActionResult PrintBarcode(int id)
         {
             var sp = db.SanPhams.Find(id);
+            if (sp == null) return HttpNotFound();
             return View(sp);
         }
     }

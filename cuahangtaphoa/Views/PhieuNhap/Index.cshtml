@@ -1,0 +1,176 @@
+﻿@model IEnumerable<cuahangtaphoa.Models.PhieuNhap>
+
+@{
+    Layout = "~/Views/Layout/Index.cshtml";
+    ViewBag.Title = "Nhập Hàng";
+}
+
+<style>
+    body {
+        background-color: #f5f5f5;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .container {
+        margin-top: 40px;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: #fff;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 1.25rem;
+    }
+
+        .card-header h4 {
+            margin-bottom: 0;
+        }
+
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .table thead th {
+            background-color: #f5f5f5;
+            color: #333;
+            border-bottom: none;
+            font-weight: 700;
+        }
+
+        .table td, .table th {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 8px;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        border-radius: 8px;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+</style>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Nhập Hàng</h4>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="search-box">
+                    @using (Html.BeginForm("Index", "PhieuNhap", FormMethod.Get))
+                    {
+                        <input type="text" class="form-control" name="search" placeholder="Tìm mã phiếu..." value="@Request["search"]" />
+                    }
+                </div>
+                <div>
+                    @Html.ActionLink("+ Nhập hàng", "Create", null, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Xuất file", "Export", null, new { @class = "btn btn-outline-primary" })
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã phiếu</th>
+                        <th>Thời gian</th>
+                        <th>Mã NCC</th>
+                        <th>Nhà cung cấp</th>
+                        <th class="text-end">Tổng tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.MaPhieu</td>
+                            <td>@(item.NgayNhap?.ToString("dd/MM/yyyy HH:mm"))</td>
+                            <td>@item.MaNhaCungCap</td>
+                            <td>@(item.NhaCungCap?.TenNhaCungCap)</td>
+                            <td class="text-end">@String.Format("{0:N0}", item.TongTien)</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm"
+                                        data-id="@item.MaPhieuNhap"
+                                        data-ncc="@item.MaNhaCungCap"
+                                        data-user="@item.MaNguoiDung"
+                                        onclick="openEditModal(this)">
+                                    Sửa
+                                </button>
+                                <a href="@Url.Action("Delete","PhieuNhap", new { id = item.MaPhieuNhap })"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Xoá?')">
+                                    Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div class="modal fade" id="modalEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sửa phiếu nhập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/PhieuNhap/Edit" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="editId" name="MaPhieuNhap" />
+                    <div class="mb-3">
+                        <label>Nhà cung cấp</label>
+                        @Html.DropDownList("MaNhaCungCap",
+                            ViewBag.MaNhaCungCap as SelectList,
+                            new { @class = "form-control", id = "editNCC" })
+                    </div>
+                    <div class="mb-3">
+                        <label>Người nhập</label>
+                        @Html.DropDownList("MaNguoiDung",
+                            ViewBag.MaNguoiDung as SelectList,
+                            new { @class = "form-control", id = "editUser" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditModal(btn) {
+        document.getElementById("editId").value = btn.dataset.id;
+        document.getElementById("editNCC").value = btn.dataset.ncc;
+        document.getElementById("editUser").value = btn.dataset.user;
+        var modal = new bootstrap.Modal(document.getElementById('modalEdit'));
+        modal.show();
+    }
+</script>
