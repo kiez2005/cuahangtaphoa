@@ -25,6 +25,7 @@
 
         <thead class="table-light">
             <tr>
+                <th>Ảnh</th>
                 <th>Mã SP</th>
                 <th>Tên sản phẩm</th>
                 <th>Mã vạch</th>
@@ -45,6 +46,16 @@
                 foreach (var item in Model)
                 {
                     <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.HinhAnh))
+                            {
+                                <img src="@item.HinhAnh" style="width:60px;height:60px;object-fit:cover" />
+                            }
+                            else
+                            {
+                                <span>Không có</span>
+                            }
+                        </td>
 
                         <td>@item.MaSanPham</td>
                         <td>@item.TenSanPham</td>
@@ -69,16 +80,10 @@
                             }
                         </td>
 
-                        <td>
-                            @(item.HanSuDung?.ToString("dd/MM/yyyy"))
-                        </td>
+                        <td>@(item.HanSuDung?.ToString("dd/MM/yyyy"))</td>
+                        <td>@(item.NgayTao?.ToString("dd/MM/yyyy"))</td>
 
                         <td>
-                            @(item.NgayTao?.ToString("dd/MM/yyyy"))
-                        </td>
-
-                        <td>
-
                             <button class="btn btn-warning btn-sm"
                                     data-id="@item.MaSanPham"
                                     data-ten="@item.TenSanPham"
@@ -86,12 +91,14 @@
                                     data-gianhap="@item.GiaNhap"
                                     data-giaban="@item.GiaBan"
                                     data-soluong="@item.SoLuong"
-                                    data-hansudung="@item.HanSuDung"
+                                    data-hansudung="@item.HanSuDung?.ToString(" yyyy-MM-dd")"
+                                    data-madanhmuc="@item.MaDanhMuc"
+                                    data-mancc="@item.MaNhaCungCap"
                                     onclick="openEditModal(this)">
                                 Sửa
                             </button>
 
-                            <a href="@Url.Action("Delete","SanPham", new { id = item.MaSanPham })"
+                            <a href="@Url.Action("Delete","HangHoa", new { id = item.MaSanPham })"
                                class="btn btn-danger btn-sm"
                                onclick="return confirm('Bạn có chắc muốn xóa?')">
                                 Xóa
@@ -103,7 +110,7 @@
                                     data-gianhap="@item.GiaNhap"
                                     data-giaban="@item.GiaBan"
                                     onclick="openPriceModal(this)">
-                                Thiết lập giá
+                                Giá
                             </button>
 
                             <button class="btn btn-secondary btn-sm"
@@ -111,11 +118,9 @@
                                     data-mavach="@item.MaVach"
                                     data-giaban="@item.GiaBan.ToString()"
                                     onclick="openBarcodeModal(this)">
-                                In tem mã
+                                Barcode
                             </button>
-
                         </td>
-
                     </tr>
                 }
             }
@@ -137,7 +142,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/Create" method="post">
+            <form action="/HangHoa/Create" method="post" enctype="multipart/form-data">
 
                 <div class="modal-body">
 
@@ -187,6 +192,23 @@
                             <label>Hạn sử dụng</label>
                             <input type="date" name="HanSuDung" class="form-control">
                         </div>
+                        <div class="col-md-6 mt-3">
+                            <label>Hình ảnh</label>
+                            <input type="file" name="fileAnh" class="form-control">
+                        </div>
+                        <div class="row mt-3">
+
+                            <div class="col-md-6">
+                                <label>Danh mục</label>
+                                @Html.DropDownList("MaDanhMuc", ViewBag.MaDanhMuc as SelectList, "-- Chọn danh mục --", new { @class = "form-control" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Nhà cung cấp</label>
+                                @Html.DropDownList("MaNhaCungCap", ViewBag.MaNhaCungCap as SelectList, "-- Chọn NCC --", new { @class = "form-control" })
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -196,7 +218,6 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
-
             </form>
 
         </div>
@@ -214,8 +235,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/Edit" method="post">
-
+            <form action="/HangHoa/Edit" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
 
                     <input type="hidden" id="editMaSanPham" name="MaSanPham">
@@ -249,6 +269,25 @@
                         <label>Hạn sử dụng</label>
                         <input type="date" id="editHanSuDung" name="HanSuDung" class="form-control">
                     </div>
+                    <div class="mb-3">
+                        <label>Hình ảnh</label>
+                        <input type="file" name="fileAnh" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Danh mục</label>
+                        @Html.DropDownList("MaDanhMuc",
+                            ViewBag.MaDanhMuc as SelectList,
+                            "-- Chọn danh mục --",
+                            new { @class = "form-control", id = "editMaDanhMuc" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Nhà cung cấp</label>
+                        @Html.DropDownList("MaNhaCungCap",
+                            ViewBag.MaNhaCungCap as SelectList,
+                            "-- Chọn NCC --",
+                            new { @class = "form-control", id = "editMaNhaCungCap" })
+                    </div>
 
                 </div>
 
@@ -274,7 +313,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/SanPham/SetPrice" method="post">
+            <form action="/HangHoa/SetPrice" method="post">
 
                 <div class="modal-body">
 
@@ -360,6 +399,8 @@
         document.getElementById("editGiaNhap").value = gianhap;
         document.getElementById("editGiaBan").value = giaban;
         document.getElementById("editSoLuong").value = soluong;
+        document.getElementById("editMaDanhMuc").value = btn.dataset.madanhmuc;
+        document.getElementById("editMaNhaCungCap").value = btn.dataset.mancc;
 
         if (hansudung) {
             document.getElementById("editHanSuDung").value = hansudung.split('T')[0];

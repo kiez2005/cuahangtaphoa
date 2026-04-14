@@ -23,16 +23,20 @@ namespace cuahangtaphoa.Controllers
             if (string.IsNullOrEmpty(keyword))
                 return Json(new List<object>(), JsonRequestBehavior.AllowGet);
 
-            var result = db.SanPhams
+            // Dùng .ToList() trước rồi mới Select để tránh lỗi EF không map được nullable
+            var list = db.SanPhams
                 .Where(s => s.TenSanPham.Contains(keyword) || s.MaVach.Contains(keyword))
-                .Select(s => new {
-                    s.MaSanPham,
-                    s.TenSanPham,
-                    s.GiaBan,
-                    s.SoLuong
-                })
                 .Take(10)
                 .ToList();
+
+            var result = list.Select(s => new {
+                MaSanPham = s.MaSanPham,
+                TenSanPham = s.TenSanPham,
+                GiaBan = s.GiaBan,
+                SoLuong = s.SoLuong,
+                MaVach = s.MaVach ?? "",
+                HinhAnh = s.HinhAnh ?? ""
+            }).ToList();
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -57,7 +61,7 @@ namespace cuahangtaphoa.Controllers
                         TrangThai = "Hoàn thành"
                     };
                     db.HoaDons.Add(hoaDon);
-                    db.SaveChanges(); // để lấy MaHoaDon
+                    db.SaveChanges();
 
                     // 2. Lưu chi tiết + trừ tồn kho
                     foreach (var item in request.ChiTiet)
@@ -70,7 +74,6 @@ namespace cuahangtaphoa.Controllers
                             GiaBan = item.GiaBan
                         });
 
-                        // Trừ tồn kho
                         var sp = db.SanPhams.Find(item.MaSanPham);
                         if (sp != null)
                             sp.SoLuong -= item.SoLuong;
@@ -99,7 +102,6 @@ namespace cuahangtaphoa.Controllers
         }
     }
 
-    // ViewModel nhận dữ liệu từ JS gửi lên
     public class HoaDonRequest
     {
         public decimal PhanTramGiam { get; set; }
